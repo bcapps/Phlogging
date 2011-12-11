@@ -5,7 +5,7 @@
     android:layout_height="fill_parent">
     <LinearLayout android:id="@+id/toolbar"
         android:layout_width="fill_parent"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/unspecified"
         android:layout_weight="10">
         <ImageButton android:id="@+id/settings_button"
 			style="@style/LittleButton"
@@ -14,7 +14,7 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_height="fill_parent"
-            android:layout_width="0dp"
+            android:layout_width="@dimen/unspecified"
 			android:layout_weight="50"
 			android:gravity="center">
 			<TextView android:layout_height="wrap_content"
@@ -23,14 +23,14 @@
 				android:textSize="@dimen/big_text_size">
   			</TextView>
         </LinearLayout>
-        <ImageButton android:id="@+id/settings_button"
+        <Button android:id="@+id/settings_button"
             style="@style/LittleButton"
             android:text="Create">
-        </ImageButton>
+        </Button>
         </LinearLayout>
         <ListView android:id="@+id/the_list"
         android:layout_width="fill_parent"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/unspecified"
         android:layout_weight="90">
     </ListView>
 </LinearLayout>
