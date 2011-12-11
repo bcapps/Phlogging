@@ -1,10 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
-    android:layout_width="fill_parent" 
+    android:layout_width="fill_parent"
     android:layout_height="fill_parent">
-    <ListView android:id="@+id/the_list"
+    <LinearLayout android:id="@+id/toolbar"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+        android:layout_height="0dp"
+        android:layout_weight="10">
+        <Button android:id="@+id/settings_button"
+			style="@style/LittleButton"
+			android:text="settings">
+		</Button>
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_height="fill_parent"
+            android:layout_width="0dp"
+			android:layout_weight="50"
+			android:gravity="center">
+			<TextView android:layout_height="wrap_content"
+				android:layout_width="wrap_content"
+				android:text="@string/toolbar_text"
+				android:textSize="@dimen/big_text_size"
+            	android:layout_gravity="center_horizontal"
+            	android:layout="center_horizontal">
+  			</TextView>
+        </LinearLayout>
+        <Button android:id="@+id/settings_button"
+            style="@style/LittleButton"
+            android:text="create">
+        </Button>
+        </LinearLayout>
+        <ListView android:id="@+id/the_list"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="90">
     </ListView>
 </LinearLayout>

@@ -2,8 +2,6 @@ package edu.miami.c06804728.phlogging;
 
 import java.io.File;
 
-import edu.miami.c06804728.talkingpicturesfinal.R;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -20,47 +18,47 @@ public class EditDataView extends Activity {
 //-----------------------------------------------------------------------------
 	private String description;
 	private long rowId;
-	
+
 	private MediaRecorder recorder;
     private String recordFileName;
-    
+
     private boolean isRecording;
 //-----------------------------------------------------------------------------
-	public void onCreate(Bundle savedInstanceState) {       
+	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.talking_pictures_edit_view_layout);
-        
+
         String imageFilename;
         Bitmap imageBitmap;
         ImageView imageView;
         EditText descriptionView;
         String recordDirName;
         File recordDir;
-        
+
         //Get the variables sent from last activity
         imageFilename = this.getIntent().getStringExtra("edu.miami.c06804728.phlogging.image_file_name");
         description = this.getIntent().getStringExtra("edu.miami.c06804728.phlogging.description");
         rowId = this.getIntent().getLongExtra("edu.miami.c06804728.phlogging.rowId", -1);
-        
+
         //Something went wrong
         if(rowId==-1){
         	finish();
         }
-        
+
         //Set the ImageView image
         int maxWidth, maxHeight;
-        
+
         imageView = (ImageView) findViewById(R.id.image_large);
         if(imageFilename!=null){
         	//Get the max values, load and set the Bitmap
         	maxWidth = getResources().getInteger(R.integer.image_max_width);
     		maxHeight = getResources().getInteger(R.integer.image_max_height);
-    		
-        	imageBitmap = loadResizedBitmap(imageFilename, 
+
+        	imageBitmap = loadResizedBitmap(imageFilename,
     				maxWidth, maxHeight, false);
         	imageView.setImageBitmap(imageBitmap);
         }
-        
+
         //Set the EditText text
         descriptionView = (EditText) findViewById(R.id.edit_text_field);
         if(description!=null){
@@ -78,7 +76,7 @@ public class EditDataView extends Activity {
         	finish();
         }
         recordFileName = recordDir + "/" + rowId + getString(R.string.record_file_name);
-        
+
         //Not recording
         isRecording = false;
 	}
@@ -86,7 +84,7 @@ public class EditDataView extends Activity {
 	public void myClickHandler(View view) {
     	Intent returnIntent;
     	EditText descriptionView;
-    	 
+
         switch (view.getId()) {
         case R.id.audio_record:
         	//Setup the media recorder
@@ -113,7 +111,7 @@ public class EditDataView extends Activity {
         case R.id.audio_clear:
         	//Stop recording
         	stopRecording();
-        	
+
         	//If the recordedFile exists, delete it
         	File recordedFile = new File(recordFileName);
         	if(recordedFile.exists()){
@@ -127,32 +125,32 @@ public class EditDataView extends Activity {
         case R.id.save_button:
         	//Stop recording
         	stopRecording();
-        	
+
         	//Get the current description
         	descriptionView = (EditText) findViewById(R.id.edit_text_field);
         	description = descriptionView.getText().toString();
-        	
+
         	//Set the values for the return Intent and exit
         	returnIntent = new Intent();
 	        returnIntent.putExtra("edu.miami.c06804728.phlogging.description", description);
 	        returnIntent.putExtra("edu.miami.c06804728.phlogging.rowId", rowId);
-	        
+
 	        //Check if we cleared the file, if so set the filename to null
 	        File recordFile = new File(recordFileName);
 	        if(!recordFile.exists()){
 	        	recordFileName = null;
 	        }
         	returnIntent.putExtra("edu.miami.c06804728.phlogging.recordFileName", recordFileName);
-	        
+
 	        setResult(RESULT_OK,returnIntent);
-	        
+
 	        finish();
             break;
         default:
             break;
         }
     }
-//-----------------------------------------------------------------------------	
+//-----------------------------------------------------------------------------
 	public void stopRecording(){
 		//Stop the recorder
     	if(isRecording){

@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Talking Picture List Brian</string>
+    <string name="app_name">Phlogging</string>
     <string name="save_button_text">Save</string>
     <string name="dismiss_button_text">Dismiss</string>
     <string name="description_hint_text">Describe it!</string>
     <string name="record_file_name">Recording.3gp</string>
-    
+    <string name="toolbar_text">Phlogging!</string>
+
     <dimen name="button_height">50dp</dimen>
     <dimen name="button_width">130dp</dimen>
     <dimen name="small_button_width">80dp</dimen>
@@ -13,11 +14,13 @@
     <dimen name="half_gap">5dp</dimen>
     <dimen name="small_gap">2dp</dimen>
     <dimen name="unspecified">0dp</dimen>
+    <dimen name="small_text_size">14sp</dimen>
     <dimen name="medium_text_size">24sp</dimen>
-    
+    <dimen name="big_text_size">30sp</dimen>
+
     <dimen name="cell_height">45dp</dimen>
     <dimen name="large_image_height">300dp</dimen>
-    
+
     <integer name="image_max_width">300</integer>
     <integer name="dialog_image_max_height">250</integer>
     <integer name="image_max_height">500</integer>
