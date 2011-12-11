@@ -80,7 +80,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         updateImageDBFromContent();
 
         //Setup the database cursor and listeners
-        imageCursor = imageDescriptionDatabase.fetchAllImageData();
+        imageCursor = imageDescriptionDatabase.fetchAllData();
         theList = (ListView)findViewById(R.id.the_list);
         cursorAdapter = new SimpleCursorAdapter(this,
           R.layout.talking_pictures_list_item_layout,

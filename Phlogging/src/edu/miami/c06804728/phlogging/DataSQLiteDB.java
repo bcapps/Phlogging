@@ -12,14 +12,16 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DataSQLiteDB {
 //-----------------------------------------------------------------------------
     public static final String DATABASE_NAME = "ImageDescriptions.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 1;
     
-    private static final String IMAGE_DESCRIPTION_TABLE = "ImageDescriptions";
-    private static final String CREATE_IMAGE_DESCRIPTION_TABLE =
-"CREATE TABLE IF NOT EXISTS " + IMAGE_DESCRIPTION_TABLE + 
+    private static final String PHLOGGING_TABLE = "ImageDescriptions";
+    private static final String CREATE_PHLOGGING_TABLE =
+"CREATE TABLE IF NOT EXISTS " + PHLOGGING_TABLE + 
 "(_id INTEGER PRIMARY KEY AUTOINCREMENT," +
-"image_media_id INTEGER NOT NULL UNIQUE, " +
+"title TEXT," +
 "description TEXT," +
+"image_media_id INTEGER, " +
+"secondary_image_media_id INTEGER, " +
 "audio_file_name TEXT" +
 ");";
 
@@ -40,12 +42,12 @@ public class DataSQLiteDB {
 //-----------------------------------------------------------------------------
     public boolean addImageData(ContentValues imageData) {
         
-        return(theDB.insert(IMAGE_DESCRIPTION_TABLE,null,imageData) >= 0);
+        return(theDB.insert(PHLOGGING_TABLE,null,imageData) >= 0);
     }
 //-----------------------------------------------------------------------------
     public boolean updateImageData(long imageID,ContentValues imageData) {
 
-        return(theDB.update(IMAGE_DESCRIPTION_TABLE,imageData,
+        return(theDB.update(PHLOGGING_TABLE,imageData,
 "_id =" + imageID,null) > 0);
     }
 //-----------------------------------------------------------------------------
@@ -67,15 +69,15 @@ public class DataSQLiteDB {
     	}
     	
     	//delete the table entry
-        return(theDB.delete(IMAGE_DESCRIPTION_TABLE,"_id =" + imageID,
+        return(theDB.delete(PHLOGGING_TABLE,"_id =" + imageID,
 null) > 0);
     }
 //-----------------------------------------------------------------------------
-    public Cursor fetchAllImageData() {
+    public Cursor fetchAllData() {
 
-        String[] fieldNames = {"_id","image_media_id","description","audio_file_name"};
+        String[] fieldNames = {"_id","title","description","image_media_id", "secondary_image_media_id","audio_file_name"};
         
-        return(theDB.query(IMAGE_DESCRIPTION_TABLE,fieldNames,null,null,
+        return(theDB.query(PHLOGGING_TABLE,fieldNames,null,null,
 null,null,"image_media_id"));
     }
 //-----------------------------------------------------------------------------
@@ -84,9 +86,9 @@ null,null,"image_media_id"));
         Cursor cursor;
         ContentValues imageData;
         
-        cursor = theDB.query(IMAGE_DESCRIPTION_TABLE,null,
+        cursor = theDB.query(PHLOGGING_TABLE,null,
 "image_media_id = " + imageMediaId,null,null,null,null);
-        imageData = imageDataFromCursor(cursor);
+        imageData = dataFromCursor(cursor);
         cursor.close();
         return(imageData);
     }
@@ -96,14 +98,14 @@ null,null,"image_media_id"));
         Cursor cursor;
         ContentValues imageData;
         
-        cursor = theDB.query(IMAGE_DESCRIPTION_TABLE,null,
+        cursor = theDB.query(PHLOGGING_TABLE,null,
 "_id = " + id,null,null,null,null);
-        imageData = imageDataFromCursor(cursor);
+        imageData = dataFromCursor(cursor);
         cursor.close();
         return(imageData);
     }
 //-----------------------------------------------------------------------------
-    private ContentValues imageDataFromCursor(Cursor cursor) {
+    private ContentValues dataFromCursor(Cursor cursor) {
         
         String[] fieldNames;
         int index;
@@ -117,9 +119,13 @@ null,null,"image_media_id"));
                     imageData.put("_id",cursor.getInt(index));
                 } else if (fieldNames[index].equals("image_media_id")) {
                     imageData.put("image_media_id",cursor.getInt(index));
+                } else if (fieldNames[index].equals("secondary_image_media_id")) {
+                    imageData.put("secondary_image_media_id",cursor.getInt(index));
+                }else if (fieldNames[index].equals("title")) {
+                    imageData.put("title",cursor.getString(index));
                 } else if (fieldNames[index].equals("description")) {
                     imageData.put("description",cursor.getString(index));
-                } else if (fieldNames[index].equals("audio_file_name")) {
+                }else if (fieldNames[index].equals("audio_file_name")) {
                     imageData.put("audio_file_name",cursor.getString(index));
                 }
             }
@@ -141,7 +147,7 @@ null,null,"image_media_id"));
     //-------------------------------------------------------------------------
         public void onCreate(SQLiteDatabase db) {
 
-            db.execSQL(CREATE_IMAGE_DESCRIPTION_TABLE);
+            db.execSQL(CREATE_PHLOGGING_TABLE);
         }
     //-------------------------------------------------------------------------
         @Override
