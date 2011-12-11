@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Random;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -62,13 +63,13 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         ListView theList;
         String[] displayFields = {
         	"image_media_id",
-            "description",
-            "audio_file_name"
+            //"description",
+            //"audio_file_name"
         };
         int[] displayViews = {
         	R.id.image_thumbnail,
-            R.id.description,
-            R.id.check_box
+            //R.id.description,
+            //R.id.check_box
         };
 
         super.onCreate(savedInstanceState);
@@ -223,31 +224,31 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         //if on the description column
         else if(columnIndex == cursor.getColumnIndex("description")){
         	//Get the description view and the description
-        	descriptionView = (TextView)view.findViewById(R.id.description);
-        	description = cursor.getString(columnIndex);
-
-        	//Set the description, including default if description is null
-        	if(description != null){
-        		descriptionView.setText(description);
-        	}
-        	else{
-        		descriptionView.setText("No description yet");
-        	}
+//        	descriptionView = (TextView)view.findViewById(R.id.description);
+//        	description = cursor.getString(columnIndex);
+//
+//        	//Set the description, including default if description is null
+//        	if(description != null){
+//        		descriptionView.setText(description);
+//        	}
+//        	else{
+//        		descriptionView.setText("No description yet");
+//        	}
         	return(true);
         }
         //if on the audio column
         else if(columnIndex == cursor.getColumnIndex("audio_file_name")){
         	//Get the checkbox view and the description
-        	checkBox = (CheckBox)view.findViewById(R.id.check_box);
-        	recordFileName = cursor.getString(columnIndex);
-
-        	//Check the checkbox if the value isn't null
-        	if(recordFileName != null){
-        		checkBox.setChecked(true);
-        	}
-        	else{
-        		checkBox.setChecked(false);
-        	}
+//        	checkBox = (CheckBox)view.findViewById(R.id.check_box);
+//        	recordFileName = cursor.getString(columnIndex);
+//
+//        	//Check the checkbox if the value isn't null
+//        	if(recordFileName != null){
+//        		checkBox.setChecked(true);
+//        	}
+//        	else{
+//        		checkBox.setChecked(false);
+//        	}
 
         	return(true);
         }

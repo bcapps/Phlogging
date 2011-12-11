@@ -21,8 +21,7 @@
 				android:layout_width="wrap_content"
 				android:text="@string/toolbar_text"
 				android:textSize="@dimen/big_text_size"
-            	android:layout_gravity="center_horizontal"
-            	android:layout="center_horizontal">
+>
   			</TextView>
         </LinearLayout>
         <Button android:id="@+id/settings_button"
