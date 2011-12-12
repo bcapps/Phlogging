@@ -2,19 +2,49 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/dialog_root"
     android:orientation="vertical"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:gravity="center_horizontal">
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    
     <ImageView android:id="@+id/image_full_size"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="@dimen/margin">
+        android:layout_width="300dp"
+        android:layout_height="300dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="@dimen/margin"
+        android:layout_margin="@dimen/margin">
     </ImageView>
     
-    <Button android:id="@+id/button_dismiss"
-        android:layout_width="@dimen/button_width"
-        android:layout_height="@dimen/button_height"
-        android:text="@string/dismiss_button_text"
-        android:onClick="myClickHandler">
-    </Button>
+    <LinearLayout android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        android:gravity="center_horizontal">
+	    <Button android:id="@+id/button_take_photo"
+	        style="@style/PictureDialogTopButton"
+	        android:background="@drawable/take_photo"
+	        android:onClick="myClickHandler">
+	    </Button>
+	    <Button android:id="@+id/button_choose_gallery"
+	        style="@style/PictureDialogTopButton"
+			android:background="@drawable/choose_photo"	     
+	        android:onClick="myClickHandler">
+	    </Button>
+    </LinearLayout>
+    
+    <LinearLayout android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="bottom"
+        android:layout_gravity="bottom">
+	    <Button android:id="@+id/button_delete_photo"
+	        style="@style/PictureDialogBottomButton"
+	        android:text="@string/delete_pic_button_text"
+	        android:background="@drawable/delete_button"
+	        android:onClick="myClickHandler">
+	    </Button>
+	    <Button android:id="@+id/button_dismiss"
+	        style="@style/PictureDialogBottomButton"
+	        android:text="@string/dismiss_button_text"
+	        android:onClick="myClickHandler">
+	    </Button>
+    </LinearLayout>
 </LinearLayout>

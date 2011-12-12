@@ -82,7 +82,7 @@ public class EditDataView extends Activity {
         }*/
         
         //Setup the date format
-        SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+        SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
 		formattedTime = df.format(new Date(System.currentTimeMillis()));
         
         //Set the recording fileName

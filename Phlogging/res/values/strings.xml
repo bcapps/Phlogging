@@ -3,6 +3,7 @@
     <string name="app_name">Phlogging</string>
     <string name="save_button_text">Save</string>
     <string name="dismiss_button_text">Dismiss</string>
+    <string name="delete_pic_button_text">Delete</string>
     <string name="description_hint_text">Describe it!</string>
     <string name="record_file_name">Recording.3gp</string>
     <string name="toolbar_text">Phlogging!</string>
