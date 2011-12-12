@@ -530,7 +530,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
     	switch (dialogId) {
     	case PICTURE_DIALOG:
     		//Inflate the dialog and set it to the builder's view
-    		dialogInflator = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
+    		//dialogInflator = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
 
     	//	dialogView = dialogInflator.inflate(R.layout.ui_pcture_dialog_layout,
     	//			(ViewGroup)findViewById(R.id.dialog_root));

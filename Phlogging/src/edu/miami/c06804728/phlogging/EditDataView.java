@@ -35,14 +35,14 @@ public class EditDataView extends Activity {
          * Then use Time.set(time) and we can get a nicely formatted string
          *
          *****************************************/
-        /*String imageFilename;
-        Bitmap imageBitmap;
-        ImageView imageView;
-        EditText descriptionView;
+//        String imageFilename;
+//        Bitmap imageBitmap;
+//        ImageView imageView;
+//        EditText descriptionView;
         String recordDirName;
         File recordDir;
 
-        //Get the variables sent from last activity
+        /*//Get the variables sent from last activity
         imageFilename = this.getIntent().getStringExtra("edu.miami.c06804728.phlogging.image_file_name");
         description = this.getIntent().getStringExtra("edu.miami.c06804728.phlogging.description");
         rowId = this.getIntent().getLongExtra("edu.miami.c06804728.phlogging.rowId", -1);
@@ -70,7 +70,9 @@ public class EditDataView extends Activity {
         descriptionView = (EditText) findViewById(R.id.edit_text_field);
         if(description!=null){
         	descriptionView.setText(description);
-        }
+        }*/
+        
+        //TODO: GET THE ROW ID FROM THE DATABASE TO USE IN THIS CODE
 
         //Set the recording fileName
         recordDirName = Environment.getExternalStorageDirectory().
@@ -85,7 +87,7 @@ public class EditDataView extends Activity {
         recordFileName = recordDir + "/" + rowId + getString(R.string.record_file_name);
 
         //Not recording
-        isRecording = false;*/
+        isRecording = false;
 	}
 //-----------------------------------------------------------------------------
 	public void myClickHandler(View view) {
