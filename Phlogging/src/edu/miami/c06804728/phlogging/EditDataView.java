@@ -27,11 +27,7 @@ public class EditDataView extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_entry_layout);
-<<<<<<< HEAD
 
-=======
-        
->>>>>>> ff6fb30ccce1c453ff558d4a3a991bc5637fb83a
         /****************************************
          * Things to be added later
          *
