@@ -8,6 +8,7 @@
         android:layout_height="@dimen/unspecified"
         android:layout_weight="10"
         android:background="@drawable/toolbar">
+        
         <ImageButton android:id="@+id/settings_button"
 			style="@style/LittleButton"
 			android:src="@drawable/gear2x"
@@ -29,7 +30,7 @@
             style="@style/LittleButton"
             android:text="Create">
         </Button>
-        </LinearLayout>
+    </LinearLayout>
         <ListView android:id="@+id/the_list"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/unspecified"
