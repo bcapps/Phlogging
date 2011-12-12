@@ -18,7 +18,9 @@ import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.provider.BaseColumns;
 import android.provider.MediaStore;
+import android.provider.MediaStore.MediaColumns;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -85,7 +87,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         imageCursor = imageDescriptionDatabase.fetchAllData();
         theList = (ListView)findViewById(R.id.the_list);
         cursorAdapter = new SimpleCursorAdapter(this,
-          R.layout.talking_pictures_list_item_layout,
+          R.layout.list_item_layout,
               imageCursor,displayFields,displayViews);
         cursorAdapter.setViewBinder(this);
         theList.setAdapter(cursorAdapter);
@@ -122,7 +124,8 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         mySpeaker.shutdown();
     }
 //-----------------------------------------------------------------------------
-    public void onInit(int status) {
+    @Override
+	public void onInit(int status) {
     	//When the TTS is initialized, check if it's ready to speak
         if (status == TextToSpeech.SUCCESS &&
         			mySpeaker.isLanguageAvailable(Locale.US) ==
@@ -137,7 +140,8 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         }
     }
 //----------------------------------------------------------------------------
-    public void onUtteranceCompleted(String utteranceId) {
+    @Override
+	public void onUtteranceCompleted(String utteranceId) {
 
     	File audioFile;
 
@@ -167,9 +171,9 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
     private void updateImageDBFromContent() {
 
         String[] queryFields = {
-            MediaStore.Images.Media._ID,
+            BaseColumns._ID,
             //The data field will be used later to obtain the fileName
-            MediaStore.Images.Media.DATA
+            MediaColumns.DATA
         };
         ContentValues imageData;
         int imageMediaId;
@@ -184,7 +188,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         if (imageMediaCursor.moveToFirst()) {
             do {
                 imageMediaId = imageMediaCursor.getInt(
-                		imageMediaCursor.getColumnIndex(MediaStore.Images.Media._ID));
+                		imageMediaCursor.getColumnIndex(BaseColumns._ID));
                 //Check if the image_media_id doesn't exist in the database
                 if (imageDescriptionDatabase.getImageByImageMediaId(imageMediaId) == null) {
                 	//If not, add a new entry with this image_media_id
@@ -198,7 +202,8 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
     }
 //-----------------------------------------------------------------------------
     //Intercept the creation of each item in the listView
-    public boolean setViewValue(View view,Cursor cursor,int columnIndex) {
+    @Override
+	public boolean setViewValue(View view,Cursor cursor,int columnIndex) {
         int imageIndex;
         String title;
         String recordFileName;
@@ -266,7 +271,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
     private void playRandomSong(){
     	Cursor audioCursor;
     	String[] queryFields = {
-                MediaStore.Audio.Media.DATA
+                MediaColumns.DATA
          };
     	Random random;
     	int randomPosition;
@@ -289,7 +294,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
     		randomPosition = random.nextInt(audioCursor.getCount());
 
     		//Get the correct column, move to random position, and obtain filename
-    		audioDataIndex = audioCursor.getColumnIndex(MediaStore.Audio.Media.DATA);
+    		audioDataIndex = audioCursor.getColumnIndex(MediaColumns.DATA);
     		audioCursor.moveToPosition(randomPosition);
     		audioFilename = audioCursor.getString(audioDataIndex);
 
@@ -418,8 +423,8 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
 
     	imageFound = false;
     	//Get the relevant MediaStore column indexes
-    	imageIDIndex = imageMediaCursor.getColumnIndex(MediaStore.Images.Media._ID);
-    	imageDataIndex = imageMediaCursor.getColumnIndex(MediaStore.Images.Media.DATA);
+    	imageIDIndex = imageMediaCursor.getColumnIndex(BaseColumns._ID);
+    	imageDataIndex = imageMediaCursor.getColumnIndex(MediaColumns.DATA);
 
     	//Get the image_media_id from the rowId (_id)
     	imageData = imageDescriptionDatabase.getImageById(rowId);
@@ -516,7 +521,8 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
 
     }
 //-----------------------------------------------------------------------------
-    protected Dialog onCreateDialog(int dialogId) {
+    @Override
+	protected Dialog onCreateDialog(int dialogId) {
 
     	AlertDialog.Builder dialogBuilder;
     	View dialogView;
@@ -529,7 +535,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
     		//Inflate the dialog and set it to the builder's view
     		dialogInflator = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
 
-    		dialogView = dialogInflator.inflate(R.layout.ui_dialog_layout,
+    		dialogView = dialogInflator.inflate(R.layout.ui_picture_dialog_layout,
     				(ViewGroup)findViewById(R.id.dialog_root));
     		dialogBuilder.setView(dialogView);
     		break;
@@ -549,7 +555,8 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
     	return(theDialog);
     }
 //-----------------------------------------------------------------------------
-    protected void onPrepareDialog (int dialogId, Dialog dialog){
+    @Override
+	protected void onPrepareDialog (int dialogId, Dialog dialog){
     	/*old code for other dialog - reuse later in DisplayView
     	ImageView imageView;
     	HashMap<String,String> speechParameters;
@@ -575,7 +582,8 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         */
     }
 //-----------------------------------------------------------------------------
-    public void onDismiss (DialogInterface dialog){
+    @Override
+	public void onDismiss (DialogInterface dialog){
     	/*old code for other dialog - reuse later in DisplayView
     	//Reset the dialog properties
     	dialogImageBitmap = null;
