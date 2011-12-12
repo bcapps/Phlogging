@@ -15,17 +15,19 @@
    		android:layout_weight="90"
     	android:layout_height="fill_parent"
     	android:paddingLeft="@dimen/small_gap">
-    <TextView android:id="@+id/title"
-        android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="60"
-        android:padding="@dimen/half_gap">
-    </TextView>
-    <TextView android:id="@+id/time"
- 		android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_weight="40"
-        android:padding="@dimen/half_gap">
-    </TextView>
+        <TextView android:id="@+id/title"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="60"
+            android:textSize="20sp"
+            android:padding="@dimen/half_gap">
+        </TextView>
+        <TextView android:id="@+id/time"
+            android:layout_width="fill_parent"
+            android:layout_height="0dp"
+            android:layout_weight="40"
+            android:textSize="11sp"
+            android:padding="@dimen/half_gap">
+        </TextView>
     </LinearLayout>
 </LinearLayout>
