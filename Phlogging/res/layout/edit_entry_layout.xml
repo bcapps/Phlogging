@@ -92,26 +92,28 @@
 			android:orientation="horizontal"
 			android:layout_margin="@dimen/small_gap">
 			<Button android:id="@+id/record_button"
-			    android:layout_height="50dp"
-			    android:layout_width="50dp"
-			    android:onClick="audioRecordListener">
+			    android:layout_height="60dp"
+			    android:layout_width="60dp"
+			    android:onClick="audioRecordListener"
+			    android:drawableTop="@drawable/microphone">
 			</Button>
 			<Button android:id="@+id/stop_button"
-			    android:layout_height="50dp"
-			    android:layout_width="50dp"
-
-			    android:onClick="audioRecordListener">
+			    android:layout_height="60dp"
+			    android:layout_width="60dp"
+			    android:onClick="audioRecordListener"
+			    android:drawableTop="@drawable/stop">
 			</Button>
 			<Button android:id="@+id/clear_button"
-			    android:layout_height="50dp"
-			    android:layout_width="50dp"
-			    android:src="@drawable/trash"
-			    android:onClick="audioRecordListener">
+			    android:layout_height="60dp"
+			    android:layout_width="60dp"
+			    android:onClick="audioRecordListener"
+			    android:drawableTop="@drawable/trash">
 			</Button>
 			<Button android:id="@+id/play_button"
-			    android:layout_height="50dp"
-			    android:layout_width="50dp"
-			    android:onClick="audioRecordListener">
+			    android:layout_height="60dp"
+			    android:layout_width="60dp"
+			    android:onClick="audioRecordListener"
+			     android:drawableTop="@drawable/play">
 			</Button>
 		</LinearLayout>
 		</LinearLayout>
