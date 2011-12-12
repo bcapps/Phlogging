@@ -41,7 +41,7 @@
 	        android:background="@drawable/delete_button"
 	        android:onClick="myClickHandler">
 	    </Button>
-	    <Button android:id="@+id/button_dismiss"
+	    <Button android:id="@+id/picture_button_dismiss"
 	        style="@style/PictureDialogBottomButton"
 	        android:text="@string/dismiss_button_text"
 	        android:onClick="myClickHandler">
