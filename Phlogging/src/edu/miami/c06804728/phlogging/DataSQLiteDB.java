@@ -12,8 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DataSQLiteDB {
 //-----------------------------------------------------------------------------
     public static final String DATABASE_NAME = "PhloggingDB.db";
-    private static final int DATABASE_VERSION = 1;
-
+    private static final int DATABASE_VERSION = 2;
     private static final String PHLOGGING_TABLE = "ImageDescriptions";
     private static final String CREATE_PHLOGGING_TABLE =
 "CREATE TABLE IF NOT EXISTS " + PHLOGGING_TABLE +
@@ -23,7 +22,7 @@ public class DataSQLiteDB {
 "image_media_id INTEGER, " +
 "secondary_image_media_id INTEGER, " +
 "audio_file_name TEXT," +
-"time INTEGER, " +
+"time REAL, " +
 "location TEXT, "+
 "orientation TEXT"+
 ");";
@@ -132,7 +131,7 @@ null,null,"image_media_id"));
                 }else if (fieldNames[index].equals("audio_file_name")) {
                     rowData.put("audio_file_name",cursor.getInt(index));
                 }else if (fieldNames[index].equals("time")) {
-                    rowData.put("time",cursor.getInt(index));
+                    rowData.put("time",cursor.getLong(index));
                 } else if (fieldNames[index].equals("location")) {
                     rowData.put("location",cursor.getString(index));
                 } else if (fieldNames[index].equals("orientation")) {
