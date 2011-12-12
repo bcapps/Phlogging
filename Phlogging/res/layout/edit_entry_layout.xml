@@ -45,7 +45,7 @@
 	</Button>
 	</LinearLayout>
 	<TextView
-	    android:layout_width="fill_parent""
+	    android:layout_width="fill_parent"
 	    android:layout_height="wrap_content"
 	    android:layout_marginTop="25dp"
 	    android:text="Add some media"
@@ -59,7 +59,7 @@
         android:layout_height="wrap_content"
         android:handle="@+id/drawer_handle"
         android:content="@+id/drawer_content"
-        android:layout_gravity="bottom | center_horizontal">
+        android:layout_gravity="bottom|center_horizontal">
         <ImageView android:id="@+id/drawer_handle"
             android:layout_height="30dp"
             android:layout_width="60dp"

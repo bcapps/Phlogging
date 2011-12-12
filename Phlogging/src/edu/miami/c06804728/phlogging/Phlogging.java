@@ -44,7 +44,8 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
 
     private MediaPlayer musicPlayer;
 
-    private static final int THE_DIALOG = 1;
+    private static final int PICTURE_DIALOG = 3;
+    private static final int SETTINGS_DIALOG = 1;
     private static final int ACTIVITY_EDIT = 2;
 
     private Bitmap dialogImageBitmap;
@@ -326,7 +327,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
     		}
 
         	//Show dialog
-        	showDialog(THE_DIALOG);
+        	showDialog(PICTURE_DIALOG);
     	}
     }
 //-----------------------------------------------------------------------------
@@ -487,8 +488,11 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
     public void myClickHandler(View view) {
 
         switch (view.getId()) {
-        case R.id.button_dismiss:
-        	dismissDialog(THE_DIALOG);
+        case R.id.settings_button:
+        	showDialog(SETTINGS_DIALOG);
+            break;
+        case R.id.settings_button_dismiss:
+        	dismissDialog(SETTINGS_DIALOG);
             break;
         default:
             break;
@@ -505,11 +509,18 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
 
     	dialogBuilder = new AlertDialog.Builder(this);
     	switch (dialogId) {
-    	case THE_DIALOG:
+    	case PICTURE_DIALOG:
     		//Inflate the dialog and set it to the builder's view
     		dialogInflator = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
 
     		dialogView = dialogInflator.inflate(R.layout.ui_dialog_layout,
+    				(ViewGroup)findViewById(R.id.dialog_root));
+    		dialogBuilder.setView(dialogView);
+    		break;
+    	case SETTINGS_DIALOG:
+    		dialogInflator = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
+
+    		dialogView = dialogInflator.inflate(R.layout.ui_settings_dialog_layout,
     				(ViewGroup)findViewById(R.id.dialog_root));
     		dialogBuilder.setView(dialogView);
     		break;
@@ -523,6 +534,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
     }
 //-----------------------------------------------------------------------------
     protected void onPrepareDialog (int dialogId, Dialog dialog){
+    	/*old code for other dialog - reuse later in DisplayView
     	ImageView imageView;
     	HashMap<String,String> speechParameters;
 
@@ -544,9 +556,11 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         	mySpeaker.speak("No description yet.",TextToSpeech.QUEUE_ADD,
         			speechParameters);
         }
+        */
     }
 //-----------------------------------------------------------------------------
     public void onDismiss (DialogInterface dialog){
+    	/*old code for other dialog - reuse later in DisplayView
     	//Reset the dialog properties
     	dialogImageBitmap = null;
     	dialogDescription = null;
@@ -564,6 +578,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
 
     	//Start the music again
     	musicPlayer.start();
+    	*/
     }
 //-----------------------------------------------------------------------------
     @Override

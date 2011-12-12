@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_root"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal">
+    <TextView 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="@dimen/medium_text_size"
+        android:text="Sort By">
+    </TextView>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal">
+        <Button android:id="@+id/sort_date"
+            android:layout_width="@dimen/button_width"
+            android:layout_height="@dimen/button_height"
+            android:text="Date"
+            android:onClick="myClickHandler">
+        </Button>
+        <Button android:id="@+id/sort_title"
+            android:layout_width="@dimen/button_width"
+            android:layout_height="@dimen/button_height"
+            android:text="Date"
+            android:onClick="myClickHandler">
+        </Button>
+    </LinearLayout>
+    <Button android:id="@+id/settings_button_dismiss"
+        android:layout_width="@dimen/button_width"
+        android:layout_height="@dimen/button_height"
+        android:text="@string/dismiss_button_text"
+        android:onClick="myClickHandler">
+    </Button>
+</LinearLayout>
