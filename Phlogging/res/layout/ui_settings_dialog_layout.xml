@@ -20,7 +20,7 @@
         <Button android:id="@+id/sort_date"
             android:layout_width="@dimen/button_width"
             android:layout_height="@dimen/button_height"
-            android:text="Date"
+            android:text="Title"
             android:onClick="myClickHandler">
         </Button>
         <Button android:id="@+id/sort_title"
