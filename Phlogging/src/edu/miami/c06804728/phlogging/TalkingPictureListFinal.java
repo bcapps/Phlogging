@@ -63,17 +63,17 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         ListView theList;
         String[] displayFields = {
         	"image_media_id",
-            //"description",
-            //"audio_file_name"
+            "title",
+            "audio_file_name"
         };
         int[] displayViews = {
         	R.id.image_thumbnail,
-            //R.id.description,
-            //R.id.check_box
+            R.id.title,
+            R.id.time
         };
 
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.talking_pictures_main_layout);
+        setContentView(R.layout.phlogging_main_layout);
 
         //Create database and add any new images
         imageDescriptionDatabase = new DataSQLiteDB(this);
@@ -189,7 +189,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
                     imageData = new ContentValues();
                     imageData.put("image_media_id",imageMediaId);
 
-                    imageDescriptionDatabase.addImageData(imageData);
+                    imageDescriptionDatabase.addRowData(imageData);
                 }
             } while (imageMediaCursor.moveToNext());
         }
@@ -198,11 +198,11 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
     //Intercept the creation of each item in the listView
     public boolean setViewValue(View view,Cursor cursor,int columnIndex) {
         int imageIndex;
-        String description;
+        String title;
         String recordFileName;
         Bitmap thumbnailBitmap;
         ImageView thumbnailView;
-        TextView descriptionView;
+        TextView titleView;
         CheckBox checkBox;
 
         //if on the image id column
@@ -222,22 +222,22 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
             return(true);
         }
         //if on the description column
-        else if(columnIndex == cursor.getColumnIndex("description")){
+        else if(columnIndex == cursor.getColumnIndex("title")){
         	//Get the description view and the description
-//        	descriptionView = (TextView)view.findViewById(R.id.description);
-//        	description = cursor.getString(columnIndex);
-//
-//        	//Set the description, including default if description is null
-//        	if(description != null){
-//        		descriptionView.setText(description);
-//        	}
-//        	else{
-//        		descriptionView.setText("No description yet");
-//        	}
+        	titleView = (TextView)view.findViewById(R.id.title);
+        	title = cursor.getString(columnIndex);
+
+        	//Set the description, including default if description is null
+        	if(title != null){
+        		titleView.setText(title);
+        	}
+        	else{
+        		titleView.setText("Untitled");
+        	}
         	return(true);
         }
         //if on the audio column
-        else if(columnIndex == cursor.getColumnIndex("audio_file_name")){
+        else if(columnIndex == cursor.getColumnIndex("time")){
         	//Get the checkbox view and the description
 //        	checkBox = (CheckBox)view.findViewById(R.id.check_box);
 //        	recordFileName = cursor.getString(columnIndex);
@@ -389,7 +389,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
                 imageData = imageDescriptionDatabase.getImageById(rowId);
                 imageData.put("description", description);
                 imageData.put("audio_file_name", recordFileName);
-                imageDescriptionDatabase.updateImageData(rowId, imageData);
+                imageDescriptionDatabase.updateRowData(rowId, imageData);
 
                 //Refresh the listView
                 imageCursor.requery();
@@ -435,7 +435,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         }
         else {
         	//Delete any image entry that can't be found
-        	imageDescriptionDatabase.deleteImageData(rowId);
+        	imageDescriptionDatabase.deleteRowData(rowId);
         	Toast.makeText(this, "The image has been deleted",
         			Toast.LENGTH_LONG).show();
         	imageCursor.requery();

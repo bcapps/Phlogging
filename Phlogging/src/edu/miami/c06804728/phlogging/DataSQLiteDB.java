@@ -23,6 +23,9 @@ public class DataSQLiteDB {
 "image_media_id INTEGER, " +
 "secondary_image_media_id INTEGER, " +
 "audio_file_name TEXT" +
+"time INTEGER NOT NULL," +
+"location TEXT"+
+"orientation TEXT"+
 ");";
 
     private DatabaseHelper dbHelper;
@@ -40,24 +43,24 @@ public class DataSQLiteDB {
         theDB.close();
     }
 //-----------------------------------------------------------------------------
-    public boolean addImageData(ContentValues imageData) {
+    public boolean addRowData(ContentValues rowData) {
         
-        return(theDB.insert(PHLOGGING_TABLE,null,imageData) >= 0);
+        return(theDB.insert(PHLOGGING_TABLE,null,rowData) >= 0);
     }
 //-----------------------------------------------------------------------------
-    public boolean updateImageData(long imageID,ContentValues imageData) {
+    public boolean updateRowData(long rowID,ContentValues rowData) {
 
-        return(theDB.update(PHLOGGING_TABLE,imageData,
-"_id =" + imageID,null) > 0);
+        return(theDB.update(PHLOGGING_TABLE,rowData,
+"_id =" + rowID,null) > 0);
     }
 //-----------------------------------------------------------------------------
-    public boolean deleteImageData(long imageID) {
-    	ContentValues imageData;
+    public boolean deleteRowData(long rowID) {
+    	ContentValues rowData;
     	String audioFileName;
     	
     	//Delete the audio file if it exists
-    	imageData = getImageById(imageID);
-    	audioFileName = imageData.getAsString("audio_file_name");
+    	rowData = getImageById(rowID);
+    	audioFileName = rowData.getAsString("audio_file_name");
     	//if it isn't null
     	if(audioFileName!=null){
     		File recordingFile = new File(audioFileName);
@@ -69,13 +72,14 @@ public class DataSQLiteDB {
     	}
     	
     	//delete the table entry
-        return(theDB.delete(PHLOGGING_TABLE,"_id =" + imageID,
+        return(theDB.delete(PHLOGGING_TABLE,"_id =" + rowID,
 null) > 0);
     }
 //-----------------------------------------------------------------------------
     public Cursor fetchAllData() {
 
-        String[] fieldNames = {"_id","title","description","image_media_id", "secondary_image_media_id","audio_file_name"};
+        String[] fieldNames = {"_id","title","description","image_media_id", "secondary_image_media_id",
+        						"audio_file_name", "time", "location", "orientation"};
         
         return(theDB.query(PHLOGGING_TABLE,fieldNames,null,null,
 null,null,"image_media_id"));
@@ -84,52 +88,58 @@ null,null,"image_media_id"));
     public ContentValues getImageByImageMediaId(int imageMediaId) {
         
         Cursor cursor;
-        ContentValues imageData;
+        ContentValues rowData;
         
         cursor = theDB.query(PHLOGGING_TABLE,null,
 "image_media_id = " + imageMediaId,null,null,null,null);
-        imageData = dataFromCursor(cursor);
+        rowData = dataFromCursor(cursor);
         cursor.close();
-        return(imageData);
+        return(rowData);
     }
 //-----------------------------------------------------------------------------
     public ContentValues getImageById(long id) {
         
         Cursor cursor;
-        ContentValues imageData;
+        ContentValues rowData;
         
         cursor = theDB.query(PHLOGGING_TABLE,null,
 "_id = " + id,null,null,null,null);
-        imageData = dataFromCursor(cursor);
+        rowData = dataFromCursor(cursor);
         cursor.close();
-        return(imageData);
+        return(rowData);
     }
 //-----------------------------------------------------------------------------
     private ContentValues dataFromCursor(Cursor cursor) {
         
         String[] fieldNames;
         int index;
-        ContentValues imageData;
+        ContentValues rowData;
 
         if (cursor != null && cursor.moveToFirst()) {
             fieldNames = cursor.getColumnNames();
-            imageData = new ContentValues();
+            rowData = new ContentValues();
             for (index=0;index < fieldNames.length;index++) {
                 if (fieldNames[index].equals("_id")) {
-                    imageData.put("_id",cursor.getInt(index));
+                    rowData.put("_id",cursor.getInt(index));
                 } else if (fieldNames[index].equals("image_media_id")) {
-                    imageData.put("image_media_id",cursor.getInt(index));
+                    rowData.put("image_media_id",cursor.getInt(index));
                 } else if (fieldNames[index].equals("secondary_image_media_id")) {
-                    imageData.put("secondary_image_media_id",cursor.getInt(index));
-                }else if (fieldNames[index].equals("title")) {
-                    imageData.put("title",cursor.getString(index));
+                    rowData.put("secondary_image_media_id",cursor.getInt(index));
+                } else if (fieldNames[index].equals("title")) {
+                    rowData.put("title",cursor.getString(index));
                 } else if (fieldNames[index].equals("description")) {
-                    imageData.put("description",cursor.getString(index));
+                    rowData.put("description",cursor.getString(index));
                 }else if (fieldNames[index].equals("audio_file_name")) {
-                    imageData.put("audio_file_name",cursor.getString(index));
+                    rowData.put("audio_file_name",cursor.getInt(index));
+                }else if (fieldNames[index].equals("time")) {
+                    rowData.put("time",cursor.getInt(index));
+                } else if (fieldNames[index].equals("location")) {
+                    rowData.put("location",cursor.getString(index));
+                } else if (fieldNames[index].equals("orientation")) {
+                    rowData.put("orientation",cursor.getString(index));
                 }
             }
-            return(imageData);
+            return(rowData);
         } else {
             return(null);
         }
