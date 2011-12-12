@@ -85,7 +85,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         imageCursor = imageDescriptionDatabase.fetchAllData();
         theList = (ListView)findViewById(R.id.the_list);
         cursorAdapter = new SimpleCursorAdapter(this,
-          R.layout.talking_pictures_list_item_layout,
+          R.layout.list_item_layout,
               imageCursor,displayFields,displayViews);
         cursorAdapter.setViewBinder(this);
         theList.setAdapter(cursorAdapter);
@@ -529,9 +529,9 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
     		//Inflate the dialog and set it to the builder's view
     		dialogInflator = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
 
-    		dialogView = dialogInflator.inflate(R.layout.ui_dialog_layout,
-    				(ViewGroup)findViewById(R.id.dialog_root));
-    		dialogBuilder.setView(dialogView);
+    	//	dialogView = dialogInflator.inflate(R.layout.ui_pcture_dialog_layout,
+    	//			(ViewGroup)findViewById(R.id.dialog_root));
+    	//	dialogBuilder.setView(dialogView);
     		break;
     	case SETTINGS_DIALOG:
     		dialogInflator = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);

@@ -76,7 +76,6 @@
 		    style="@style/MediumButton"
 		    android:text="Delete"
 		    android:textColor="@color/white"
-		    android:layout_margin="4dp"
 		    android:background="@drawable/delete_button">
 		</Button>
 	</LinearLayout>
