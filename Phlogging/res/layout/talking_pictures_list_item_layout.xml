@@ -10,13 +10,6 @@
         android:layout_height="fill_parent">
     </ImageView>
     <TextView android:id="@+id/title"
-<<<<<<< HEAD
-		android:layout_height="fill_parent"
-        android:layout_width="0dp"
-=======
-        android:layout_width="@dimen/unspecified"
-        android:layout_height="fill_parent"
->>>>>>> 68741cf4c86338ca8a494e5e932a300e2ad85b84
         android:layout_weight="60"
         android:padding="@dimen/half_gap"
         android:textSize="@dimen/medium_text_size">
