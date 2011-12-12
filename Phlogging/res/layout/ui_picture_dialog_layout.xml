@@ -6,8 +6,8 @@
     android:layout_height="fill_parent">
     
     <ImageView android:id="@+id/image_full_size"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:layout_width="250dp"
+        android:layout_height="150dp"
         android:layout_gravity="center_horizontal"
         android:layout_marginBottom="@dimen/margin"
         android:layout_margin="@dimen/margin">
@@ -32,17 +32,19 @@
     
     <LinearLayout android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:gravity="bottom"
-        android:layout_gravity="bottom">
+        android:layout_height="wrap_content"
+        android:gravity="center">
 	    <Button android:id="@+id/button_delete_photo"
 	        style="@style/PictureDialogBottomButton"
+	        android:layout_height="55dp"
 	        android:text="@string/delete_pic_button_text"
 	        android:background="@drawable/delete_button"
+	        android:textColor="@color/white"
 	        android:onClick="myClickHandler">
 	    </Button>
-	    <Button android:id="@+id/button_dismiss"
+	    <Button android:id="@+id/picture_button_dismiss"
 	        style="@style/PictureDialogBottomButton"
+	        android:layout_marginTop="2dp"
 	        android:text="@string/dismiss_button_text"
 	        android:onClick="myClickHandler">
 	    </Button>

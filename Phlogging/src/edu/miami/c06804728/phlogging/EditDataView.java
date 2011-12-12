@@ -5,22 +5,29 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaRecorder;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 //=============================================================================
-public class EditDataView extends Activity {
+public class EditDataView extends Activity
+implements DialogInterface.OnDismissListener{
 //-----------------------------------------------------------------------------
 	private DataSQLiteDB phloggingDatabase;
-    
+	private static final int PICTURE_DIALOG = 1;
+	
 	private String description;
 	private long rowId;
 
@@ -82,7 +89,7 @@ public class EditDataView extends Activity {
         }*/
         
         //Setup the date format
-        SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
+        SimpleDateFormat df = new SimpleDateFormat("MM.dd.yyyy.HH.mm.ss");
 		formattedTime = df.format(new Date(System.currentTimeMillis()));
         
         //Set the recording fileName
@@ -139,6 +146,12 @@ public class EditDataView extends Activity {
 	        setResult(RESULT_OK,returnIntent);
 
 	        finish();
+        	break;
+        case R.id.picture_button_dismiss:
+        	dismissDialog(PICTURE_DIALOG);
+        	break;
+        case R.id.add_main_pic_button:
+        	showDialog(PICTURE_DIALOG);
         	break;
         /*case R.id.audio_record:
         	//Setup the media recorder
@@ -203,6 +216,43 @@ public class EditDataView extends Activity {
         default:
             break;
         }
+    }
+//-----------------------------------------------------------------------------
+    @Override
+	protected Dialog onCreateDialog(int dialogId) {
+    	AlertDialog.Builder dialogBuilder;
+    	View dialogView;
+    	LayoutInflater dialogInflator;
+    	AlertDialog theDialog;
+    	
+    	dialogBuilder = new AlertDialog.Builder(this);
+    	
+    	switch (dialogId) {
+    	case PICTURE_DIALOG:
+    		//Inflate the dialog and set it to the builder's view
+    		dialogInflator = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
+
+    		dialogView = dialogInflator.inflate(R.layout.ui_picture_dialog_layout,
+    				(ViewGroup)findViewById(R.id.dialog_root));
+    		dialogBuilder.setView(dialogView);
+
+    		break;
+    	default:
+    		break;
+    	}
+    	theDialog = dialogBuilder.create();
+    	theDialog.setOnDismissListener(this);
+
+    	return(theDialog);
+    }
+//-----------------------------------------------------------------------------
+    @Override
+	protected void onPrepareDialog (int dialogId, Dialog dialog){
+    }
+//-----------------------------------------------------------------------------
+    @Override
+	public void onDismiss (DialogInterface dialog){
+    	
     }
 //-----------------------------------------------------------------------------
 	public void stopRecording(){
