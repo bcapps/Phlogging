@@ -2,6 +2,8 @@ package edu.miami.c06804728.phlogging;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Locale;
 import java.util.Random;
 
@@ -20,6 +22,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.speech.tts.TextToSpeech;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +30,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -38,8 +40,8 @@ public class Phlogging extends Activity
 implements OnItemClickListener, OnItemLongClickListener, SimpleCursorAdapter.ViewBinder,
 DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUtteranceCompletedListener {
 //-----------------------------------------------------------------------------
-    private DataSQLiteDB imageDescriptionDatabase;
-    private Cursor imageCursor;
+    private DataSQLiteDB phloggingDatabase;
+    private Cursor entryCursor;
     private Cursor imageMediaCursor;
 
     private MediaPlayer musicPlayer;
@@ -65,28 +67,28 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         String[] displayFields = {
         	"image_media_id",
             "title",
-            "audio_file_name"
+            "time"
         };
 
         int[] displayViews = {
         	R.id.image_thumbnail,
             R.id.title,
             R.id.time
-            };
+        };
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.phlogging_main_layout);
 
         //Create database and add any new images
-        imageDescriptionDatabase = new DataSQLiteDB(this);
+        phloggingDatabase = new DataSQLiteDB(this);
         updateImageDBFromContent();
 
         //Setup the database cursor and listeners
-        imageCursor = imageDescriptionDatabase.fetchAllData();
+        entryCursor = phloggingDatabase.fetchAllData();
         theList = (ListView)findViewById(R.id.the_list);
         cursorAdapter = new SimpleCursorAdapter(this,
           R.layout.list_item_layout,
-              imageCursor,displayFields,displayViews);
+              entryCursor,displayFields,displayViews);
         cursorAdapter.setViewBinder(this);
         theList.setAdapter(cursorAdapter);
         theList.setOnItemClickListener(this);
@@ -117,8 +119,8 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
 
         musicPlayer.release();
         recordingPlayer.release();
-        imageCursor.close();
-        imageDescriptionDatabase.close();
+        entryCursor.close();
+        phloggingDatabase.close();
         mySpeaker.shutdown();
     }
 //-----------------------------------------------------------------------------
@@ -186,12 +188,12 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
                 imageMediaId = imageMediaCursor.getInt(
                 		imageMediaCursor.getColumnIndex(MediaStore.Images.Media._ID));
                 //Check if the image_media_id doesn't exist in the database
-                if (imageDescriptionDatabase.getImageByImageMediaId(imageMediaId) == null) {
+                if (phloggingDatabase.getImageByImageMediaId(imageMediaId) == null) {
                 	//If not, add a new entry with this image_media_id
                     imageData = new ContentValues();
                     imageData.put("image_media_id",imageMediaId);
 
-                    imageDescriptionDatabase.addRowData(imageData);
+                    phloggingDatabase.addRowData(imageData);
                 }
             } while (imageMediaCursor.moveToNext());
         }
@@ -201,11 +203,11 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
     public boolean setViewValue(View view,Cursor cursor,int columnIndex) {
         int imageIndex;
         String title;
-        String recordFileName;
+        long timeSinceEpoch;
         Bitmap thumbnailBitmap;
         ImageView thumbnailView;
         TextView titleView;
-        CheckBox checkBox;
+        TextView timeView;
 
         //if on the image id column
         if (columnIndex == cursor.getColumnIndex("image_media_id")) {
@@ -225,14 +227,12 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         }
         //if on the description column
         else if(columnIndex == cursor.getColumnIndex("title")){
-        	Log.v("Brian", "TITLE!");
         	//Get the description view and the description
         	titleView = (TextView)view.findViewById(R.id.title);
         	title = cursor.getString(columnIndex);
 
         	//Set the description, including default if description is null
         	if(title != null){
-        		Log.v("Brian", "TITLE NOT NULL!");
         		titleView.setText(title);
         	}
         	else{
@@ -244,16 +244,19 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         //if on the audio column
         else if(columnIndex == cursor.getColumnIndex("time")){
         	//Get the checkbox view and the description
-//        	checkBox = (CheckBox)view.findViewById(R.id.check_box);
-//        	recordFileName = cursor.getString(columnIndex);
-//
-//        	//Check the checkbox if the value isn't null
-//        	if(recordFileName != null){
-//        		checkBox.setChecked(true);
-//        	}
-//        	else{
-//        		checkBox.setChecked(false);
-//        	}
+        	timeView = (TextView)view.findViewById(R.id.time);
+        	timeSinceEpoch = cursor.getLong(columnIndex);
+
+        	//Check the checkbox if the value isn't null
+        	if(timeSinceEpoch > 0){
+        		//Time timeFormatter = new Time();
+        		//timeFormatter.set(timeSinceEpoch);
+        		//Set the formatted time to the timeView
+        		//timeView.setText(timeFormatter.format("MM-dd-yyyy hh:mm"));
+
+        		SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+        		timeView.setText(df.format(new Date(timeSinceEpoch)));
+        	}
 
         	return(true);
         }
@@ -391,13 +394,13 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
                 }
 
                 //Update the description and recordFileName based on the rowId
-                imageData = imageDescriptionDatabase.getImageById(rowId);
+                imageData = phloggingDatabase.getImageById(rowId);
                 imageData.put("description", description);
                 imageData.put("audio_file_name", recordFileName);
-                imageDescriptionDatabase.updateRowData(rowId, imageData);
+                phloggingDatabase.updateRowData(rowId, imageData);
 
                 //Refresh the listView
-                imageCursor.requery();
+                entryCursor.requery();
         	}
         	break;
         default:
@@ -422,7 +425,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
     	imageDataIndex = imageMediaCursor.getColumnIndex(MediaStore.Images.Media.DATA);
 
     	//Get the image_media_id from the rowId (_id)
-    	imageData = imageDescriptionDatabase.getImageById(rowId);
+    	imageData = phloggingDatabase.getImageById(rowId);
     	imageMediaId = imageData.getAsInteger("image_media_id").intValue();
 
     	//Use the cursor to iterate through images to find one that matches the id
@@ -440,10 +443,10 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         }
         else {
         	//Delete any image entry that can't be found
-        	imageDescriptionDatabase.deleteRowData(rowId);
+        	phloggingDatabase.deleteRowData(rowId);
         	Toast.makeText(this, "The image has been deleted",
         			Toast.LENGTH_LONG).show();
-        	imageCursor.requery();
+        	entryCursor.requery();
         	return null;
         }
     }
@@ -475,7 +478,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
     	String description;
 
     	//get the description
-    	imageData = imageDescriptionDatabase.getImageById((int) rowId);
+    	imageData = phloggingDatabase.getImageById((int) rowId);
     	description = imageData.getAsString("description");
 
     	return description; //can be null
@@ -484,7 +487,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
     public String getAudioFileNameFromRowId(long rowId){
     	ContentValues imageData;
 
-    	imageData = imageDescriptionDatabase.getImageById(rowId);
+    	imageData = phloggingDatabase.getImageById(rowId);
     	return imageData.getAsString("audio_file_name");
     }
 //-----------------------------------------------------------------------------
