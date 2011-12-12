@@ -27,7 +27,15 @@ public class EditDataView extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.talking_pictures_edit_view_layout);
-
+        
+        /****************************************
+         * Things to be added later
+         * 
+         * long time = System.currentTimeMillis()
+         * time is the time since Jan. 1, 1970. 
+         * Then use Time.set(time) and we can get a nicely formatted string
+         * 
+         *****************************************/
         String imageFilename;
         Bitmap imageBitmap;
         ImageView imageView;
