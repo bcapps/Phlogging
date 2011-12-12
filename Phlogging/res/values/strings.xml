@@ -18,7 +18,7 @@
     <dimen name="medium_text_size">24sp</dimen>
     <dimen name="big_text_size">30sp</dimen>
 
-    <dimen name="cell_height">45dp</dimen>
+    <dimen name="cell_height">60dp</dimen>
     <dimen name="large_image_height">300dp</dimen>
 
     <integer name="image_max_width">300</integer>

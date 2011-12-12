@@ -81,7 +81,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
 
         //Create database and add any new images
         phloggingDatabase = new DataSQLiteDB(this);
-        updateImageDBFromContent();
+        //updateImageDBFromContent();
 
         //Setup the database cursor and listeners
         entryCursor = phloggingDatabase.fetchAllData();
@@ -236,7 +236,6 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         		titleView.setText(title);
         	}
         	else{
-        		Log.v("Brian", "TITLE NULL!");
         		titleView.setText("Untitled");
         	}
         	return(true);
@@ -254,7 +253,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         		//Set the formatted time to the timeView
         		//timeView.setText(timeFormatter.format("MM-dd-yyyy hh:mm"));
 
-        		SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+        		SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy hh:mm");
         		timeView.setText(df.format(new Date(timeSinceEpoch)));
         	}
 
@@ -383,21 +382,22 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
     	switch (requestCode) {
         case ACTIVITY_EDIT:
         	if (resultCode == Activity.RESULT_OK) {
+        		Log.v("Brian", "RESULT OKAY");
         		//Get the description and rowId values
-        		description = data.getStringExtra("edu.miami.c06804728.phlogging.description");
-        		rowId = data.getLongExtra("edu.miami.c06804728.phlogging.rowId", -1);
-        		recordFileName = data.getStringExtra("edu.miami.c06804728.phlogging.recordFileName");
-
-        		//Wrong rowId
-                if(rowId==-1){
-                	break;
-                }
-
-                //Update the description and recordFileName based on the rowId
-                imageData = phloggingDatabase.getImageById(rowId);
-                imageData.put("description", description);
-                imageData.put("audio_file_name", recordFileName);
-                phloggingDatabase.updateRowData(rowId, imageData);
+//        		description = data.getStringExtra("edu.miami.c06804728.phlogging.description");
+//        		rowId = data.getLongExtra("edu.miami.c06804728.phlogging.rowId", -1);
+//        		recordFileName = data.getStringExtra("edu.miami.c06804728.phlogging.recordFileName");
+//
+//        		//Wrong rowId
+//                if(rowId==-1){
+//                	break;
+//                }
+//
+//                //Update the description and recordFileName based on the rowId
+//                imageData = phloggingDatabase.getImageById(rowId);
+//                imageData.put("description", description);
+//                imageData.put("audio_file_name", recordFileName);
+//                phloggingDatabase.updateRowData(rowId, imageData);
 
                 //Refresh the listView
                 entryCursor.requery();

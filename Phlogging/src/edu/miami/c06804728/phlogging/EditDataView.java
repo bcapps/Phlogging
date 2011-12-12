@@ -1,8 +1,11 @@
 package edu.miami.c06804728.phlogging;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import android.app.Activity;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -11,11 +14,13 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 //=============================================================================
 public class EditDataView extends Activity {
 //-----------------------------------------------------------------------------
+	private DataSQLiteDB phloggingDatabase;
+    
 	private String description;
 	private long rowId;
 
@@ -39,8 +44,12 @@ public class EditDataView extends Activity {
 //        Bitmap imageBitmap;
 //        ImageView imageView;
 //        EditText descriptionView;
+        String formattedTime;
         String recordDirName;
         File recordDir;
+        
+        //Create database
+        phloggingDatabase = new DataSQLiteDB(this);
 
         /*//Get the variables sent from last activity
         imageFilename = this.getIntent().getStringExtra("edu.miami.c06804728.phlogging.image_file_name");
@@ -72,8 +81,10 @@ public class EditDataView extends Activity {
         	descriptionView.setText(description);
         }*/
         
-        //TODO: GET THE ROW ID FROM THE DATABASE TO USE IN THIS CODE
-
+        //Setup the date format
+        SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+		formattedTime = df.format(new Date(System.currentTimeMillis()));
+        
         //Set the recording fileName
         recordDirName = Environment.getExternalStorageDirectory().
         		getAbsolutePath() + "/Android/data/edu.miami.c06804728.phlogging/files";
@@ -84,7 +95,7 @@ public class EditDataView extends Activity {
         			Toast.LENGTH_LONG).show();
         	finish();
         }
-        recordFileName = recordDir + "/" + rowId + getString(R.string.record_file_name);
+        recordFileName = recordDir + "/" +  formattedTime + getString(R.string.record_file_name);
 
         //Not recording
         isRecording = false;
@@ -93,10 +104,41 @@ public class EditDataView extends Activity {
 	public void myClickHandler(View view) {
     	Intent returnIntent;
     	EditText descriptionView;
+    	ContentValues phlogEntry;
+    	TextView titleView;
+    	String title;
+    	String description;
 
         switch (view.getId()) {
         case R.id.cancel_button:
         	finish();
+        	break;
+        case R.id.phlog_button:
+        	//Get the values from their fields
+        	titleView = (TextView) findViewById(R.id.title);
+        	title = titleView.getText().toString().trim();
+        	
+        	descriptionView = (EditText) findViewById(R.id.entry_text);
+        	description = descriptionView.getText().toString().trim();
+        	
+        	//Update the database
+        	phlogEntry = new ContentValues();
+        	//phlogEntry.put("image_media_id",imageMediaId); //This will be when we have the image id
+        	phlogEntry.put("title",title);
+        	phlogEntry.put("description",description);
+        	phlogEntry.put("time", System.currentTimeMillis());
+        	//phlogEntry.put("location", );
+        	//phlogEntry.put("orientation", );
+        	
+        	//Add it to the database
+        	phloggingDatabase.addRowData(phlogEntry);
+        	
+        	//Set the blank return Intent and exit
+        	//Tells Phlogging.java to requery if result_ok
+        	returnIntent = new Intent();
+	        setResult(RESULT_OK,returnIntent);
+
+	        finish();
         	break;
         /*case R.id.audio_record:
         	//Setup the media recorder
