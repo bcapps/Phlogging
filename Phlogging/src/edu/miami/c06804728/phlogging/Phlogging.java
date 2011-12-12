@@ -493,7 +493,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
 //-----------------------------------------------------------------------------
     public void myClickHandler(View view) {
     	Intent nextActivity;
-    	
+
         switch (view.getId()) {
         case R.id.settings_button:
         	showDialog(SETTINGS_DIALOG);
@@ -508,7 +508,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
 
         	//Start the Edit activity
         	startActivityForResult(nextActivity,ACTIVITY_EDIT);
-        	
+
             break;
         case R.id.settings_button_dismiss:
         	dismissDialog(SETTINGS_DIALOG);
