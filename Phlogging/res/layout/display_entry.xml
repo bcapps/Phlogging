@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical">
     <LinearLayout android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="0dp"
+        android:layout_weight="15">
 		<ImageView android:id="@+id/image_thumbnail"
-	        android:layout_height="fill_parent"
+	        android:layout_height="wrap_content"
 	        android:layout_width="0dp"
 	        android:layout_weight="10"
 	        android:background="#ffffff"
@@ -17,40 +18,59 @@
 	    	android:layout_width="0dp"
 	    	android:layout_weight="90"
 			android:layout_height="wrap_content"
-			android:text="title here"
-			android:layout_margin="5dp">
+			android:textSize="@dimen/big_text_size"
+			android:text="Title here">
 	    </TextView>
 	</LinearLayout>
-	<TextView android:id="@+id/entry_text"
-		android:layout_width="fill_parent"
-		android:layout_height="0dp"
-		android:layout_weight="45"
-	 	android:layout_margin="5dp"
-		android:background="#ffffff">
-	</TextView>
+	 <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="45">
+		<TextView android:id="@+id/entry_text"
+			android:layout_width="fill_parent"
+			android:layout_height="fill_parent"
+			android:layout_margin="5dp"
+			android:background="#ffffff">
+		</TextView>
+	</LinearLayout>
 	<LinearLayout android:orientation="horizontal"
 	    android:layout_width="fill_parent"
+	    android:layout_height="0dp"
+	    android:layout_weight="20">
+	<ImageView android:id="@+id/second_photo_thumbnail"
+ 		android:layout_width="wrap_content"
 	    android:layout_height="wrap_content"
-	    android:layout_marginTop="7dp">
-	<ImageView android:id="@+id/second_photo"
- 		android:layout_width="wrap_content"
-	    android:layout_height="wrap_content">
+	    android:onClick="myClickHandler">
 	</ImageView>
-	<ImageView android:id="@+id/video"
+	<ImageView android:id="@+id/video_thumbnail"
  		android:layout_width="wrap_content"
-	    android:layout_height="wrap_content">
+	    android:layout_height="wrap_content"
+	    android:onClick="myClickHandler">
 	</ImageView>
-	<Button android:id="@+id/cancel_button"
-	    style="@style/MediumButton"
-	    android:text="Cancel">
-	</Button>
+	<ImageButton android:id="@+id/play_recording"
+	    style="@style/TinyButton"
+	    android:src="@drawable/speaker">
+	</ImageButton>
 	</LinearLayout>
-	<TextView
-	    android:layout_width="fill_parent""
-	    android:layout_height="wrap_content"
-	    android:layout_marginTop="25dp"
-	    android:text="Add some media"
-	    android:gravity="center_horizontal">
-	</TextView>
+	<LinearLayout android:orientation="horizontal"
+	    android:layout_width="fill_parent"
+	    android:layout_height="0dp"
+	    android:layout_weight="20"
+	    android:layout_marginTop="15dp">
+	<Button android:id="@+id/close_button"
+	    style="@style/MediumButton"
+	    android:text="Close">
+	</Button>
+		<Button android:id="@+id/delete_button"
+	    style="@style/MediumButton"
+	    android:text="Delete"
+	    android:background="@drawable/custom_button">
+	</Button>
+		<Button android:id="@+id/edit_button"
+	    style="@style/MediumButton"
+	    android:text="Edit">
+	</Button>
+
+
     </LinearLayout>
 </LinearLayout>
