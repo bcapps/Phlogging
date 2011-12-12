@@ -6,6 +6,7 @@
     <LinearLayout android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
+        android:layout_margin="4dp"
         android:layout_weight="15">
 		<ImageView android:id="@+id/image_thumbnail"
 	        android:layout_height="60dp"
@@ -17,6 +18,7 @@
 	    	android:layout_width="0dp"
 	    	android:layout_weight="90"
 			android:layout_height="wrap_content"
+			android:layout_margin="6dp"
 			android:textSize="@dimen/big_text_size"
 			android:text="Title here">
 	    </TextView>
@@ -37,13 +39,13 @@
 	    android:layout_height="0dp"
 	    android:layout_weight="20">
 	<ImageView android:id="@+id/second_photo_thumbnail"
- 		android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
+ 		android:layout_width="60dp"
+	    android:layout_height="60dp"
 	    android:onClick="myClickHandler">
 	</ImageView>
 	<ImageView android:id="@+id/video_thumbnail"
- 		android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
+ 		android:layout_width="60dp"
+	    android:layout_height="60dp"
 	    android:onClick="myClickHandler">
 	</ImageView>
 	<ImageButton android:id="@+id/play_recording"
@@ -71,12 +73,12 @@
         android:layout_weight="10"
         android:layout_marginBottom="5dp">
 		<Button android:id="@+id/delete_button"
-	    style="@style/MediumButton"
-	    android:text="Delete"
-	    android:textColor="@color/white"
-	    android:layout_margin="4dp"
-	    android:background="@drawable/delete_button">
-	</Button>
+		    style="@style/MediumButton"
+		    android:text="Delete"
+		    android:textColor="@color/white"
+		    android:layout_margin="4dp"
+		    android:background="@drawable/delete_button">
+		</Button>
 	</LinearLayout>
 
 
