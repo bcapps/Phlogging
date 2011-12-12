@@ -11,7 +11,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 //=============================================================================
 public class DataSQLiteDB {
 //-----------------------------------------------------------------------------
-    public static final String DATABASE_NAME = "ImageDescriptions.db";
+    public static final String DATABASE_NAME = "PhloggingDB.db";
     private static final int DATABASE_VERSION = 1;
 
     private static final String PHLOGGING_TABLE = "ImageDescriptions";
@@ -22,9 +22,9 @@ public class DataSQLiteDB {
 "description TEXT," +
 "image_media_id INTEGER, " +
 "secondary_image_media_id INTEGER, " +
-"audio_file_name TEXT" +
-"time INTEGER NOT NULL," +
-"location TEXT"+
+"audio_file_name TEXT," +
+"time INTEGER, " +
+"location TEXT, "+
 "orientation TEXT"+
 ");";
 

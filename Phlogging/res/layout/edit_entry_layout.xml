@@ -16,7 +16,7 @@
 			android:layout_margin="5dp"
 			android:hint="Enter a title..">
 	    </EditText>
-	    <TextView android:id="@+id/entry_text"
+	    <EditText android:id="@+id/entry_text"
 	        android:layout_width="fill_parent"
 	        android:layout_height="0dp"
 	        android:layout_weight="50"
@@ -24,7 +24,7 @@
 	        android:hint="Share your thoughts..."
 	        android:textSize="@dimen/medium_text_size"
 	        android:background="#ffffff">
-		</TextView>
+		</EditText>
 	</LinearLayout>
 	<LinearLayout android:orientation="vertical"
         android:layout_width="fill_parent"
@@ -50,6 +50,7 @@
 	    android:layout_marginTop="25dp"
 	    android:text="Add some media"
 	    android:gravity="center_horizontal">
+	</TextView>
     </LinearLayout>
 
 	</LinearLayout>

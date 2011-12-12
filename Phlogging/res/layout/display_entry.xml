@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+    <LinearLayout android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content">
+		<ImageView android:id="@+id/image_thumbnail"
+	        android:layout_height="fill_parent"
+	        android:layout_width="0dp"
+	        android:layout_weight="10"
+	        android:background="#ffffff"
+	        android:onClick="myClickHandler">
+		</ImageView>
+		<TextView android:id="@+id/title"
+	    	android:layout_width="0dp"
+	    	android:layout_weight="90"
+			android:layout_height="wrap_content"
+			android:text="title here"
+			android:layout_margin="5dp">
+	    </TextView>
+	</LinearLayout>
+	<TextView android:id="@+id/entry_text"
+		android:layout_width="fill_parent"
+		android:layout_height="0dp"
+		android:layout_weight="45"
+	 	android:layout_margin="5dp"
+		android:background="#ffffff">
+	</TextView>
+	<LinearLayout android:orientation="horizontal"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_marginTop="7dp">
+	<ImageView android:id="@+id/second_photo"
+ 		android:layout_width="wrap_content"
+	    android:layout_height="wrap_content">
+	</ImageView>
+	<ImageView android:id="@+id/video"
+ 		android:layout_width="wrap_content"
+	    android:layout_height="wrap_content">
+	</ImageView>
+	<Button android:id="@+id/cancel_button"
+	    style="@style/MediumButton"
+	    android:text="Cancel">
+	</Button>
+	</LinearLayout>
+	<TextView
+	    android:layout_width="fill_parent""
+	    android:layout_height="wrap_content"
+	    android:layout_marginTop="25dp"
+	    android:text="Add some media"
+	    android:gravity="center_horizontal">
+	</TextView>
+    </LinearLayout>
+</LinearLayout>

@@ -225,16 +225,16 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         //if on the description column
         else if(columnIndex == cursor.getColumnIndex("title")){
         	//Get the description view and the description
-        	titleView = (TextView)view.findViewById(R.id.title);
-        	title = cursor.getString(columnIndex);
-
-        	//Set the description, including default if description is null
-        	if(title != null){
-        		titleView.setText(title);
-        	}
-        	else{
-        		titleView.setText("Untitled");
-        	}
+//        	titleView = (TextView)view.findViewById(R.id.title);
+//        	title = cursor.getString(columnIndex);
+//
+//        	//Set the description, including default if description is null
+//        	if(title != null){
+//        		titleView.setText(title);
+//        	}
+//        	else{
+//        		titleView.setText("Untitled");
+//        	}
         	return(true);
         }
         //if on the audio column
