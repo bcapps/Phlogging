@@ -34,7 +34,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 //=============================================================================
-public class TalkingPictureListFinal extends Activity
+public class Phlogging extends Activity
 implements OnItemClickListener, OnItemLongClickListener, SimpleCursorAdapter.ViewBinder,
 DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUtteranceCompletedListener {
 //-----------------------------------------------------------------------------
@@ -66,11 +66,12 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
             "title",
             "audio_file_name"
         };
+
         int[] displayViews = {
         	R.id.image_thumbnail,
             R.id.title,
             R.id.time
-        };
+            };
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.phlogging_main_layout);

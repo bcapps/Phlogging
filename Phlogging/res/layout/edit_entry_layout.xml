@@ -1,31 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:orientation="vertical" >
+    android:orientation="vertical">
+    <LinearLayout android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
     <LinearLayout android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="80">
+        android:layout_weight="65">
 		<EditText android:id="@+id/title"
 	    	android:layout_width="fill_parent"
 			android:layout_height="wrap_content"
+			android:layout_margin="5dp"
 			android:hint="Enter a title..">
 	    </EditText>
 	    <TextView android:id="@+id/entry_text"
 	        android:layout_width="fill_parent"
 	        android:layout_height="0dp"
-	        android:layout_weight="70"
+	        android:layout_weight="50"
 	        android:layout_margin="5dp"
 	        android:hint="Share your thoughts..."
 	        android:textSize="@dimen/medium_text_size"
-	        android:background="@color/white">
+	        android:background="#ffffff">
 		</TextView>
 	</LinearLayout>
-	<LinearLayout android:orientation="horizontal"
+	<LinearLayout android:orientation="vertical"
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="20">
+        android:layout_weight="35"
+        >
+	<LinearLayout android:orientation="horizontal"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_marginTop="40dp">
 	<Button android:id="@+id/phlog_button"
 	    style="@style/MediumButton"
 	    android:text="Phlog!">
@@ -35,4 +44,30 @@
 	    android:text="Cancel">
 	</Button>
 	</LinearLayout>
-</LinearLayout>
+	<TextView
+	    android:layout_width="fill_parent""
+	    android:layout_height="wrap_content"
+	    android:layout_marginTop="25dp"
+	    android:text="Add some media"
+	    android:gravity="center_horizontal">
+    </LinearLayout>
+
+	</LinearLayout>
+	 <SlidingDrawer
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:handle="@+id/drawer_handle"
+        android:content="@+id/drawer_content"
+        android:layout_gravity="bottom | center_horizontal">
+        <ImageView android:id="@+id/drawer_handle"
+            android:layout_height="30dp"
+            android:layout_width="60dp"
+            android:src="@drawable/drawer_handle">
+        </ImageView>
+        <Button android:id="@+id/drawer_content"
+            android:layout_height="fill_parent"
+            android:layout_width="fill_parent"
+            android:text="I'm a button in a drawer">
+        </Button>
+    </SlidingDrawer>
+</FrameLayout>

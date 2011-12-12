@@ -13,10 +13,10 @@ public class DataSQLiteDB {
 //-----------------------------------------------------------------------------
     public static final String DATABASE_NAME = "ImageDescriptions.db";
     private static final int DATABASE_VERSION = 1;
-    
+
     private static final String PHLOGGING_TABLE = "ImageDescriptions";
     private static final String CREATE_PHLOGGING_TABLE =
-"CREATE TABLE IF NOT EXISTS " + PHLOGGING_TABLE + 
+"CREATE TABLE IF NOT EXISTS " + PHLOGGING_TABLE +
 "(_id INTEGER PRIMARY KEY AUTOINCREMENT," +
 "title TEXT," +
 "description TEXT," +
@@ -32,19 +32,19 @@ public class DataSQLiteDB {
     private SQLiteDatabase theDB;
 //-----------------------------------------------------------------------------
     public DataSQLiteDB(Context theContext) {
-        
+
         dbHelper = new DatabaseHelper(theContext);
         theDB = dbHelper.getWritableDatabase();
    }
 //-----------------------------------------------------------------------------
     public void close() {
-        
+
         dbHelper.close();
         theDB.close();
     }
 //-----------------------------------------------------------------------------
     public boolean addRowData(ContentValues rowData) {
-        
+
         return(theDB.insert(PHLOGGING_TABLE,null,rowData) >= 0);
     }
 //-----------------------------------------------------------------------------
@@ -57,7 +57,7 @@ public class DataSQLiteDB {
     public boolean deleteRowData(long rowID) {
     	ContentValues rowData;
     	String audioFileName;
-    	
+
     	//Delete the audio file if it exists
     	rowData = getImageById(rowID);
     	audioFileName = rowData.getAsString("audio_file_name");
@@ -70,7 +70,7 @@ public class DataSQLiteDB {
     			recordingFile.delete();
     		}
     	}
-    	
+
     	//delete the table entry
         return(theDB.delete(PHLOGGING_TABLE,"_id =" + rowID,
 null) > 0);
@@ -80,16 +80,16 @@ null) > 0);
 
         String[] fieldNames = {"_id","title","description","image_media_id", "secondary_image_media_id",
         						"audio_file_name", "time", "location", "orientation"};
-        
+
         return(theDB.query(PHLOGGING_TABLE,fieldNames,null,null,
 null,null,"image_media_id"));
     }
 //-----------------------------------------------------------------------------
     public ContentValues getImageByImageMediaId(int imageMediaId) {
-        
+
         Cursor cursor;
         ContentValues rowData;
-        
+
         cursor = theDB.query(PHLOGGING_TABLE,null,
 "image_media_id = " + imageMediaId,null,null,null,null);
         rowData = dataFromCursor(cursor);
@@ -98,10 +98,10 @@ null,null,"image_media_id"));
     }
 //-----------------------------------------------------------------------------
     public ContentValues getImageById(long id) {
-        
+
         Cursor cursor;
         ContentValues rowData;
-        
+
         cursor = theDB.query(PHLOGGING_TABLE,null,
 "_id = " + id,null,null,null,null);
         rowData = dataFromCursor(cursor);
@@ -110,7 +110,7 @@ null,null,"image_media_id"));
     }
 //-----------------------------------------------------------------------------
     private ContentValues dataFromCursor(Cursor cursor) {
-        
+
         String[] fieldNames;
         int index;
         ContentValues rowData;
@@ -150,7 +150,7 @@ null,null,"image_media_id"));
         private Context userContext;
     //-------------------------------------------------------------------------
         public DatabaseHelper(Context context) {
-            
+
             super(context,DATABASE_NAME,null,DATABASE_VERSION);
             userContext = context;
         }
@@ -162,13 +162,13 @@ null,null,"image_media_id"));
     //-------------------------------------------------------------------------
         @Override
         public void onOpen(SQLiteDatabase db) {
-            
+
             super.onOpen(db);
         }
     //-------------------------------------------------------------------------
         public void onUpgrade(SQLiteDatabase db,int oldVersion,
 int newVersion) {
-            
+
             (new ContextWrapper(userContext)).deleteDatabase(DATABASE_NAME);
         }
     //-------------------------------------------------------------------------
