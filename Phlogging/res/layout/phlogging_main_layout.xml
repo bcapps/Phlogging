@@ -6,7 +6,8 @@
     <LinearLayout android:id="@+id/toolbar"
         android:layout_width="fill_parent"
         android:layout_height="@dimen/unspecified"
-        android:layout_weight="10">
+        android:layout_weight="10"
+        android:background="@drawable/toolbar">
         <ImageButton android:id="@+id/settings_button"
 			style="@style/LittleButton"
 			android:src="@drawable/gear2x"

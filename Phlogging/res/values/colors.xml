@@ -161,4 +161,8 @@
 
 <color name="DelRed1">#ba0005</color>
 <color name="DelRed2">#820202</color>
+
+<color name="toolbar_top">#28292B</color>
+<color name="toolbar_bottom">#151517</color>
+
 </resources>
