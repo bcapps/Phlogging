@@ -23,7 +23,7 @@ public class DataSQLiteDB {
 "image_media_id INTEGER, " +
 "secondary_image_media_id INTEGER, " +
 "audio_file_name TEXT," +
-"time INTEGER, " +
+"time REAL, " +
 "location TEXT, "+
 "orientation TEXT"+
 ");";
@@ -132,7 +132,7 @@ null,null,"image_media_id"));
                 }else if (fieldNames[index].equals("audio_file_name")) {
                     rowData.put("audio_file_name",cursor.getInt(index));
                 }else if (fieldNames[index].equals("time")) {
-                    rowData.put("time",cursor.getInt(index));
+                    rowData.put("time",cursor.getLong(index));
                 } else if (fieldNames[index].equals("location")) {
                     rowData.put("location",cursor.getString(index));
                 } else if (fieldNames[index].equals("orientation")) {
