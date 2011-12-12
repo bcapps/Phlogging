@@ -2,7 +2,6 @@ package edu.miami.c06804728.phlogging;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Random;
 
@@ -21,6 +20,7 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.speech.tts.TextToSpeech;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -225,15 +225,18 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         }
         //if on the description column
         else if(columnIndex == cursor.getColumnIndex("title")){
+        	Log.v("Brian", "TITLE!");
         	//Get the description view and the description
         	titleView = (TextView)view.findViewById(R.id.title);
         	title = cursor.getString(columnIndex);
 
         	//Set the description, including default if description is null
         	if(title != null){
+        		Log.v("Brian", "TITLE NOT NULL!");
         		titleView.setText(title);
         	}
         	else{
+        		Log.v("Brian", "TITLE NULL!");
         		titleView.setText("Untitled");
         	}
         	return(true);
