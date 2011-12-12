@@ -9,7 +9,8 @@
         android:layout_weight="10">
         <ImageButton android:id="@+id/settings_button"
 			style="@style/LittleButton"
-			android:src="@drawable/gear2x">
+			android:src="@drawable/gear2x"
+			android:onClick="myClickHandler">
 		</ImageButton>
         <LinearLayout
             android:orientation="horizontal"
