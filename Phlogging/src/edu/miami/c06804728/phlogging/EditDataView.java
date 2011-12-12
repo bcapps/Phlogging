@@ -27,7 +27,11 @@ public class EditDataView extends Activity {
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_entry_layout);
+<<<<<<< HEAD
 
+=======
+        
+>>>>>>> ff6fb30ccce1c453ff558d4a3a991bc5637fb83a
         /****************************************
          * Things to be added later
          *
@@ -36,7 +40,7 @@ public class EditDataView extends Activity {
          * Then use Time.set(time) and we can get a nicely formatted string
          *
          *****************************************/
-        String imageFilename;
+        /*String imageFilename;
         Bitmap imageBitmap;
         ImageView imageView;
         EditText descriptionView;
@@ -86,7 +90,7 @@ public class EditDataView extends Activity {
         recordFileName = recordDir + "/" + rowId + getString(R.string.record_file_name);
 
         //Not recording
-        isRecording = false;
+        isRecording = false;*/
 	}
 //-----------------------------------------------------------------------------
 	public void myClickHandler(View view) {
@@ -94,7 +98,10 @@ public class EditDataView extends Activity {
     	EditText descriptionView;
 
         switch (view.getId()) {
-        case R.id.audio_record:
+        case R.id.cancel_button:
+        	finish();
+        	break;
+        /*case R.id.audio_record:
         	//Setup the media recorder
             recorder = new MediaRecorder();
             recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
@@ -153,7 +160,7 @@ public class EditDataView extends Activity {
 	        setResult(RESULT_OK,returnIntent);
 
 	        finish();
-            break;
+            break;*/
         default:
             break;
         }

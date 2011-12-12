@@ -486,10 +486,23 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
     }
 //-----------------------------------------------------------------------------
     public void myClickHandler(View view) {
-
+    	Intent nextActivity;
+    	
         switch (view.getId()) {
         case R.id.settings_button:
         	showDialog(SETTINGS_DIALOG);
+            break;
+        case R.id.create_button:
+        	nextActivity = new Intent();
+        	nextActivity.setClassName("edu.miami.c06804728.phlogging",
+            		"edu.miami.c06804728.phlogging.EditDataView");
+            //nextActivity.putExtra("edu.miami.c06804728.phlogging.image_file_name", rowImageFilename);
+            //nextActivity.putExtra("edu.miami.c06804728.phlogging.description", description);
+            //nextActivity.putExtra("edu.miami.c06804728.phlogging.rowId", rowId);
+
+        	//Start the Edit activity
+        	startActivityForResult(nextActivity,ACTIVITY_EDIT);
+        	
             break;
         case R.id.settings_button_dismiss:
         	dismissDialog(SETTINGS_DIALOG);
