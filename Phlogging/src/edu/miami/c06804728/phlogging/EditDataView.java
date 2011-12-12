@@ -254,6 +254,13 @@ implements DialogInterface.OnDismissListener{
 	public void onDismiss (DialogInterface dialog){
     	
     }
+//-----------------------------------------------------------------------------  
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        phloggingDatabase.close();
+    }
 //-----------------------------------------------------------------------------
 	public void stopRecording(){
 		//Stop the recorder
