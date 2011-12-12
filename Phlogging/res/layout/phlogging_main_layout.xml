@@ -23,7 +23,7 @@
 				android:textSize="@dimen/big_text_size">
   			</TextView>
         </LinearLayout>
-        <Button android:id="@+id/settings_button"
+        <Button android:id="@+id/create_button"
             style="@style/LittleButton"
             android:text="Create">
         </Button>

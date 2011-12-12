@@ -1,9 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
     android:orientation="vertical" >
-<EditText android:id="@+id/title"
-    android:layout_width=""
-
+    <LinearLayout android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="80">
+		<EditText android:id="@+id/title"
+	    	android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:hint="Enter a title..">
+	    </EditText>
+	    <TextView android:id="@+id/entry_text"
+	        android:layout_width="fill_parent"
+	        android:layout_height="0dp"
+	        android:layout_weight="70"
+	        android:layout_margin="5dp"
+	        android:hint="Share your thoughts..."
+	        android:textSize="@dimen/medium_text_size"
+	        android:background="@color/white">
+		</TextView>
+	</LinearLayout>
+	<LinearLayout android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="20">
+	<Button android:id="@+id/phlog_button"
+	    style="@style/MediumButton"
+	    android:text="Phlog!">
+	</Button>
+	<Button android:id="@+id/cancel_button"
+	    style="@style/MediumButton"
+	    android:text="Cancel">
+	</Button>
+	</LinearLayout>
 </LinearLayout>
