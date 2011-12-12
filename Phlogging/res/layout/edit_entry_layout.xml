@@ -19,7 +19,7 @@
 	        android:layout_margin="5dp"
 	        android:hint="Share your thoughts..."
 	        android:textSize="@dimen/medium_text_size"
-	        android:background="@color/white">
+	        android:background ="#ffffff">
 		</TextView>
 	</LinearLayout>
 	<LinearLayout android:orientation="horizontal"
