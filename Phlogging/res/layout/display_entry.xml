@@ -8,9 +8,8 @@
         android:layout_height="0dp"
         android:layout_weight="15">
 		<ImageView android:id="@+id/image_thumbnail"
-	        android:layout_height="wrap_content"
-	        android:layout_width="0dp"
-	        android:layout_weight="10"
+	        android:layout_height="60dp"
+	        android:layout_width="60dp"
 	        android:background="#ffffff"
 	        android:onClick="myClickHandler">
 		</ImageView>
