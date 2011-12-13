@@ -59,7 +59,6 @@ public class DisplayDataView extends Activity {
         mainImageId = entryData.getAsInteger("image_media_id");
         timeSinceEpoch = entryData.getAsLong("time");
         recordingFileName = entryData.getAsString("audio_file_name");
-        Log.v("Brian", "recording name = "+recordingFileName);
         //TODO: get and display location and orientation
         
         //Set the imageView image
@@ -96,7 +95,7 @@ public class DisplayDataView extends Activity {
         	break;
         case R.id.play_recording:
         	//if it's playing already, stop
-        	if(recordingPlayer.isPlaying()){
+        	if(recordingPlayer.isPlaying() || recordingFileName == null){
         		recordingPlayer.stop();
         		break;
         	}
