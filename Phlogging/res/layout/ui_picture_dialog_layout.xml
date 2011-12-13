@@ -4,14 +4,14 @@
     android:orientation="vertical"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
-    
+
     <ImageView android:id="@+id/image_full_size"
         android:layout_width="250dp"
         android:layout_height="150dp"
         android:layout_gravity="center_horizontal"
         android:layout_margin="@dimen/margin">
     </ImageView>
-    
+
     <LinearLayout android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
@@ -24,11 +24,11 @@
 	    </Button>
 	    <Button android:id="@+id/button_choose_gallery"
 	        style="@style/PictureDialogTopButton"
-			android:background="@drawable/choose_photo"	     
+			android:background="@drawable/choose_photo"
 	        android:onClick="myClickHandler">
 	    </Button>
     </LinearLayout>
-    
+
     <LinearLayout android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"

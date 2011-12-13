@@ -8,6 +8,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -26,14 +27,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class DisplayDataView extends Activity 
+public class DisplayDataView extends Activity
 implements DialogInterface.OnDismissListener{
-//-----------------------------------------------------------------------------	
+//-----------------------------------------------------------------------------
 	private static final int PICTURE_DIALOG = 0;
-	
+	private static final int EDIT_MODE = 2;
 	private DataSQLiteDB phloggingDatabase;
 	private long rowId;
-	
+
     private MediaPlayer recordingPlayer;
     private String recordingFileName;
     private int mainImageId;
@@ -43,20 +44,20 @@ implements DialogInterface.OnDismissListener{
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.display_entry);
-        
+
         ContentValues entryData;
         String title;
         String entryText;
         Bitmap mainImageThumbnail;
         long timeSinceEpoch;
-        
+
         TextView titleView;
         TextView entryTextView;
         ImageView mainImageView;
-        
+
       	//Open database
         phloggingDatabase = new DataSQLiteDB(this);
-        
+
         //Get the rowId from the Intent
         rowId = this.getIntent().getLongExtra("edu.miami.c06804728.phlogging.rowId", -1);
 
@@ -64,7 +65,7 @@ implements DialogInterface.OnDismissListener{
         if(rowId==-1){
         	finish();
         }
-        
+
         //Get the ContentValues and corresponding data
         entryData = phloggingDatabase.getEntryByRowId(rowId);
         title = entryData.getAsString("title");
@@ -73,7 +74,7 @@ implements DialogInterface.OnDismissListener{
         timeSinceEpoch = entryData.getAsLong("time");
         recordingFileName = entryData.getAsString("audio_file_name");
         //TODO: get and display location and orientation
-        
+
         //Set the imageView image
         if(mainImageId != -1){
         	mainImageView = (ImageView) findViewById(R.id.image_thumbnail);
@@ -82,15 +83,15 @@ implements DialogInterface.OnDismissListener{
         			MediaStore.Images.Thumbnails.MICRO_KIND,null);
         	mainImageView.setImageBitmap(mainImageThumbnail);
         }
-        
+
         //Set the titleView title
         titleView = (TextView) findViewById(R.id.title);
         titleView.setText(title);
-        
+
         //Set the entryView entry
         entryTextView = (TextView) findViewById(R.id.entry_text);
         entryTextView.setText(entryText);
-        
+
         //Setup the audio recorder player
         recordingPlayer = new MediaPlayer();
 		recordingPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -98,14 +99,15 @@ implements DialogInterface.OnDismissListener{
 //-----------------------------------------------------------------------------
 	public void myClickHandler(View view) {
 		File audioFile;
-		
+		Intent nextActivity;
+
         switch (view.getId()) {
         case R.id.close_button:
         	//if playing, stop
         	if(recordingPlayer.isPlaying()){
         		recordingPlayer.stop();
         	}
-        	
+
         	finish();
             break;
         case R.id.edit_button:
@@ -114,6 +116,10 @@ implements DialogInterface.OnDismissListener{
         		recordingPlayer.stop();
         	}
         	//TODO: start the EditData Intent
+        	nextActivity = new Intent();
+        	nextActivity.setClassName("edu.miami.c06804728.phlogging",
+            		"edu.miami.c06804728.phlogging.EditDataView");
+            nextActivity.putExtra("edu.miami.c06804728.phlogging.rowId", rowId);
         	break;
         case R.id.play_recording:
         	//if it's playing already, stop
@@ -121,7 +127,7 @@ implements DialogInterface.OnDismissListener{
         		recordingPlayer.stop();
         		break;
         	}
-        	
+
         	//if not playing and the file exists, play it
 	    	audioFile = new File(recordingFileName);
 	    	if(audioFile.exists()){
@@ -160,9 +166,9 @@ implements DialogInterface.OnDismissListener{
     	View dialogView;
     	LayoutInflater dialogInflator;
     	AlertDialog theDialog;
-    	
+
     	dialogBuilder = new AlertDialog.Builder(this);
-    	
+
     	switch (dialogId) {
     	case PICTURE_DIALOG:
     		//Inflate the dialog and set it to the builder's view
@@ -177,7 +183,7 @@ implements DialogInterface.OnDismissListener{
     	}
     	theDialog = dialogBuilder.create();
     	theDialog.setOnDismissListener(this);
-		
+
     	return(theDialog);
     }
 //-----------------------------------------------------------------------------
@@ -186,16 +192,16 @@ implements DialogInterface.OnDismissListener{
 	    	String mainPictureFilename;
 	    	Bitmap mainPictureBitmap;
 	    	ImageView pictureView;
-	    			
+
 	    	switch(dialogId){
 	    	case PICTURE_DIALOG:
 	        	//Get the pictureView
 	        	pictureView = (ImageView)dialog.findViewById(R.id.image_full_size);
-	        	
+
 	        	//Get the image bitmap
 	        	mainPictureFilename = getFilenameFromMediaId(mainImageId);
 	        	mainPictureBitmap = loadResizedBitmap(mainPictureFilename, 300, 300, false);
-	        	
+
 	        	//Set the pictureView's image to the image bitmap
 	        	pictureView.setImageBitmap(mainPictureBitmap);
 
@@ -224,7 +230,7 @@ implements DialogInterface.OnDismissListener{
     	Cursor imageMediaCursor;
 
     	imageFound = false;
-    	
+
     	//Setup
     	String[] queryFields = {
                 BaseColumns._ID,
@@ -236,7 +242,7 @@ implements DialogInterface.OnDismissListener{
         imageMediaCursor = managedQuery(
             			MediaStore.Images.Media.EXTERNAL_CONTENT_URI,queryFields,null,null,
             			MediaStore.Images.Media.DEFAULT_SORT_ORDER);
-    	
+
     	//Get the relevant MediaStore column indexes
     	imageIDIndex = imageMediaCursor.getColumnIndex(BaseColumns._ID);
     	imageDataIndex = imageMediaCursor.getColumnIndex(MediaColumns.DATA);
@@ -254,7 +260,7 @@ implements DialogInterface.OnDismissListener{
 
         	return imageFileName;
         }
-        
+
         //If the image isn't found, return null
         return null;
     }

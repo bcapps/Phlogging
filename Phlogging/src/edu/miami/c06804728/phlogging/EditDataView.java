@@ -46,7 +46,7 @@ implements DialogInterface.OnDismissListener{
 	private static final int EDIT_MODE = 2;
 	private static final int ACTIVITY_SELECT_PICTURE = 3;
 	private static final int ACTIVITY_CAMERA_APP = 4;
-	
+
 	private String description;
 	private long rowId;
 	private int mode;
@@ -55,40 +55,45 @@ implements DialogInterface.OnDismissListener{
 	private MediaRecorder recorder;
     private String recordFileName;
     private MediaPlayer recordingPlayer;
-    
     private Dialog currentDialog;
     private int mainPictureMediaId;
-    
+
     private Drawable defaultButtonBackground;
 
     private boolean isRecording;
+
+    int currentMode;
 //-----------------------------------------------------------------------------
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_entry_layout);
 
-//        String imageFilename;
+        //String imageFilename;
 //        Bitmap imageBitmap;
 //        ImageView imageView;
 //        EditText descriptionView;
         String formattedTime;
         String recordDirName;
         File recordDir;
-        
+
         //Open database
         phloggingDatabase = new DataSQLiteDB(this);
 
-        /*//Get the variables sent from last activity
-        imageFilename = this.getIntent().getStringExtra("edu.miami.c06804728.phlogging.image_file_name");
-        description = this.getIntent().getStringExtra("edu.miami.c06804728.phlogging.description");
+        //Get the variables sent from last activity
+       // imageFilename = this.getIntent().getStringExtra("edu.miami.c06804728.phlogging.image_file_name");
+      //  description = this.getIntent().getStringExtra("edu.miami.c06804728.phlogging.description");
         rowId = this.getIntent().getLongExtra("edu.miami.c06804728.phlogging.rowId", -1);
 
-        //Something went wrong
+        //No corresponding entry found in database- enter Create Mode
         if(rowId==-1){
-        	finish();
+        	currentMode=CREATE_MODE;
+        	//createNewEntry();
+        } else{
+        	currentMode=EDIT_MODE;
         }
 
+/*
         //Set the ImageView image
         int maxWidth, maxHeight;
 
@@ -108,13 +113,13 @@ implements DialogInterface.OnDismissListener{
         if(description!=null){
         	descriptionView.setText(description);
         }*/
-        
+
         //Setup the date format
         //TODO: add this to the database here so we can delete files later
         creationTime = System.currentTimeMillis();
         SimpleDateFormat df = new SimpleDateFormat("MM.dd.yyyy.HH.mm.ss");
 		formattedTime = df.format(new Date(creationTime));
-        
+
         //Set the recording fileName
         recordDirName = Environment.getExternalStorageDirectory().
         		getAbsolutePath() + "/Android/data/edu.miami.c06804728.phlogging/files";
@@ -129,15 +134,15 @@ implements DialogInterface.OnDismissListener{
 
         //Not recording
         isRecording = false;
-        
+
         //Setup the audio recorder player
         recordingPlayer = new MediaPlayer();
 		recordingPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-		
+
 		//Set current dialog to null
 		currentDialog = null;
 		mainPictureMediaId = -1;
-		
+
 		//Get the default button background - this is to be reused when resetting the button
 		//This is a hack because android doesn't support resetting the background drawable
 		defaultButtonBackground = findViewById(R.id.add_main_pic_button).getBackground();
@@ -145,7 +150,7 @@ implements DialogInterface.OnDismissListener{
 //-----------------------------------------------------------------------------
 	public void audioClickHandler(View view) {
 		File audioFile;
-		
+
 		switch(view.getId()){
 		case R.id.record_button:
 			//Setup the media recorder
@@ -186,7 +191,7 @@ implements DialogInterface.OnDismissListener{
 		case R.id.play_button:
 			//Stop recording
 			stopRecording();
-			
+
 			//if the file exists
 	    	audioFile = new File(recordFileName);
 	    	if(audioFile.exists()){
@@ -228,20 +233,20 @@ implements DialogInterface.OnDismissListener{
         	//Get the values from their fields
         	titleView = (TextView) findViewById(R.id.title);
         	title = titleView.getText().toString().trim();
-        	
+
         	descriptionView = (EditText) findViewById(R.id.entry_text);
         	description = descriptionView.getText().toString().trim();
-        	
+
         	//Update the database
         	phlogEntry = new ContentValues();
-        	
+
         	phlogEntry.put("title",title);
         	phlogEntry.put("description",description);
         	phlogEntry.put("time", creationTime);
         	phlogEntry.put("image_media_id",mainPictureMediaId);
         	//TODO: phlogEntry.put("location", );
         	//TODO: phlogEntry.put("orientation", );
-        	
+
         	//if the file exists, put it in the Intent
         	Log.v("Brian", recordFileName);
 	    	audioFile = new File(recordFileName);
@@ -249,10 +254,10 @@ implements DialogInterface.OnDismissListener{
         		Log.v("Brian", "exists");
         		phlogEntry.put("audio_file_name",recordFileName);
         	}
-        	
+
         	//Add it to the database
         	phloggingDatabase.addRowData(phlogEntry);
-        	
+
         	//Set the blank return Intent and exit
         	//Tells Phlogging.java to requery if result_ok
         	returnIntent = new Intent();
@@ -282,20 +287,20 @@ implements DialogInterface.OnDismissListener{
         	if(mainPictureMediaId == -1){
         		break;
         	}
-        	
+
         	//Reset the main photo id to not found
         	mainPictureMediaId = -1;
-        	
+
         	//Remove the image
         	pictureView = (ImageView)currentDialog.findViewById(R.id.image_full_size);
         	recycleView(pictureView);
         	pictureView.setBackgroundResource(R.drawable.no_photo);
-        	
+
         	//Remove thumbnail and reset the button
             mainPictureButton = (Button) findViewById(R.id.add_main_pic_button);
             mainPictureButton.setBackgroundDrawable(defaultButtonBackground);
             mainPictureButton.setText("Click me to add a photo");
-        	
+
         	break;
         default:
             break;
@@ -308,9 +313,9 @@ implements DialogInterface.OnDismissListener{
     	View dialogView;
     	LayoutInflater dialogInflator;
     	AlertDialog theDialog;
-    	
+
     	dialogBuilder = new AlertDialog.Builder(this);
-    	
+
     	switch (dialogId) {
     	case PICTURE_DIALOG:
     		//Inflate the dialog and set it to the builder's view
@@ -325,7 +330,7 @@ implements DialogInterface.OnDismissListener{
     	}
     	theDialog = dialogBuilder.create();
     	theDialog.setOnDismissListener(this);
-		
+
     	return(theDialog);
     }
 //-----------------------------------------------------------------------------
@@ -334,25 +339,25 @@ implements DialogInterface.OnDismissListener{
     	String mainPictureFilename;
     	Bitmap mainPictureBitmap;
     	ImageView pictureView;
-    	
+
     	//set the current dialog
     	currentDialog = dialog;
-    			
+
     	switch(dialogId){
     	case PICTURE_DIALOG:
     		//Get the pictureView
         	pictureView = (ImageView)dialog.findViewById(R.id.image_full_size);
-        	
+
     		//If there is no image, set to blank image
         	if(mainPictureMediaId == -1){
         		pictureView.setBackgroundResource(R.drawable.no_photo);
         		break;
         	}
-        	
+
         	//Get the image bitmap
         	mainPictureFilename = getFilenameFromMediaId(mainPictureMediaId);
         	mainPictureBitmap = loadResizedBitmap(mainPictureFilename, 300, 300, false);
-        	
+
         	//Set the pictureView's image to the image bitmap
         	pictureView.setImageBitmap(mainPictureBitmap);
 
@@ -364,7 +369,7 @@ implements DialogInterface.OnDismissListener{
 	public void onDismiss (DialogInterface dialog){
 		currentDialog = null;
     }
-//-----------------------------------------------------------------------------  
+//-----------------------------------------------------------------------------
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -384,7 +389,7 @@ implements DialogInterface.OnDismissListener{
     @Override
     public void onActivityResult(int requestCode,int resultCode,Intent returnIntent) {
     	super.onActivityResult(requestCode,resultCode,returnIntent);
-    	
+
         ImageView pictureView;
         Button mainPictureButton;
         Uri selectedURI;
@@ -398,22 +403,22 @@ implements DialogInterface.OnDismissListener{
                 pictureView = (ImageView)currentDialog.findViewById(R.id.image_full_size);
                 selectedURI = returnIntent.getData();
                 selectedImagePath = getPath(selectedURI);
-                
+
                 //Set the media ID, to be added to the database
                 mainPictureMediaId = getMediaId(selectedURI);
 
-                
+
                 //Set the thumbnail onto the button
                 mainPictureButton = (Button) findViewById(R.id.add_main_pic_button);
-                
+
                 try {
                 	//Recycle the view
                 	recycleView(pictureView);
-                	
+
                 	//Set the pictureView
-                    selectedPicture = loadResizedBitmap(selectedImagePath, 300, 300, false);                    
+                    selectedPicture = loadResizedBitmap(selectedImagePath, 300, 300, false);
                     pictureView.setImageBitmap(selectedPicture);
-                    
+
                     //Set the thumbnail
                     mainPictureButton.setBackgroundDrawable(new BitmapDrawable(selectedPicture));
                     mainPictureButton.setText("");
@@ -426,23 +431,23 @@ implements DialogInterface.OnDismissListener{
         	if (resultCode == Activity.RESULT_OK) {
         		pictureView = (ImageView)currentDialog.findViewById(R.id.image_full_size);
                 photoBitmap = (Bitmap)returnIntent.getExtras().get("data");
-                selectedImagePath = MediaStore.Images.Media.insertImage(getContentResolver(),  
+                selectedImagePath = MediaStore.Images.Media.insertImage(getContentResolver(),
                 								photoBitmap, "title", "description");
                 selectedURI = Uri.parse(selectedImagePath);
 
                 //Set the media ID, to be added to the database
                 mainPictureMediaId = getMediaId(selectedURI);
-                                
+
                 //Set the thumbnail onto the button
                 mainPictureButton = (Button) findViewById(R.id.add_main_pic_button);
-                
+
                 try {
                 	//Recycle the view
                 	recycleView(pictureView);
-                	
+
                 	//Set the pictureView
                     pictureView.setImageBitmap(photoBitmap);
-                    
+
                     //Set the thumbnail
                     mainPictureButton.setBackgroundDrawable(new BitmapDrawable(photoBitmap));
                     mainPictureButton.setText("");
@@ -465,7 +470,7 @@ implements DialogInterface.OnDismissListener{
     	Cursor imageMediaCursor;
 
     	imageFound = false;
-    	
+
     	//Setup
     	String[] queryFields = {
                 BaseColumns._ID,
@@ -477,7 +482,7 @@ implements DialogInterface.OnDismissListener{
         imageMediaCursor = managedQuery(
             			MediaStore.Images.Media.EXTERNAL_CONTENT_URI,queryFields,null,null,
             			MediaStore.Images.Media.DEFAULT_SORT_ORDER);
-    	
+
     	//Get the relevant MediaStore column indexes
     	imageIDIndex = imageMediaCursor.getColumnIndex(BaseColumns._ID);
     	imageDataIndex = imageMediaCursor.getColumnIndex(MediaColumns.DATA);
@@ -495,7 +500,7 @@ implements DialogInterface.OnDismissListener{
 
         	return imageFileName;
         }
-        
+
         //If the image isn't found, return null
         return null;
     }
@@ -548,9 +553,8 @@ implements DialogInterface.OnDismissListener{
         }
     }
 //-----------------------------------------------------------------------------
-
 	//This code is from the internet. It fixes a common Android issue
-    //where if the image is too big, it just crashes.
+    // where if the image is too big, it just crashes.
     public static Bitmap loadResizedBitmap( String filename, int width, int height, boolean exact ) {
         Bitmap bitmap = null;
         BitmapFactory.Options options = new BitmapFactory.Options();
@@ -572,5 +576,43 @@ implements DialogInterface.OnDismissListener{
         }
         return bitmap;
     }
+//-----------------------------------------------------------------------------
+/*    private void loadExistingEntry(int rowId){
+        ContentValues entryData;
+        String title;
+        String entryText;
+        Bitmap mainImageThumbnail;
+        long timeSinceEpoch;
+
+    	 //Get the ContentValues and corresponding data
+        entryData = phloggingDatabase.getEntryByRowId(rowId);
+        title = entryData.getAsString("title");
+        entryText = entryData.getAsString("description");
+        mainPictureMediaId = entryData.getAsInteger("image_media_id");
+        timeSinceEpoch = entryData.getAsLong("time");
+        recordingFileName = entryData.getAsString("audio_file_name");
+        //TODO: get and display location and orientation
+
+        //Set the imageView image
+        if(mainImageId != -1){
+        	mainImageView = (ImageView) findViewById(R.id.image_thumbnail);
+        	mainImageThumbnail = MediaStore.Images.Thumbnails.getThumbnail(
+        			getContentResolver(),mainImageId,
+        			MediaStore.Images.Thumbnails.MICRO_KIND,null);
+        	mainImageView.setImageBitmap(mainImageThumbnail);
+        }
+
+        //Set the titleView title
+        titleView = (TextView) findViewById(R.id.title);
+        titleView.setText(title);
+
+        //Set the entryView entry
+        entryTextView = (TextView) findViewById(R.id.entry_text);
+        entryTextView.setText(entryText);
+
+        //Setup the audio recorder player
+        recordingPlayer = new MediaPlayer();
+		recordingPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+    }*/
 //-----------------------------------------------------------------------------
 }
