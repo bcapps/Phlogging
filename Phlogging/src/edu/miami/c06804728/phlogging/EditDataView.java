@@ -348,7 +348,6 @@ implements DialogInterface.OnDismissListener{
         	
         	//Get the image bitmap
         	mainPictureFilename = getFilenameFromMediaId(mainPictureMediaId);
-        	Log.v("Brian", "mainpicFileName = "+mainPictureFilename);
         	mainPictureBitmap = loadResizedBitmap(mainPictureFilename, 300, 300, false);
         	
         	//Set the pictureView's image to the image bitmap
