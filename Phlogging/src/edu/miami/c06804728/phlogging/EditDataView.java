@@ -50,6 +50,7 @@ implements DialogInterface.OnDismissListener{
 	private String description;
 	private long rowId;
 	private int mode;
+	private long creationTime;
 
 	private MediaRecorder recorder;
     private String recordFileName;
@@ -110,8 +111,9 @@ implements DialogInterface.OnDismissListener{
         
         //Setup the date format
         //TODO: add this to the database here so we can delete files later
+        creationTime = System.currentTimeMillis();
         SimpleDateFormat df = new SimpleDateFormat("MM.dd.yyyy.HH.mm.ss");
-		formattedTime = df.format(new Date(System.currentTimeMillis()));
+		formattedTime = df.format(new Date(creationTime));
         
         //Set the recording fileName
         recordDirName = Environment.getExternalStorageDirectory().
@@ -235,14 +237,16 @@ implements DialogInterface.OnDismissListener{
         	
         	phlogEntry.put("title",title);
         	phlogEntry.put("description",description);
-        	phlogEntry.put("time", System.currentTimeMillis());
+        	phlogEntry.put("time", creationTime);
         	phlogEntry.put("image_media_id",mainPictureMediaId);
         	//TODO: phlogEntry.put("location", );
         	//TODO: phlogEntry.put("orientation", );
         	
         	//if the file exists, put it in the Intent
+        	Log.v("Brian", recordFileName);
 	    	audioFile = new File(recordFileName);
         	if(audioFile.exists()){
+        		Log.v("Brian", "exists");
         		phlogEntry.put("audio_file_name",recordFileName);
         	}
         	

@@ -138,7 +138,7 @@ null,null,sortColumn));
                 } else if (fieldNames[index].equals("description")) {
                     rowData.put("description",cursor.getString(index));
                 }else if (fieldNames[index].equals("audio_file_name")) {
-                    rowData.put("audio_file_name",cursor.getInt(index));
+                    rowData.put("audio_file_name",cursor.getString(index));
                 }else if (fieldNames[index].equals("time")) {
                     rowData.put("time",cursor.getLong(index));
                 } else if (fieldNames[index].equals("location")) {
