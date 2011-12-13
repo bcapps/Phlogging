@@ -63,14 +63,7 @@ implements DialogInterface.OnDismissListener{
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_entry_layout);
-        /****************************************
-         * Things to be added later
-         *
-         * long time = System.currentTimeMillis()
-         * time is the time since Jan. 1, 1970.
-         * Then use Time.set(time) and we can get a nicely formatted string
-         *
-         *****************************************/
+
 //        String imageFilename;
 //        Bitmap imageBitmap;
 //        ImageView imageView;
@@ -240,7 +233,7 @@ implements DialogInterface.OnDismissListener{
         	phlogEntry.put("time", System.currentTimeMillis());
         	phlogEntry.put("image_media_id",mainPictureMediaId);
         	//TODO: phlogEntry.put("location", );
-        	//phlogEntry.put("orientation", );
+        	//TODO: phlogEntry.put("orientation", );
         	
         	//if the file exists, put it in the Intent
 	    	audioFile = new File(recordFileName);
@@ -270,6 +263,7 @@ implements DialogInterface.OnDismissListener{
         			MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         	startActivityForResult(galleryIntent,ACTIVITY_SELECT_PICTURE);
         	break;
+        //TODO: case R.id.button_choose_camera:  //Let the user take a picture
         case R.id.button_delete_photo:
         	//If there was already no image, don't do anything
         	if(mainPictureMediaId == -1){
