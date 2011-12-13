@@ -38,7 +38,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 //=============================================================================
 public class Phlogging extends Activity
-implements OnItemClickListener, OnItemLongClickListener, SimpleCursorAdapter.ViewBinder,
+implements OnItemClickListener, SimpleCursorAdapter.ViewBinder,
 DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUtteranceCompletedListener {
 //-----------------------------------------------------------------------------
     private DataSQLiteDB phloggingDatabase;
@@ -93,7 +93,6 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         cursorAdapter.setViewBinder(this);
         theList.setAdapter(cursorAdapter);
         theList.setOnItemClickListener(this);
-        theList.setOnItemLongClickListener(this);
 
         //Setup TTS
         mySpeaker = new TextToSpeech(this,this);
@@ -326,27 +325,37 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
 //-----------------------------------------------------------------------------
     @Override
     public void onItemClick(AdapterView<?> parent,View view,int position, long rowId) {
-    	//get the dialog bitmap
-    	dialogImageBitmap = getBitmapFromRowId(rowId);
+//    	//get the dialog bitmap
+//    	dialogImageBitmap = getBitmapFromRowId(rowId);
+//
+//    	if(dialogImageBitmap != null){
+//    		//get the dialog description
+//    		dialogDescription = getDescriptionFromRowId(rowId);
+//
+//    		//get the dialog audio filename
+//    		dialogAudioFileName = getAudioFileNameFromRowId(rowId);
+//
+//    		//Pause the music
+//    		if(musicPlayer.isPlaying()){
+//    			musicPlayer.pause();
+//    		}
+//
+//        	//Show dialog
+//        	showDialog(PICTURE_DIALOG);
+//    	}
+    	Intent nextActivity;
+    	nextActivity = new Intent();
+    	nextActivity.setClassName("edu.miami.c06804728.phlogging",
+        		"edu.miami.c06804728.phlogging.DisplayDataView");
+        //nextActivity.putExtra("edu.miami.c06804728.phlogging.image_file_name", rowImageFilename);
+        //nextActivity.putExtra("edu.miami.c06804728.phlogging.description", description);
+        nextActivity.putExtra("edu.miami.c06804728.phlogging.rowId", rowId);
 
-    	if(dialogImageBitmap != null){
-    		//get the dialog description
-    		dialogDescription = getDescriptionFromRowId(rowId);
-
-    		//get the dialog audio filename
-    		dialogAudioFileName = getAudioFileNameFromRowId(rowId);
-
-    		//Pause the music
-    		if(musicPlayer.isPlaying()){
-    			musicPlayer.pause();
-    		}
-
-        	//Show dialog
-        	showDialog(PICTURE_DIALOG);
-    	}
+    	//Start the Edit activity
+    	startActivityForResult(nextActivity,ACTIVITY_EDIT);
     }
 //-----------------------------------------------------------------------------
-    @Override
+    /*@Override
     public boolean onItemLongClick(AdapterView<?> av, View v, int pos, long rowId) {
     	String rowImageFilename;
     	String description;
@@ -378,7 +387,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
     	startActivityForResult(nextActivity,ACTIVITY_EDIT);
 
     	return true;
-    }
+    }*/
 //-----------------------------------------------------------------------------
     @Override
     public void onActivityResult(int requestCode,int resultCode,Intent data) {
@@ -392,7 +401,6 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
     	switch (requestCode) {
         case ACTIVITY_EDIT:
         	if (resultCode == Activity.RESULT_OK) {
-        		Log.v("Brian", "RESULT OKAY");
         		//Get the description and rowId values
 //        		description = data.getStringExtra("edu.miami.c06804728.phlogging.description");
 //        		rowId = data.getLongExtra("edu.miami.c06804728.phlogging.rowId", -1);
@@ -435,7 +443,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
     	imageDataIndex = imageMediaCursor.getColumnIndex(MediaColumns.DATA);
 
     	//Get the image_media_id from the rowId (_id)
-    	imageData = phloggingDatabase.getImageById(rowId);
+    	imageData = phloggingDatabase.getEntryByRowId(rowId);
     	imageMediaId = imageData.getAsInteger("image_media_id").intValue();
 
     	//Use the cursor to iterate through images to find one that matches the id
@@ -488,7 +496,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
     	String description;
 
     	//get the description
-    	imageData = phloggingDatabase.getImageById((int) rowId);
+    	imageData = phloggingDatabase.getEntryByRowId((int) rowId);
     	description = imageData.getAsString("description");
 
     	return description; //can be null
@@ -497,7 +505,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
     public String getAudioFileNameFromRowId(long rowId){
     	ContentValues imageData;
 
-    	imageData = phloggingDatabase.getImageById(rowId);
+    	imageData = phloggingDatabase.getEntryByRowId(rowId);
     	return imageData.getAsString("audio_file_name");
     }
 //-----------------------------------------------------------------------------

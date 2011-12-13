@@ -58,7 +58,7 @@ public class DataSQLiteDB {
     	String audioFileName;
 
     	//Delete the audio file if it exists
-    	rowData = getImageById(rowID);
+    	rowData = getEntryByRowId(rowID);
     	audioFileName = rowData.getAsString("audio_file_name");
     	//if it isn't null
     	if(audioFileName!=null){
@@ -105,7 +105,7 @@ null,null,sortColumn));
         return(rowData);
     }
 //-----------------------------------------------------------------------------
-    public ContentValues getImageById(long id) {
+    public ContentValues getEntryByRowId(long id) {
 
         Cursor cursor;
         ContentValues rowData;

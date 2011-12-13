@@ -75,7 +75,7 @@ implements DialogInterface.OnDismissListener{
         String recordDirName;
         File recordDir;
         
-        //Create database
+        //Open database
         phloggingDatabase = new DataSQLiteDB(this);
 
         /*//Get the variables sent from last activity
@@ -420,7 +420,8 @@ implements DialogInterface.OnDismissListener{
         	if (resultCode == Activity.RESULT_OK) {
         		pictureView = (ImageView)currentDialog.findViewById(R.id.image_full_size);
                 photoBitmap = (Bitmap)returnIntent.getExtras().get("data");
-                selectedImagePath = MediaStore.Images.Media.insertImage(getContentResolver(),  photoBitmap, "title", "description");
+                selectedImagePath = MediaStore.Images.Media.insertImage(getContentResolver(),  
+                								photoBitmap, "title", "description");
                 selectedURI = Uri.parse(selectedImagePath);
 
                 //Set the media ID, to be added to the database
