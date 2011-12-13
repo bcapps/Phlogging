@@ -189,7 +189,6 @@ implements DialogInterface.OnDismissListener{
 	}
 //-----------------------------------------------------------------------------
 	public void myClickHandler(View view) {
-    	Intent returnIntent;
     	Intent galleryIntent;
     	EditText descriptionView;
     	ContentValues phlogContent;
@@ -238,8 +237,6 @@ implements DialogInterface.OnDismissListener{
         		//Update the existing entry in the database
         		phloggingDatabase.updateRowData(rowId, phlogContent);
         	}
-
-
 	        setResult(RESULT_OK);
 
 	        finish();
@@ -590,10 +587,6 @@ implements DialogInterface.OnDismissListener{
         String title;
         String entryText;
         Bitmap mainImageThumbnail;
-        long timeSinceEpoch;
-        String formattedTime;
-        String recordDirName;
-        File recordDir;
         Button mainPictureButton;
 
     	 //Get the ContentValues and corresponding data
