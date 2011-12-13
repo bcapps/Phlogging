@@ -1,6 +1,7 @@
 package edu.miami.c06804728.phlogging;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -12,6 +13,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
@@ -37,9 +40,11 @@ implements DialogInterface.OnDismissListener{
 	
 	private String description;
 	private long rowId;
+	private int mode;
 
 	private MediaRecorder recorder;
     private String recordFileName;
+    private MediaPlayer recordingPlayer;
 
     private boolean isRecording;
 //-----------------------------------------------------------------------------
@@ -114,6 +119,74 @@ implements DialogInterface.OnDismissListener{
 
         //Not recording
         isRecording = false;
+        
+        //Setup the audio recorder player
+        recordingPlayer = new MediaPlayer();
+		recordingPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+	}
+//-----------------------------------------------------------------------------
+	public void audioClickHandler(View view) {
+		File audioFile;
+		
+		switch(view.getId()){
+		case R.id.record_button:
+			//Setup the media recorder
+			recorder = new MediaRecorder();
+			recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+			recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+			recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+			recorder.setOutputFile(recordFileName);
+			try {
+				recorder.prepare();
+			} catch (Exception e) {
+				Toast.makeText(this,
+						"There was an error preparing the audio recording.",
+						Toast.LENGTH_LONG).show();
+			}
+			//Start the recording and set isRecording to true
+			recorder.start();
+			isRecording = true;
+			break;
+		case R.id.stop_button:
+			//Stop recording
+			stopRecording();
+			break;
+		case R.id.clear_button:
+			//Stop recording
+			stopRecording();
+
+			//If the recordedFile exists, delete it
+			File recordedFile = new File(recordFileName);
+			if(recordedFile.exists()){
+				if(!recordedFile.delete()){
+					Toast.makeText(this,
+							"There was an error clearing the audio recording.",
+							Toast.LENGTH_LONG).show();
+				}
+			}
+			break;
+		case R.id.play_button:
+			//Stop recording
+			stopRecording();
+			
+			//if the file exists
+	    	audioFile = new File(recordFileName);
+	    	if(audioFile.exists()){
+	    		recordingPlayer.reset();
+	    		try {
+	    			recordingPlayer.setDataSource(recordFileName);
+	    			recordingPlayer.prepare();
+	            } catch (IOException e) {
+	            	Toast.makeText(this,"There was an error playing the recording. " +
+	            						"Try waiting a few seconds after recording.",
+	            			Toast.LENGTH_LONG).show();
+	            }
+	    		recordingPlayer.start();
+	    	}
+			break;
+		default:
+			break;
+		}
 	}
 //-----------------------------------------------------------------------------
 	public void myClickHandler(View view) {
@@ -124,6 +197,7 @@ implements DialogInterface.OnDismissListener{
     	TextView titleView;
     	String title;
     	String description;
+    	File audioFile;
 
         switch (view.getId()) {
         case R.id.cancel_button:
@@ -146,6 +220,12 @@ implements DialogInterface.OnDismissListener{
         	//phlogEntry.put("location", );
         	//phlogEntry.put("orientation", );
         	
+        	//if the file exists, put it in the Intent
+	    	audioFile = new File(recordFileName);
+        	if(audioFile.exists()){
+        		phlogEntry.put("audio_file_name",recordFileName);
+        	}
+        	
         	//Add it to the database
         	phloggingDatabase.addRowData(phlogEntry);
         	
@@ -162,71 +242,13 @@ implements DialogInterface.OnDismissListener{
         case R.id.add_main_pic_button:
         	showDialog(PICTURE_DIALOG);
         	break;
+
         case R.id.button_choose_gallery:
         	galleryIntent = new Intent(Intent.ACTION_PICK,
         			android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         			            startActivityForResult(galleryIntent,ACTIVITY_SELECT_PICTURE);
         	break;
-        /*case R.id.audio_record:
-        	//Setup the media recorder
-            recorder = new MediaRecorder();
-            recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
-            recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
-            recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
-            recorder.setOutputFile(recordFileName);
-            try {
-                recorder.prepare();
-            } catch (Exception e) {
-            	Toast.makeText(this,
-            			"There was an error preparing the audio recording.",
-            			Toast.LENGTH_LONG).show();
-            }
-            //Start the recording and set isRecording to true
-            recorder.start();
-            isRecording = true;
-            break;
-        case R.id.audio_stop:
-        	//Stop recording
-        	stopRecording();
-            break;
-        case R.id.audio_clear:
-        	//Stop recording
-        	stopRecording();
-
-        	//If the recordedFile exists, delete it
-        	File recordedFile = new File(recordFileName);
-        	if(recordedFile.exists()){
-        		if(!recordedFile.delete()){
-        			Toast.makeText(this,
-                			"There was an error clearing the audio recording.",
-                			Toast.LENGTH_LONG).show();
-        		}
-        	}
-        	break;
-        case R.id.save_button:
-        	//Stop recording
-        	stopRecording();
-
-        	//Get the current description
-        	descriptionView = (EditText) findViewById(R.id.edit_text_field);
-        	description = descriptionView.getText().toString();
-
-        	//Set the values for the return Intent and exit
-        	returnIntent = new Intent();
-	        returnIntent.putExtra("edu.miami.c06804728.phlogging.description", description);
-	        returnIntent.putExtra("edu.miami.c06804728.phlogging.rowId", rowId);
-
-	        //Check if we cleared the file, if so set the filename to null
-	        File recordFile = new File(recordFileName);
-	        if(!recordFile.exists()){
-	        	recordFileName = null;
-	        }
-        	returnIntent.putExtra("edu.miami.c06804728.phlogging.recordFileName", recordFileName);
-
-	        setResult(RESULT_OK,returnIntent);
-
-	        finish();
-            break;*/
+        
         default:
             break;
         }
@@ -272,7 +294,7 @@ implements DialogInterface.OnDismissListener{
     @Override
     public void onDestroy() {
         super.onDestroy();
-
+        recordingPlayer.release();
         phloggingDatabase.close();
     }
 //-----------------------------------------------------------------------------

@@ -109,25 +109,25 @@
 			<ImageButton android:id="@+id/record_button"
 			    android:layout_height="60dp"
 			    android:layout_width="60dp"
-			    android:onClick="audioRecordListener"
+			    android:onClick="audioClickHandler"
 			    android:src="@drawable/microphone">
 			</ImageButton>
 			<ImageButton android:id="@+id/stop_button"
 			    android:layout_height="60dp"
 			    android:layout_width="60dp"
-			    android:onClick="audioRecordListener"
+			    android:onClick="audioClickHandler"
 			    android:src="@drawable/stop">
 			</ImageButton>
 			<ImageButton android:id="@+id/play_button"
 			    android:layout_height="60dp"
 			    android:layout_width="60dp"
-			    android:onClick="audioRecordListener"
+			    android:onClick="audioClickHandler"
 			     android:src="@drawable/play">
 			</ImageButton>
 			<ImageButton android:id="@+id/clear_button"
 			    android:layout_height="60dp"
 			    android:layout_width="60dp"
-			    android:onClick="audioRecordListener"
+			    android:onClick="audioClickHandler"
 			    android:src="@drawable/trash">
 			</ImageButton>
 		</LinearLayout>
