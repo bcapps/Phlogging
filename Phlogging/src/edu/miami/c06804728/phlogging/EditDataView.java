@@ -238,13 +238,9 @@ implements DialogInterface.OnDismissListener{
         	phlogEntry.put("title",title);
         	phlogEntry.put("description",description);
         	phlogEntry.put("time", System.currentTimeMillis());
+        	phlogEntry.put("image_media_id",mainPictureMediaId);
         	//TODO: phlogEntry.put("location", );
         	//phlogEntry.put("orientation", );
-        	
-        	//if the main picture was set, add it
-        	if(mainPictureMediaId != -1){
-        		phlogEntry.put("image_media_id",mainPictureMediaId);
-        	}
         	
         	//if the file exists, put it in the Intent
 	    	audioFile = new File(recordFileName);

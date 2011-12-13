@@ -218,6 +218,12 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         	//Get the thumbnail view and the thumbnail
         	thumbnailView = (ImageView)view.findViewById(R.id.image_thumbnail);
         	imageIndex = cursor.getInt(columnIndex);
+        	//if there is no image, simply return
+        	if(imageIndex == -1){
+        		recycleView(thumbnailView);
+        		return(true);
+        	}
+        	
         	thumbnailBitmap = MediaStore.Images.Thumbnails.getThumbnail(
         			getContentResolver(),imageIndex,
         			MediaStore.Images.Thumbnails.MICRO_KIND,null);
