@@ -15,6 +15,7 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
@@ -22,10 +23,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -50,6 +51,8 @@ implements DialogInterface.OnDismissListener{
     
     private Dialog currentDialog;
     private int mainPictureMediaId;
+    
+    private Drawable defaultButtonBackground;
 
     private boolean isRecording;
 //-----------------------------------------------------------------------------
@@ -132,6 +135,9 @@ implements DialogInterface.OnDismissListener{
 		//Set current dialog to null
 		currentDialog = null;
 		mainPictureMediaId = -1;
+		
+		//Get the default button background - this is to be reused when resetting the button
+		defaultButtonBackground = findViewById(R.id.add_main_pic_button).getBackground();
 	}
 //-----------------------------------------------------------------------------
 	public void audioClickHandler(View view) {
@@ -208,6 +214,7 @@ implements DialogInterface.OnDismissListener{
     	String description;
     	File audioFile;
     	ImageView pictureView;
+    	Button mainPictureButton;
 
         switch (view.getId()) {
         case R.id.cancel_button:
@@ -227,7 +234,7 @@ implements DialogInterface.OnDismissListener{
         	phlogEntry.put("title",title);
         	phlogEntry.put("description",description);
         	phlogEntry.put("time", System.currentTimeMillis());
-        	//phlogEntry.put("location", );
+        	//TODO: phlogEntry.put("location", );
         	//phlogEntry.put("orientation", );
         	
         	//if the main picture was set, add it
@@ -264,12 +271,22 @@ implements DialogInterface.OnDismissListener{
         	startActivityForResult(galleryIntent,ACTIVITY_SELECT_PICTURE);
         	break;
         case R.id.button_delete_photo:
+        	//If there was already no image, don't do anything
+        	if(mainPictureMediaId == -1){
+        		break;
+        	}
+        	
         	//Reset the main photo id to not found
         	mainPictureMediaId = -1;
         	
         	//Remove the image
         	pictureView = (ImageView)currentDialog.findViewById(R.id.image_full_size);
         	recycleView(pictureView);
+        	
+        	//Remove thumbnail and reset the button
+            mainPictureButton = (Button) findViewById(R.id.add_main_pic_button);
+            mainPictureButton.setBackgroundDrawable(defaultButtonBackground);
+            mainPictureButton.setText("Click me to add a photo");
         	
         	break;
         default:
@@ -338,6 +355,7 @@ implements DialogInterface.OnDismissListener{
     	super.onActivityResult(requestCode,resultCode,data);
     	
         ImageView pictureView;
+        Button mainPictureButton;
         Uri selectedURI;
         Bitmap selectedPicture;
         String selectedImagePath;
@@ -352,12 +370,20 @@ implements DialogInterface.OnDismissListener{
                 //Set the media ID, to be added to the database
                 mainPictureMediaId = getMediaId(selectedURI);
                 
+                //Set the thumbnail onto the button
+                mainPictureButton = (Button) findViewById(R.id.add_main_pic_button);
+                
                 try {
                 	//Recycle the view
                 	recycleView(pictureView);
                 	
+                	//Set the pictureView
                     selectedPicture = loadResizedBitmap(selectedImagePath, 300, 300, false);                    
                     pictureView.setImageBitmap(selectedPicture);
+                    
+                    //Set the thumbnail
+                    mainPictureButton.setBackgroundDrawable(new BitmapDrawable(selectedPicture));
+                    mainPictureButton.setText("");
                 } catch (Exception e) {
                 	//Error
                 }
