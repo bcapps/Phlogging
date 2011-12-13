@@ -39,7 +39,7 @@ import android.widget.Toast;
 //=============================================================================
 public class Phlogging extends Activity
 implements OnItemClickListener, SimpleCursorAdapter.ViewBinder,
-DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUtteranceCompletedListener {
+DialogInterface.OnDismissListener{
 //-----------------------------------------------------------------------------
     private DataSQLiteDB phloggingDatabase;
     private Cursor entryCursor;
@@ -47,18 +47,12 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
 
     private MediaPlayer musicPlayer;
 
-    private static final int PICTURE_DIALOG = 3;
     private static final int SETTINGS_DIALOG = 1;
     private static final int ACTIVITY_EDIT = 2;
-
-    private Bitmap dialogImageBitmap;
-    private String dialogDescription;
-    private String dialogAudioFileName;
 
     private TextToSpeech mySpeaker;
     private MediaPlayer recordingPlayer;
 
-    private boolean musicWasPlaying;
 //-----------------------------------------------------------------------------
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -97,17 +91,6 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         //Setup TTS
         mySpeaker = new TextToSpeech(this,this);
 
-        //Initialize the dialogBitmap and description and audio filename to null
-        dialogImageBitmap = null;
-        dialogDescription = null;
-        dialogAudioFileName = null;
-
-        //No music playing
-        musicWasPlaying = false;
-
-        //Play a random song from the music library
-        //playRandomSong();
-
         //Setup the audio recorder player
         recordingPlayer = new MediaPlayer();
 		recordingPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -137,67 +120,6 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
             Toast.makeText(this,"You need to install TextToSpeech",
             		Toast.LENGTH_LONG).show();
             finish();
-        }
-    }
-//----------------------------------------------------------------------------
-    @Override
-	public void onUtteranceCompleted(String utteranceId) {
-
-    	File audioFile;
-
-    	//if the recording is null
-    	if(dialogAudioFileName == null){
-    		return;
-    	}
-    	//if the file exists
-    	audioFile = new File(dialogAudioFileName);
-    	if(audioFile.exists()){
-    		recordingPlayer.reset();
-    		try {
-    			recordingPlayer.setDataSource(dialogAudioFileName);
-    			recordingPlayer.prepare();
-            } catch (IOException e) {
-            	Toast.makeText(this,"There was an error playing the recording",
-            			Toast.LENGTH_LONG).show();
-            }
-    		recordingPlayer.start();
-    	}
-    	else{
-    		dialogAudioFileName = null;
-    	}
-    }
-//-----------------------------------------------------------------------------
-    //Scan for new images and add them to the database
-    private void updateImageDBFromContent() {
-
-        String[] queryFields = {
-            BaseColumns._ID,
-            //The data field will be used later to obtain the fileName
-            MediaColumns.DATA
-        };
-        ContentValues imageData;
-        int imageMediaId;
-
-        //Setup the query
-        imageMediaCursor = managedQuery(
-        			MediaStore.Images.Media.EXTERNAL_CONTENT_URI,queryFields,null,null,
-        			MediaStore.Images.Media.DEFAULT_SORT_ORDER);
-        startManagingCursor(imageMediaCursor);
-
-        //Iterate through the list, adding any images not already there
-        if (imageMediaCursor.moveToFirst()) {
-            do {
-                imageMediaId = imageMediaCursor.getInt(
-                		imageMediaCursor.getColumnIndex(BaseColumns._ID));
-                //Check if the image_media_id doesn't exist in the database
-                if (phloggingDatabase.getImageByImageMediaId(imageMediaId) == null) {
-                	//If not, add a new entry with this image_media_id
-                    imageData = new ContentValues();
-                    imageData.put("image_media_id",imageMediaId);
-
-                    phloggingDatabase.addRowData(imageData);
-                }
-            } while (imageMediaCursor.moveToNext());
         }
     }
 //-----------------------------------------------------------------------------
@@ -257,11 +179,6 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
 
         	//Check the checkbox if the value isn't null
         	if(timeSinceEpoch > 0){
-        		//Time timeFormatter = new Time();
-        		//timeFormatter.set(timeSinceEpoch);
-        		//Set the formatted time to the timeView
-        		//timeView.setText(timeFormatter.format("MM-dd-yyyy hh:mm"));
-
         		SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy hh:mm");
         		timeView.setText(df.format(new Date(timeSinceEpoch)));
         	}
@@ -273,121 +190,17 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         }
     }
 //-----------------------------------------------------------------------------
-    //Play a random song from the music library, or included song if none
-    private void playRandomSong(){
-    	Cursor audioCursor;
-    	String[] queryFields = {
-                MediaColumns.DATA
-         };
-    	Random random;
-    	int randomPosition;
-    	int audioDataIndex;
-    	String audioFilename;
-
-    	//create the default player
-    	musicPlayer = MediaPlayer.create(this,R.raw.passionpit);
-
-    	//Setup the query
-    	audioCursor = managedQuery(
-    			MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,queryFields,null,null,
-    			MediaStore.Audio.Media.DEFAULT_SORT_ORDER);
-    	startManagingCursor(audioCursor);
-
-    	//if the user has at least 1 song
-    	if(audioCursor.getCount()>0){
-    		random = new Random();
-    		//generate a random position from [0 to count)
-    		randomPosition = random.nextInt(audioCursor.getCount());
-
-    		//Get the correct column, move to random position, and obtain filename
-    		audioDataIndex = audioCursor.getColumnIndex(MediaColumns.DATA);
-    		audioCursor.moveToPosition(randomPosition);
-    		audioFilename = audioCursor.getString(audioDataIndex);
-
-    		try {
-    			musicPlayer.reset();
-                musicPlayer.setDataSource(audioFilename);
-                musicPlayer.prepare();
-            } catch (IOException e) {
-                //if there is a problem loading the file, play default
-            	//reset first just to be safe
-            	musicPlayer.reset();
-            	musicPlayer = MediaPlayer.create(this,R.raw.passionpit);
-            }
-    	}
-    	//play the loaded file (and loop)
-    	musicPlayer.setLooping(true);
-    	musicPlayer.start();
-
-    	//Stop managing the cursor, it's no longer needed
-    	stopManagingCursor(audioCursor);
-    }
-//-----------------------------------------------------------------------------
     @Override
     public void onItemClick(AdapterView<?> parent,View view,int position, long rowId) {
-//    	//get the dialog bitmap
-//    	dialogImageBitmap = getBitmapFromRowId(rowId);
-//
-//    	if(dialogImageBitmap != null){
-//    		//get the dialog description
-//    		dialogDescription = getDescriptionFromRowId(rowId);
-//
-//    		//get the dialog audio filename
-//    		dialogAudioFileName = getAudioFileNameFromRowId(rowId);
-//
-//    		//Pause the music
-//    		if(musicPlayer.isPlaying()){
-//    			musicPlayer.pause();
-//    		}
-//
-//        	//Show dialog
-//        	showDialog(PICTURE_DIALOG);
-//    	}
     	Intent nextActivity;
     	nextActivity = new Intent();
     	nextActivity.setClassName("edu.miami.c06804728.phlogging",
         		"edu.miami.c06804728.phlogging.DisplayDataView");
-        //nextActivity.putExtra("edu.miami.c06804728.phlogging.image_file_name", rowImageFilename);
-        //nextActivity.putExtra("edu.miami.c06804728.phlogging.description", description);
         nextActivity.putExtra("edu.miami.c06804728.phlogging.rowId", rowId);
 
     	//Start the Edit activity
     	startActivityForResult(nextActivity,ACTIVITY_EDIT);
     }
-//-----------------------------------------------------------------------------
-    /*@Override
-    public boolean onItemLongClick(AdapterView<?> av, View v, int pos, long rowId) {
-    	String rowImageFilename;
-    	String description;
-    	Intent nextActivity;
-
-    	//Get the full size bitmap
-    	rowImageFilename = getFilenameFromRowId(rowId);
-    	if(rowImageFilename == null){
-    		return true;
-    	}
-
-    	//Get the description
-    	description = getDescriptionFromRowId(rowId);
-
-    	//Put filename, description, and rowId on new activity
-    	nextActivity = new Intent();
-        nextActivity.setClassName("edu.miami.c06804728.phlogging",
-        		"edu.miami.c06804728.phlogging.EditDataView");
-        nextActivity.putExtra("edu.miami.c06804728.phlogging.image_file_name", rowImageFilename);
-        nextActivity.putExtra("edu.miami.c06804728.phlogging.description", description);
-        nextActivity.putExtra("edu.miami.c06804728.phlogging.rowId", rowId);
-
-    	//Pause the music
-    	if(musicPlayer.isPlaying()){
-    		musicPlayer.pause();
-    	}
-
-    	//Start the Edit activity
-    	startActivityForResult(nextActivity,ACTIVITY_EDIT);
-
-    	return true;
-    }*/
 //-----------------------------------------------------------------------------
     @Override
     public void onActivityResult(int requestCode,int resultCode,Intent data) {
@@ -510,10 +323,6 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         	nextActivity = new Intent();
         	nextActivity.setClassName("edu.miami.c06804728.phlogging",
             		"edu.miami.c06804728.phlogging.EditDataView");
-            //nextActivity.putExtra("edu.miami.c06804728.phlogging.image_file_name", rowImageFilename);
-            //nextActivity.putExtra("edu.miami.c06804728.phlogging.description", description);
-            //nextActivity.putExtra("edu.miami.c06804728.phlogging.rowId", rowId);
-
         	//Start the Edit activity
         	startActivityForResult(nextActivity,ACTIVITY_EDIT);
 
@@ -561,16 +370,6 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
 
     	dialogBuilder = new AlertDialog.Builder(this);
     	switch (dialogId) {
-    	case PICTURE_DIALOG:
-    		//Inflate the dialog and set it to the builder's view
-    		//dialogInflator = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
-
-
-    	//	dialogView = dialogInflator.inflate(R.layout.ui_pcture_dialog_layout,
-    	//			(ViewGroup)findViewById(R.id.dialog_root));
-    	//	dialogBuilder.setView(dialogView);
-
-    		break;
     	case SETTINGS_DIALOG:
     		dialogInflator = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
 
@@ -589,77 +388,13 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
 //-----------------------------------------------------------------------------
     @Override
 	protected void onPrepareDialog (int dialogId, Dialog dialog){
-    	/*old code for other dialog - reuse later in DisplayView
-    	ImageView imageView;
-    	HashMap<String,String> speechParameters;
 
-    	imageView = (ImageView)dialog.findViewById(R.id.image_full_size);
-
-    	//Display the bitmap image in the dialog
-    	if (dialogImageBitmap != null) {
-    		recycleView(imageView);
-    		imageView.setImageBitmap(dialogImageBitmap);
-    	}
-
-    	//Speak the description
-    	speechParameters = new HashMap<String,String>();
-        speechParameters.put(TextToSpeech.Engine.KEY_PARAM_UTTERANCE_ID,"WHAT_I_SAID");
-
-    	if (dialogDescription != null && dialogDescription.length() > 0) {
-            mySpeaker.speak(dialogDescription,TextToSpeech.QUEUE_ADD,speechParameters);
-        } else {
-        	mySpeaker.speak("No description yet.",TextToSpeech.QUEUE_ADD,
-        			speechParameters);
-        }
-        */
     }
 //-----------------------------------------------------------------------------
     @Override
 	public void onDismiss (DialogInterface dialog){
-    	/*old code for other dialog - reuse later in DisplayView
-    	//Reset the dialog properties
-    	dialogImageBitmap = null;
-    	dialogDescription = null;
-    	dialogAudioFileName = null;
 
-    	//Stop TTS
-    	if(mySpeaker.isSpeaking()){
-    		mySpeaker.stop();
-    	}
-
-    	//Stop recording
-    	if(recordingPlayer.isPlaying()){
-    		recordingPlayer.stop();
-    	}
-
-    	//Start the music again
-    	musicPlayer.start();
-    	*/
     }
-//-----------------------------------------------------------------------------
-    @Override
-    protected void onResume() {
-        super.onResume();
-        //Start music, if it was playing
-        if(musicWasPlaying){
-        	musicPlayer.start();
-        }
-    }
-
-//-----------------------------------------------------------------------------
-//    @Override
-//    protected void onPause() {
-//        super.onPause();
-//        musicWasPlaying = musicPlayer.isPlaying();
-//        //Pause playing music
-//        if(musicWasPlaying){
-//        	musicPlayer.pause();
-//        }
-//        //Stop TTS
-//        if(mySpeaker.isSpeaking()){
-//        	mySpeaker.stop();
-//        }
-//    }
 //-----------------------------------------------------------------------------
     //Generic code to recycleView. Taken verbatim from Geoff's site.
     private void recycleView(View view) {
