@@ -86,14 +86,14 @@
 		            android:layout_width="96px"
 		            android:text="Click me to add a photo"
 		            android:textSize="9sp"
-		            android:onClick="photoClickHandler">
+		            android:onClick="myClickHandler">
 			</Button>
 			<Button android:id="@+id/add_second_pic_button"
 	            android:layout_height="96px"
 	            android:layout_width="96px"
 	            android:text="Click me to add a photo"
 	            android:textSize="9sp"
-	            android:onClick="photoClickHandler">
+	            android:onClick="myClickHandler">
 	        </Button>
 		</LinearLayout>
 		<TextView android:text="Add audio:"

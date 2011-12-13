@@ -26,7 +26,9 @@ public class EditDataView extends Activity
 implements DialogInterface.OnDismissListener{
 //-----------------------------------------------------------------------------
 	private DataSQLiteDB phloggingDatabase;
-	private static final int PICTURE_DIALOG = 1;
+	private static final int PICTURE_DIALOG = 10;
+	private static final int CREATE_MODE = 1;
+	private static final int EDIT_MODE = 2;
 	
 	private String description;
 	private long rowId;
