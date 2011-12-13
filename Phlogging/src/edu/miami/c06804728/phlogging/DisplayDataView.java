@@ -302,7 +302,6 @@ implements DialogInterface.OnDismissListener{
         String title;
         String entryText;
         Bitmap mainImageThumbnail;
-        long timeSinceEpoch;
 
         TextView titleView;
         TextView entryTextView;
@@ -313,8 +312,8 @@ implements DialogInterface.OnDismissListener{
     title = entryData.getAsString("title");
     entryText = entryData.getAsString("description");
     mainImageId = entryData.getAsInteger("image_media_id");
-    timeSinceEpoch = entryData.getAsLong("time");
     recordingFileName = entryData.getAsString("audio_file_name");
+ 
     //TODO: get and display location and orientation
 
     mainImageView = (ImageView) findViewById(R.id.image_thumbnail);
