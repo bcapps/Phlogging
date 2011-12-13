@@ -31,7 +31,6 @@ public class DisplayDataView extends Activity
 implements DialogInterface.OnDismissListener{
 //-----------------------------------------------------------------------------
 	private static final int PICTURE_DIALOG = 0;
-	private static final int EDIT_MODE = 2;
 	private DataSQLiteDB phloggingDatabase;
 	private long rowId;
 
@@ -45,15 +44,7 @@ implements DialogInterface.OnDismissListener{
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.display_entry);
 
-        ContentValues entryData;
-        String title;
-        String entryText;
-        Bitmap mainImageThumbnail;
-        long timeSinceEpoch;
 
-        TextView titleView;
-        TextView entryTextView;
-        ImageView mainImageView;
 
       	//Open database
         phloggingDatabase = new DataSQLiteDB(this);
@@ -66,31 +57,7 @@ implements DialogInterface.OnDismissListener{
         	finish();
         }
 
-        //Get the ContentValues and corresponding data
-        entryData = phloggingDatabase.getEntryByRowId(rowId);
-        title = entryData.getAsString("title");
-        entryText = entryData.getAsString("description");
-        mainImageId = entryData.getAsInteger("image_media_id");
-        timeSinceEpoch = entryData.getAsLong("time");
-        recordingFileName = entryData.getAsString("audio_file_name");
-        //TODO: get and display location and orientation
-
-        //Set the imageView image
-        if(mainImageId != -1){
-        	mainImageView = (ImageView) findViewById(R.id.image_thumbnail);
-        	mainImageThumbnail = MediaStore.Images.Thumbnails.getThumbnail(
-        			getContentResolver(),mainImageId,
-        			MediaStore.Images.Thumbnails.MICRO_KIND,null);
-        	mainImageView.setImageBitmap(mainImageThumbnail);
-        }
-
-        //Set the titleView title
-        titleView = (TextView) findViewById(R.id.title);
-        titleView.setText(title);
-
-        //Set the entryView entry
-        entryTextView = (TextView) findViewById(R.id.entry_text);
-        entryTextView.setText(entryText);
+        setViews();
 
         //Setup the audio recorder player
         recordingPlayer = new MediaPlayer();
@@ -107,7 +74,7 @@ implements DialogInterface.OnDismissListener{
         	if(recordingPlayer.isPlaying()){
         		recordingPlayer.stop();
         	}
-
+        	setResult(RESULT_OK);
         	finish();
             break;
         case R.id.edit_button:
@@ -120,6 +87,10 @@ implements DialogInterface.OnDismissListener{
         	nextActivity.setClassName("edu.miami.c06804728.phlogging",
             		"edu.miami.c06804728.phlogging.EditDataView");
             nextActivity.putExtra("edu.miami.c06804728.phlogging.rowId", rowId);
+
+          //Start the Edit activity
+        	startActivityForResult(nextActivity,0);
+
         	break;
         case R.id.play_recording:
         	//if it's playing already, stop
@@ -265,7 +236,6 @@ implements DialogInterface.OnDismissListener{
         return null;
     }
 //-----------------------------------------------------------------------------
-//-----------------------------------------------------------------------------
     //Generic code to recycleView. Taken verbatim from Geoff's site.
     private void recycleView(View view) {
 
@@ -319,4 +289,86 @@ implements DialogInterface.OnDismissListener{
         return bitmap;
     }
 //-----------------------------------------------------------------------------
+    @Override
+    public void onActivityResult(int requestCode,int resultCode,Intent data) {
+    	super.onActivityResult(requestCode, resultCode, data);
+
+    	String description;
+    	long rowId;
+    	String recordFileName;
+    	ContentValues imageData;
+//
+//    	switch (requestCode) {
+//        case ACTIVITY_EDIT:
+        	if (resultCode == Activity.RESULT_OK) {
+        		//Get the description and rowId values
+//        		description = data.getStringExtra("edu.miami.c06804728.phlogging.description");
+//        		rowId = data.getLongExtra("edu.miami.c06804728.phlogging.rowId", -1);
+//        		recordFileName = data.getStringExtra("edu.miami.c06804728.phlogging.recordFileName");
+
+        		setViews();
+//        		//Wrong rowId
+//                if(rowId==-1){
+//                	break;
+//                }
+//
+//                //Update the description and recordFileName based on the rowId
+//                imageData = phloggingDatabase.getImageById(rowId);
+//                imageData.put("description", description);
+//                imageData.put("audio_file_name", recordFileName);
+//                phloggingDatabase.updateRowData(rowId, imageData);
+
+        	}
+//        	break;
+//        default:
+//        	break;
+//    	}
+    	//Start the music again
+    	//musicPlayer.start();
+    }
+//-----------------------------------------------------------------------------
+    public void setViews(){
+        ContentValues entryData;
+        String title;
+        String entryText;
+        Bitmap mainImageThumbnail;
+        long timeSinceEpoch;
+
+        TextView titleView;
+        TextView entryTextView;
+        ImageView mainImageView;
+
+  //Get the ContentValues and corresponding data
+    entryData = phloggingDatabase.getEntryByRowId(rowId);
+    title = entryData.getAsString("title");
+    entryText = entryData.getAsString("description");
+    mainImageId = entryData.getAsInteger("image_media_id");
+    timeSinceEpoch = entryData.getAsLong("time");
+    recordingFileName = entryData.getAsString("audio_file_name");
+    //TODO: get and display location and orientation
+
+    mainImageView = (ImageView) findViewById(R.id.image_thumbnail);
+
+    //Set the imageView image
+    if(mainImageId != -1){
+    	mainImageThumbnail = MediaStore.Images.Thumbnails.getThumbnail(
+    			getContentResolver(),mainImageId,
+    			MediaStore.Images.Thumbnails.MICRO_KIND,null);
+    	mainImageView.setImageBitmap(mainImageThumbnail);
+    } else if(mainImageView.getBackground()!=null){
+    	Log.i("SETVAL", "**reached**");
+    	//recycleView(mainImageView);
+    	mainImageView.setImageBitmap(null);
+    	mainImageView.setBackgroundDrawable(null);
+    	
+    }
+
+    //Set the titleView title
+    titleView = (TextView) findViewById(R.id.title);
+    titleView.setText(title);
+
+    //Set the entryView entry
+    entryTextView = (TextView) findViewById(R.id.entry_text);
+    entryTextView.setText(entryText);
+    }
 }

@@ -42,8 +42,6 @@ implements DialogInterface.OnDismissListener{
 //-----------------------------------------------------------------------------
 	private DataSQLiteDB phloggingDatabase;
 	private static final int PICTURE_DIALOG = 0;
-	private static final int CREATE_MODE = 1;
-	private static final int EDIT_MODE = 2;
 	private static final int ACTIVITY_SELECT_PICTURE = 3;
 	private static final int ACTIVITY_CAMERA_APP = 4;
 
@@ -61,8 +59,6 @@ implements DialogInterface.OnDismissListener{
     private Drawable defaultButtonBackground;
 
     private boolean isRecording;
-
-    int currentMode;
 //-----------------------------------------------------------------------------
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -73,9 +69,7 @@ implements DialogInterface.OnDismissListener{
 //        Bitmap imageBitmap;
 //        ImageView imageView;
 //        EditText descriptionView;
-        String formattedTime;
-        String recordDirName;
-        File recordDir;
+
 
         //Open database
         phloggingDatabase = new DataSQLiteDB(this);
@@ -85,12 +79,16 @@ implements DialogInterface.OnDismissListener{
       //  description = this.getIntent().getStringExtra("edu.miami.c06804728.phlogging.description");
         rowId = this.getIntent().getLongExtra("edu.miami.c06804728.phlogging.rowId", -1);
 
+
+		//Get the default button background - this is to be reused when resetting the button
+		//This is a hack because android doesn't support resetting the background drawable
+		defaultButtonBackground = findViewById(R.id.add_main_pic_button).getBackground();
+
         //No corresponding entry found in database- enter Create Mode
         if(rowId==-1){
-        	currentMode=CREATE_MODE;
-        	//createNewEntry();
+        	createNewEntry();
         } else{
-        	currentMode=EDIT_MODE;
+        	loadExistingEntry(rowId);
         }
 
 /*
@@ -114,23 +112,6 @@ implements DialogInterface.OnDismissListener{
         	descriptionView.setText(description);
         }*/
 
-        //Setup the date format
-        //TODO: add this to the database here so we can delete files later
-        creationTime = System.currentTimeMillis();
-        SimpleDateFormat df = new SimpleDateFormat("MM.dd.yyyy.HH.mm.ss");
-		formattedTime = df.format(new Date(creationTime));
-
-        //Set the recording fileName
-        recordDirName = Environment.getExternalStorageDirectory().
-        		getAbsolutePath() + "/Android/data/edu.miami.c06804728.phlogging/files";
-        recordDir = new File (recordDirName);
-        if (!recordDir.exists() && !recordDir.mkdirs()) {
-        	Toast.makeText(this,
-        			"ERROR: Could not make temporary storage directory "+recordDir,
-        			Toast.LENGTH_LONG).show();
-        	finish();
-        }
-        recordFileName = recordDir + "/" +  formattedTime + getString(R.string.record_file_name);
 
         //Not recording
         isRecording = false;
@@ -141,11 +122,6 @@ implements DialogInterface.OnDismissListener{
 
 		//Set current dialog to null
 		currentDialog = null;
-		mainPictureMediaId = -1;
-
-		//Get the default button background - this is to be reused when resetting the button
-		//This is a hack because android doesn't support resetting the background drawable
-		defaultButtonBackground = findViewById(R.id.add_main_pic_button).getBackground();
 	}
 //-----------------------------------------------------------------------------
 	public void audioClickHandler(View view) {
@@ -216,7 +192,7 @@ implements DialogInterface.OnDismissListener{
     	Intent returnIntent;
     	Intent galleryIntent;
     	EditText descriptionView;
-    	ContentValues phlogEntry;
+    	ContentValues phlogContent;
     	TextView titleView;
     	String title;
     	String description;
@@ -238,30 +214,33 @@ implements DialogInterface.OnDismissListener{
         	description = descriptionView.getText().toString().trim();
 
         	//Update the database
-        	phlogEntry = new ContentValues();
+        	phlogContent = new ContentValues();
 
-        	phlogEntry.put("title",title);
-        	phlogEntry.put("description",description);
-        	phlogEntry.put("time", creationTime);
-        	phlogEntry.put("image_media_id",mainPictureMediaId);
+        	phlogContent.put("title",title);
+        	phlogContent.put("description",description);
+        	phlogContent.put("time", creationTime);
+        	phlogContent.put("image_media_id",mainPictureMediaId);
         	//TODO: phlogEntry.put("location", );
         	//TODO: phlogEntry.put("orientation", );
 
         	//if the file exists, put it in the Intent
-        	Log.v("Brian", recordFileName);
-	    	audioFile = new File(recordFileName);
-        	if(audioFile.exists()){
-        		Log.v("Brian", "exists");
-        		phlogEntry.put("audio_file_name",recordFileName);
+        	if(recordFileName!=null){
+		    	audioFile = new File(recordFileName);
+	        	if(audioFile.exists()){
+	        		phlogContent.put("audio_file_name",recordFileName);
+	        	}
         	}
 
-        	//Add it to the database
-        	phloggingDatabase.addRowData(phlogEntry);
+        	if(rowId==-1){
+	        	//Add a new entry to the database
+	        	phloggingDatabase.addRowData(phlogContent);
+        	} else {
+        		//Update the existing entry in the database
+        		phloggingDatabase.updateRowData(rowId, phlogContent);
+        	}
 
-        	//Set the blank return Intent and exit
-        	//Tells Phlogging.java to requery if result_ok
-        	returnIntent = new Intent();
-	        setResult(RESULT_OK,returnIntent);
+
+	        setResult(RESULT_OK);
 
 	        finish();
         	break;
@@ -577,42 +556,79 @@ implements DialogInterface.OnDismissListener{
         return bitmap;
     }
 //-----------------------------------------------------------------------------
-/*    private void loadExistingEntry(int rowId){
+    private void createNewEntry(){
+        String formattedTime;
+        String recordDirName;
+        File recordDir;
+
+
+        //TODO: add this to the database here so we can delete files later
+
+		mainPictureMediaId = -1;
+
+		//Setup the date format
+        creationTime = System.currentTimeMillis();
+        SimpleDateFormat df = new SimpleDateFormat("MM.dd.yyyy.HH.mm.ss");
+		formattedTime = df.format(new Date(creationTime));
+
+        //Set the recording fileName
+        recordDirName = Environment.getExternalStorageDirectory().
+        		getAbsolutePath() + "/Android/data/edu.miami.c06804728.phlogging/files";
+        recordDir = new File (recordDirName);
+        if (!recordDir.exists() && !recordDir.mkdirs()) {
+        	Toast.makeText(this,
+        			"ERROR: Could not make temporary storage directory "+recordDir,
+        			Toast.LENGTH_LONG).show();
+        	finish();
+        }
+        recordFileName = recordDir + "/" +  formattedTime + getString(R.string.record_file_name);
+
+    }
+//-----------------------------------------------------------------------------
+    private void loadExistingEntry(long rowId){
         ContentValues entryData;
         String title;
         String entryText;
         Bitmap mainImageThumbnail;
         long timeSinceEpoch;
+        String formattedTime;
+        String recordDirName;
+        File recordDir;
+        Button mainPictureButton;
 
     	 //Get the ContentValues and corresponding data
         entryData = phloggingDatabase.getEntryByRowId(rowId);
         title = entryData.getAsString("title");
         entryText = entryData.getAsString("description");
         mainPictureMediaId = entryData.getAsInteger("image_media_id");
-        timeSinceEpoch = entryData.getAsLong("time");
-        recordingFileName = entryData.getAsString("audio_file_name");
+       // timeSinceEpoch = entryData.getAsLong("time");
+        recordFileName = entryData.getAsString("audio_file_name");
         //TODO: get and display location and orientation
 
+        mainPictureButton = (Button) findViewById(R.id.add_main_pic_button);
+
         //Set the imageView image
-        if(mainImageId != -1){
-        	mainImageView = (ImageView) findViewById(R.id.image_thumbnail);
+        if(mainPictureMediaId != -1){
         	mainImageThumbnail = MediaStore.Images.Thumbnails.getThumbnail(
-        			getContentResolver(),mainImageId,
+        			getContentResolver(),mainPictureMediaId,
         			MediaStore.Images.Thumbnails.MICRO_KIND,null);
-        	mainImageView.setImageBitmap(mainImageThumbnail);
+        	mainPictureButton = (Button) findViewById(R.id.add_main_pic_button);
+        	try {
+                //Set the thumbnail
+                mainPictureButton.setBackgroundDrawable(new BitmapDrawable(mainImageThumbnail));
+                mainPictureButton.setText("");
+            } catch (Exception e) {
+            	//Error
+            }
         }
 
-        //Set the titleView title
-        titleView = (TextView) findViewById(R.id.title);
-        titleView.setText(title);
+      //Set the titleView title text
+    	EditText titleView = (EditText) findViewById(R.id.title);
+    	titleView.setText(title);
 
-        //Set the entryView entry
-        entryTextView = (TextView) findViewById(R.id.entry_text);
-        entryTextView.setText(entryText);
-
-        //Setup the audio recorder player
-        recordingPlayer = new MediaPlayer();
-		recordingPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-    }*/
+    	//Set the entryView text
+    	EditText descriptionView = (EditText) findViewById(R.id.entry_text);
+    	descriptionView.setText(entryText);
+    }
 //-----------------------------------------------------------------------------
 }
