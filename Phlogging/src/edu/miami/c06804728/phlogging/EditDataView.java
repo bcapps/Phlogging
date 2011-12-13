@@ -24,6 +24,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
+import android.provider.MediaStore.Images;
+import android.provider.MediaStore.Images.Media;
 import android.provider.MediaStore.MediaColumns;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -43,6 +45,7 @@ implements DialogInterface.OnDismissListener{
 	private static final int CREATE_MODE = 1;
 	private static final int EDIT_MODE = 2;
 	private static final int ACTIVITY_SELECT_PICTURE = 3;
+	private static final int ACTIVITY_CAMERA_APP = 4;
 	
 	private String description;
 	private long rowId;
@@ -106,6 +109,7 @@ implements DialogInterface.OnDismissListener{
         }*/
         
         //Setup the date format
+        //TODO: add this to the database here so we can delete files later
         SimpleDateFormat df = new SimpleDateFormat("MM.dd.yyyy.HH.mm.ss");
 		formattedTime = df.format(new Date(System.currentTimeMillis()));
         
@@ -212,6 +216,7 @@ implements DialogInterface.OnDismissListener{
     	File audioFile;
     	ImageView pictureView;
     	Button mainPictureButton;
+    	Intent cameraIntent;
 
         switch (view.getId()) {
         case R.id.cancel_button:
@@ -264,6 +269,10 @@ implements DialogInterface.OnDismissListener{
         	startActivityForResult(galleryIntent,ACTIVITY_SELECT_PICTURE);
         	break;
         //TODO: case R.id.button_choose_camera:  //Let the user take a picture
+        case R.id.button_take_photo:
+        	cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            startActivityForResult(cameraIntent,ACTIVITY_CAMERA_APP);
+            break;
         case R.id.button_delete_photo:
         	//If there was already no image, don't do anything
         	if(mainPictureMediaId == -1){
@@ -367,24 +376,26 @@ implements DialogInterface.OnDismissListener{
 	}
 //-----------------------------------------------------------------------------
     @Override
-    public void onActivityResult(int requestCode,int resultCode,Intent data) {
-    	super.onActivityResult(requestCode,resultCode,data);
+    public void onActivityResult(int requestCode,int resultCode,Intent returnIntent) {
+    	super.onActivityResult(requestCode,resultCode,returnIntent);
     	
         ImageView pictureView;
         Button mainPictureButton;
         Uri selectedURI;
         Bitmap selectedPicture;
         String selectedImagePath;
+        Bitmap photoBitmap;
 
         switch (requestCode) {
         case ACTIVITY_SELECT_PICTURE:
             if (resultCode == Activity.RESULT_OK) {
                 pictureView = (ImageView)currentDialog.findViewById(R.id.image_full_size);
-                selectedURI = data.getData();
+                selectedURI = returnIntent.getData();
                 selectedImagePath = getPath(selectedURI);
                 
                 //Set the media ID, to be added to the database
                 mainPictureMediaId = getMediaId(selectedURI);
+
                 
                 //Set the thumbnail onto the button
                 mainPictureButton = (Button) findViewById(R.id.add_main_pic_button);
@@ -405,6 +416,36 @@ implements DialogInterface.OnDismissListener{
                 }
             }
             break;
+        case ACTIVITY_CAMERA_APP:
+        	if (resultCode == Activity.RESULT_OK) {
+        		pictureView = (ImageView)currentDialog.findViewById(R.id.image_full_size);
+                photoBitmap = (Bitmap)returnIntent.getExtras().get("data");
+                selectedImagePath = MediaStore.Images.Media.insertImage(getContentResolver(),  photoBitmap, "title", "description");
+                selectedURI = Uri.parse(selectedImagePath);
+
+                //Set the media ID, to be added to the database
+                mainPictureMediaId = getMediaId(selectedURI);
+                                
+                //Set the thumbnail onto the button
+                mainPictureButton = (Button) findViewById(R.id.add_main_pic_button);
+                
+                try {
+                	//Recycle the view
+                	recycleView(pictureView);
+                	
+                	//Set the pictureView
+                    pictureView.setImageBitmap(photoBitmap);
+                    
+                    //Set the thumbnail
+                    mainPictureButton.setBackgroundDrawable(new BitmapDrawable(photoBitmap));
+                    mainPictureButton.setText("");
+                } catch (Exception e) {
+                	//Error
+                }
+        	}
+        	break;
+        default:
+        	break;
         }
     }
 //-----------------------------------------------------------------------------
