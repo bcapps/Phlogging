@@ -22,7 +22,9 @@ import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.BaseColumns;
 import android.provider.MediaStore;
+import android.provider.MediaStore.MediaColumns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,7 +38,7 @@ public class EditDataView extends Activity
 implements DialogInterface.OnDismissListener{
 //-----------------------------------------------------------------------------
 	private DataSQLiteDB phloggingDatabase;
-	private static final int PICTURE_DIALOG = 10;
+	private static final int PICTURE_DIALOG = 0;
 	private static final int CREATE_MODE = 1;
 	private static final int EDIT_MODE = 2;
 	private static final int ACTIVITY_SELECT_PICTURE = 3;
@@ -137,6 +139,7 @@ implements DialogInterface.OnDismissListener{
 		mainPictureMediaId = -1;
 		
 		//Get the default button background - this is to be reused when resetting the button
+		//This is a hack because android doesn't support resetting the background drawable
 		defaultButtonBackground = findViewById(R.id.add_main_pic_button).getBackground();
 	}
 //-----------------------------------------------------------------------------
@@ -323,10 +326,34 @@ implements DialogInterface.OnDismissListener{
 //-----------------------------------------------------------------------------
     @Override
 	protected void onPrepareDialog (int dialogId, Dialog dialog){
+    	String mainPictureFilename;
+    	Bitmap mainPictureBitmap;
+    	ImageView pictureView;
+    	
     	//set the current dialog
     	currentDialog = dialog;
     			
-    	//TODO: display current image
+    	switch(dialogId){
+    	case PICTURE_DIALOG:
+    		//If there is no image, don't do anything
+        	if(mainPictureMediaId == -1){
+        		break;
+        	}
+        	//Get the pictureView
+        	pictureView = (ImageView)dialog.findViewById(R.id.image_full_size);
+        	
+        	//Get the image bitmap
+        	mainPictureFilename = getFilenameFromMediaId(mainPictureMediaId);
+        	mainPictureBitmap = loadResizedBitmap(mainPictureFilename, 300, 300, false);
+        	
+        	//Recycle the view
+        	recycleView(pictureView);
+        	
+        	//Set the pictureView's image to the image bitmap
+        	pictureView.setImageBitmap(mainPictureBitmap);
+
+    		break;
+    	}
     }
 //-----------------------------------------------------------------------------
     @Override
@@ -392,6 +419,51 @@ implements DialogInterface.OnDismissListener{
         }
     }
 //-----------------------------------------------------------------------------
+    //Convenience method to get the image filename from a rowId
+    public String getFilenameFromMediaId(int imageMediaId){
+    	boolean imageFound;
+    	int imageIDIndex;
+    	int imageDataIndex;
+    	String imageFileName;
+    	Cursor imageMediaCursor;
+
+    	imageFound = false;
+    	
+    	//Setup
+    	String[] queryFields = {
+                BaseColumns._ID,
+                //The data field will be used later to obtain the fileName
+                MediaColumns.DATA
+            };
+
+    	//Setup the query
+        imageMediaCursor = managedQuery(
+            			MediaStore.Images.Media.EXTERNAL_CONTENT_URI,queryFields,null,null,
+            			MediaStore.Images.Media.DEFAULT_SORT_ORDER);
+    	
+    	//Get the relevant MediaStore column indexes
+    	imageIDIndex = imageMediaCursor.getColumnIndex(BaseColumns._ID);
+    	imageDataIndex = imageMediaCursor.getColumnIndex(MediaColumns.DATA);
+
+    	//Use the cursor to iterate through images to find one that matches the id
+        if (imageMediaCursor.moveToFirst()) {
+            do {
+            	//Compare the imageMediaId with id's in the media store
+                imageFound = (imageMediaId == imageMediaCursor.getInt(imageIDIndex));
+            } while (!imageFound && imageMediaCursor.moveToNext());
+        }
+        if (imageFound) {
+        	//if the image was found, get the fileName
+        	imageFileName = imageMediaCursor.getString(imageDataIndex);
+
+        	return imageFileName;
+        }
+        
+        //If the image isn't found, return null
+        return null;
+    }
+//-----------------------------------------------------------------------------
+    //Helper method to get the file path from a Uri
     public String getPath(Uri uri) {
         String[] projection = { MediaStore.Images.Media.DATA };
         Cursor cursor = managedQuery(uri, projection, null, null, null);
@@ -401,6 +473,7 @@ implements DialogInterface.OnDismissListener{
         return cursor.getString(column_index);
     }
 //-----------------------------------------------------------------------------
+    //Helper method to get the media id from a Uri
     public int getMediaId(Uri uri) {
         String[] projection = { MediaStore.Images.Media._ID };
         Cursor cursor = managedQuery(uri, projection, null, null, null);

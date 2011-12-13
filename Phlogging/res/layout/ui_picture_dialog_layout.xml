@@ -35,7 +35,7 @@
         android:gravity="center">
 	    <Button android:id="@+id/button_delete_photo"
 	        style="@style/PictureDialogBottomButton"
-	        android:layout_height="55dp"
+	        android:layout_height="53dp"
 	        android:text="@string/delete_pic_button_text"
 	        android:background="@drawable/delete_button"
 	        android:textColor="@color/white"

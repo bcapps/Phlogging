@@ -236,7 +236,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         	title = cursor.getString(columnIndex);
 
         	//Set the description, including default if description is null
-        	if(title != null){
+        	if(title.length()>0){
         		titleView.setText(title);
         	}
         	else{
