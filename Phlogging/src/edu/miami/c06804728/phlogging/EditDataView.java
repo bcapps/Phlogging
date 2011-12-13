@@ -289,6 +289,7 @@ implements DialogInterface.OnDismissListener{
         	//Remove the image
         	pictureView = (ImageView)currentDialog.findViewById(R.id.image_full_size);
         	recycleView(pictureView);
+        	pictureView.setBackgroundResource(R.drawable.no_photo);
         	
         	//Remove thumbnail and reset the button
             mainPictureButton = (Button) findViewById(R.id.add_main_pic_button);
@@ -339,12 +340,14 @@ implements DialogInterface.OnDismissListener{
     			
     	switch(dialogId){
     	case PICTURE_DIALOG:
-    		//If there is no image, don't do anything
+    		//Get the pictureView
+        	pictureView = (ImageView)dialog.findViewById(R.id.image_full_size);
+        	
+    		//If there is no image, set to blank image
         	if(mainPictureMediaId == -1){
+        		pictureView.setBackgroundResource(R.drawable.no_photo);
         		break;
         	}
-        	//Get the pictureView
-        	pictureView = (ImageView)dialog.findViewById(R.id.image_full_size);
         	
         	//Get the image bitmap
         	mainPictureFilename = getFilenameFromMediaId(mainPictureMediaId);
