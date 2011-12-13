@@ -208,7 +208,6 @@ implements DialogInterface.OnDismissListener{
 	}
 //-----------------------------------------------------------------------------
 	public void myClickHandler(View view) {
-    	Intent returnIntent;
     	Intent galleryIntent;
     	EditText descriptionView;
     	ContentValues phlogEntry;
@@ -243,20 +242,16 @@ implements DialogInterface.OnDismissListener{
         	//TODO: phlogEntry.put("orientation", );
         	
         	//if the file exists, put it in the Intent
-        	Log.v("Brian", recordFileName);
 	    	audioFile = new File(recordFileName);
         	if(audioFile.exists()){
-        		Log.v("Brian", "exists");
         		phlogEntry.put("audio_file_name",recordFileName);
         	}
         	
         	//Add it to the database
         	phloggingDatabase.addRowData(phlogEntry);
         	
-        	//Set the blank return Intent and exit
         	//Tells Phlogging.java to requery if result_ok
-        	returnIntent = new Intent();
-	        setResult(RESULT_OK,returnIntent);
+	        setResult(RESULT_OK);
 
 	        finish();
         	break;

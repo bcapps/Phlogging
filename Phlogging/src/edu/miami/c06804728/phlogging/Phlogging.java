@@ -393,30 +393,9 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
     public void onActivityResult(int requestCode,int resultCode,Intent data) {
     	super.onActivityResult(requestCode, resultCode, data);
 
-    	String description;
-    	long rowId;
-    	String recordFileName;
-    	ContentValues imageData;
-
     	switch (requestCode) {
         case ACTIVITY_EDIT:
         	if (resultCode == Activity.RESULT_OK) {
-        		//Get the description and rowId values
-//        		description = data.getStringExtra("edu.miami.c06804728.phlogging.description");
-//        		rowId = data.getLongExtra("edu.miami.c06804728.phlogging.rowId", -1);
-//        		recordFileName = data.getStringExtra("edu.miami.c06804728.phlogging.recordFileName");
-//
-//        		//Wrong rowId
-//                if(rowId==-1){
-//                	break;
-//                }
-//
-//                //Update the description and recordFileName based on the rowId
-//                imageData = phloggingDatabase.getImageById(rowId);
-//                imageData.put("description", description);
-//                imageData.put("audio_file_name", recordFileName);
-//                phloggingDatabase.updateRowData(rowId, imageData);
-
                 //Refresh the listView
                 entryCursor.requery();
         	}
@@ -424,8 +403,6 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         default:
         	break;
     	}
-    	//Start the music again
-    	//musicPlayer.start();
     }
 //-----------------------------------------------------------------------------
     //Convenience method to get the image filename from a rowId
