@@ -203,9 +203,17 @@ implements DialogInterface.OnDismissListener{
 	    	}
 	    }
 //-----------------------------------------------------------------------------
-	@Override
-	public void onDismiss (DialogInterface dialog){
-    }
+	 @Override
+	 public void onDismiss (DialogInterface dialog){
+	 }
+//-----------------------------------------------------------------------------
+	 @Override
+	 public void onDestroy() {
+		 super.onDestroy();
+
+		 recordingPlayer.release();
+		 phloggingDatabase.close();
+	}
 //-----------------------------------------------------------------------------
     //Convenience method to get the image filename from a rowId
     public String getFilenameFromMediaId(int imageMediaId){
