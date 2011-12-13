@@ -107,7 +107,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         musicWasPlaying = false;
 
         //Play a random song from the music library
-        playRandomSong();
+        //playRandomSong();
 
         //Setup the audio recorder player
         recordingPlayer = new MediaPlayer();
@@ -619,19 +619,19 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
     }
 
 //-----------------------------------------------------------------------------
-    @Override
-    protected void onPause() {
-        super.onPause();
-        musicWasPlaying = musicPlayer.isPlaying();
-        //Pause playing music
-        if(musicWasPlaying){
-        	musicPlayer.pause();
-        }
-        //Stop TTS
-        if(mySpeaker.isSpeaking()){
-        	mySpeaker.stop();
-        }
-    }
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+//        musicWasPlaying = musicPlayer.isPlaying();
+//        //Pause playing music
+//        if(musicWasPlaying){
+//        	musicPlayer.pause();
+//        }
+//        //Stop TTS
+//        if(mySpeaker.isSpeaking()){
+//        	mySpeaker.stop();
+//        }
+//    }
 //-----------------------------------------------------------------------------
     //Generic code to recycleView. Taken verbatim from Geoff's site.
     private void recycleView(View view) {

@@ -13,6 +13,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
@@ -245,8 +246,8 @@ implements DialogInterface.OnDismissListener{
 
         case R.id.button_choose_gallery:
         	galleryIntent = new Intent(Intent.ACTION_PICK,
-        			android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-        			            startActivityForResult(galleryIntent,ACTIVITY_SELECT_PICTURE);
+        			MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        	startActivityForResult(galleryIntent,ACTIVITY_SELECT_PICTURE);
         	break;
         
         default:
@@ -323,6 +324,7 @@ implements DialogInterface.OnDismissListener{
                 selectedURI = data.getData();
                 
                 try {
+                	recycleView(pictureView);
                     selectedPicture = MediaStore.Images.Media.getBitmap(
 this.getContentResolver(),selectedURI);
                     Log.i("ENID", selectedPicture.toString());
@@ -334,7 +336,37 @@ this.getContentResolver(),selectedURI);
             break;
         }
     }
+    
 //-----------------------------------------------------------------------------
+    //Generic code to recycleView. Taken verbatim from Geoff's site.
+    private void recycleView(View view) {
+
+        ImageView imageView;
+        Bitmap imageBitmap;
+        BitmapDrawable imageBitmapDrawable;
+
+        if (view != null) {
+            if (view instanceof ImageView) {
+                imageView = (ImageView)view;
+                if ((imageBitmapDrawable =
+                		(BitmapDrawable)imageView.getDrawable()) != null &&
+                		(imageBitmap = imageBitmapDrawable.getBitmap()) != null) {
+                    imageBitmap.recycle();
+                }
+                imageView.setImageURI(null);
+                imageView.setImageBitmap(null);
+            }
+            if ((imageBitmapDrawable =
+            		(BitmapDrawable)view.getBackground()) != null &&
+            		(imageBitmap = imageBitmapDrawable.getBitmap()) != null) {
+                imageBitmap.recycle();
+            }
+            view.setBackgroundDrawable(null);
+            System.gc();
+        }
+    }
+//-----------------------------------------------------------------------------
+
 	//This code is from the internet. It fixes a common Android issue
     //where if the image is too big, it just crashes.
     public static Bitmap loadResizedBitmap( String filename, int width, int height, boolean exact ) {
