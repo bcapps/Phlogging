@@ -25,6 +25,7 @@ import android.os.Environment;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -344,10 +345,8 @@ implements DialogInterface.OnDismissListener{
         	
         	//Get the image bitmap
         	mainPictureFilename = getFilenameFromMediaId(mainPictureMediaId);
+        	Log.v("Brian", "mainpicFileName = "+mainPictureFilename);
         	mainPictureBitmap = loadResizedBitmap(mainPictureFilename, 300, 300, false);
-        	
-        	//Recycle the view
-        	recycleView(pictureView);
         	
         	//Set the pictureView's image to the image bitmap
         	pictureView.setImageBitmap(mainPictureBitmap);
