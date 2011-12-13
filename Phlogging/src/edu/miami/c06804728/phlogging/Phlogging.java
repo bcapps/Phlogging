@@ -411,7 +411,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         	break;
     	}
     	//Start the music again
-    	musicPlayer.start();
+    	//musicPlayer.start();
     }
 //-----------------------------------------------------------------------------
     //Convenience method to get the image filename from a rowId

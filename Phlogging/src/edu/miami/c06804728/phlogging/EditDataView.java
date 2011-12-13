@@ -11,6 +11,7 @@ import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
@@ -46,6 +47,9 @@ implements DialogInterface.OnDismissListener{
 	private MediaRecorder recorder;
     private String recordFileName;
     private MediaPlayer recordingPlayer;
+    
+    private Dialog currentDialog;
+    private int mainPictureMediaId;
 
     private boolean isRecording;
 //-----------------------------------------------------------------------------
@@ -124,6 +128,10 @@ implements DialogInterface.OnDismissListener{
         //Setup the audio recorder player
         recordingPlayer = new MediaPlayer();
 		recordingPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+		
+		//Set current dialog to null
+		currentDialog = null;
+		mainPictureMediaId = -1;
 	}
 //-----------------------------------------------------------------------------
 	public void audioClickHandler(View view) {
@@ -199,6 +207,7 @@ implements DialogInterface.OnDismissListener{
     	String title;
     	String description;
     	File audioFile;
+    	ImageView pictureView;
 
         switch (view.getId()) {
         case R.id.cancel_button:
@@ -214,12 +223,17 @@ implements DialogInterface.OnDismissListener{
         	
         	//Update the database
         	phlogEntry = new ContentValues();
-        	//phlogEntry.put("image_media_id",imageMediaId); //This will be when we have the image id
+        	
         	phlogEntry.put("title",title);
         	phlogEntry.put("description",description);
         	phlogEntry.put("time", System.currentTimeMillis());
         	//phlogEntry.put("location", );
         	//phlogEntry.put("orientation", );
+        	
+        	//if the main picture was set, add it
+        	if(mainPictureMediaId != -1){
+        		phlogEntry.put("image_media_id",mainPictureMediaId);
+        	}
         	
         	//if the file exists, put it in the Intent
 	    	audioFile = new File(recordFileName);
@@ -249,7 +263,15 @@ implements DialogInterface.OnDismissListener{
         			MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         	startActivityForResult(galleryIntent,ACTIVITY_SELECT_PICTURE);
         	break;
-        
+        case R.id.button_delete_photo:
+        	//Reset the main photo id to not found
+        	mainPictureMediaId = -1;
+        	
+        	//Remove the image
+        	pictureView = (ImageView)currentDialog.findViewById(R.id.image_full_size);
+        	recycleView(pictureView);
+        	
+        	break;
         default:
             break;
         }
@@ -272,24 +294,27 @@ implements DialogInterface.OnDismissListener{
     		dialogView = dialogInflator.inflate(R.layout.ui_picture_dialog_layout,
     				(ViewGroup)findViewById(R.id.dialog_root));
     		dialogBuilder.setView(dialogView);
-
     		break;
     	default:
     		break;
     	}
     	theDialog = dialogBuilder.create();
     	theDialog.setOnDismissListener(this);
-
+		
     	return(theDialog);
     }
 //-----------------------------------------------------------------------------
     @Override
 	protected void onPrepareDialog (int dialogId, Dialog dialog){
+    	//set the current dialog
+    	currentDialog = dialog;
+    			
+    	//TODO: display current image
     }
 //-----------------------------------------------------------------------------
     @Override
 	public void onDismiss (DialogInterface dialog){
-    	
+		currentDialog = null;
     }
 //-----------------------------------------------------------------------------  
     @Override
@@ -310,33 +335,54 @@ implements DialogInterface.OnDismissListener{
 //-----------------------------------------------------------------------------
     @Override
     public void onActivityResult(int requestCode,int resultCode,Intent data) {
-        
+    	super.onActivityResult(requestCode,resultCode,data);
+    	
         ImageView pictureView;
         Uri selectedURI;
         Bitmap selectedPicture;
-        
-        super.onActivityResult(requestCode,resultCode,data);
+        String selectedImagePath;
 
         switch (requestCode) {
         case ACTIVITY_SELECT_PICTURE:
             if (resultCode == Activity.RESULT_OK) {
-                pictureView = (ImageView)findViewById(R.id.image_full_size);
+                pictureView = (ImageView)currentDialog.findViewById(R.id.image_full_size);
                 selectedURI = data.getData();
+                selectedImagePath = getPath(selectedURI);
+                
+                //Set the media ID, to be added to the database
+                mainPictureMediaId = getMediaId(selectedURI);
                 
                 try {
+                	//Recycle the view
                 	recycleView(pictureView);
-                    selectedPicture = MediaStore.Images.Media.getBitmap(
-this.getContentResolver(),selectedURI);
-                    Log.i("ENID", selectedPicture.toString());
+                	
+                    selectedPicture = loadResizedBitmap(selectedImagePath, 300, 300, false);                    
                     pictureView.setImageBitmap(selectedPicture);
                 } catch (Exception e) {
-                	Log.i("ENID", "IM HERE2");
+                	//Error
                 }
             }
             break;
         }
     }
-    
+//-----------------------------------------------------------------------------
+    public String getPath(Uri uri) {
+        String[] projection = { MediaStore.Images.Media.DATA };
+        Cursor cursor = managedQuery(uri, projection, null, null, null);
+        int column_index = cursor
+                .getColumnIndex(MediaStore.Images.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(column_index);
+    }
+//-----------------------------------------------------------------------------
+    public int getMediaId(Uri uri) {
+        String[] projection = { MediaStore.Images.Media._ID };
+        Cursor cursor = managedQuery(uri, projection, null, null, null);
+        int column_index = cursor
+                .getColumnIndex(MediaStore.Images.Media._ID);
+        cursor.moveToFirst();
+        return cursor.getInt(column_index);
+    }
 //-----------------------------------------------------------------------------
     //Generic code to recycleView. Taken verbatim from Geoff's site.
     private void recycleView(View view) {
