@@ -65,18 +65,10 @@ implements DialogInterface.OnDismissListener{
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_entry_layout);
 
-        //String imageFilename;
-//        Bitmap imageBitmap;
-//        ImageView imageView;
-//        EditText descriptionView;
-
-
         //Open database
         phloggingDatabase = new DataSQLiteDB(this);
 
         //Get the variables sent from last activity
-       // imageFilename = this.getIntent().getStringExtra("edu.miami.c06804728.phlogging.image_file_name");
-      //  description = this.getIntent().getStringExtra("edu.miami.c06804728.phlogging.description");
         rowId = this.getIntent().getLongExtra("edu.miami.c06804728.phlogging.rowId", -1);
 
 
@@ -90,28 +82,6 @@ implements DialogInterface.OnDismissListener{
         } else{
         	loadExistingEntry(rowId);
         }
-
-/*
-        //Set the ImageView image
-        int maxWidth, maxHeight;
-
-        imageView = (ImageView) findViewById(R.id.image_large);
-        if(imageFilename!=null){
-        	//Get the max values, load and set the Bitmap
-        	maxWidth = getResources().getInteger(R.integer.image_max_width);
-    		maxHeight = getResources().getInteger(R.integer.image_max_height);
-
-        	imageBitmap = loadResizedBitmap(imageFilename,
-    				maxWidth, maxHeight, false);
-        	imageView.setImageBitmap(imageBitmap);
-        }
-
-        //Set the EditText text
-        descriptionView = (EditText) findViewById(R.id.edit_text_field);
-        if(description!=null){
-        	descriptionView.setText(description);
-        }*/
-
 
         //Not recording
         isRecording = false;
@@ -557,9 +527,6 @@ implements DialogInterface.OnDismissListener{
         String formattedTime;
         String recordDirName;
         File recordDir;
-
-
-        //TODO: add this to the database here so we can delete files later
 
 		mainPictureMediaId = -1;
 

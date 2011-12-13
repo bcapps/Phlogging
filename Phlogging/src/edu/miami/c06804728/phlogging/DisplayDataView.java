@@ -44,8 +44,6 @@ implements DialogInterface.OnDismissListener{
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.display_entry);
 
-
-
       	//Open database
         phloggingDatabase = new DataSQLiteDB(this);
 
@@ -56,7 +54,8 @@ implements DialogInterface.OnDismissListener{
         if(rowId==-1){
         	finish();
         }
-
+        
+        //Initialize all the views with their values
         setViews();
 
         //Setup the audio recorder player
@@ -292,39 +291,10 @@ implements DialogInterface.OnDismissListener{
     @Override
     public void onActivityResult(int requestCode,int resultCode,Intent data) {
     	super.onActivityResult(requestCode, resultCode, data);
-
-    	String description;
-    	long rowId;
-    	String recordFileName;
-    	ContentValues imageData;
-//
-//    	switch (requestCode) {
-//        case ACTIVITY_EDIT:
-        	if (resultCode == Activity.RESULT_OK) {
-        		//Get the description and rowId values
-//        		description = data.getStringExtra("edu.miami.c06804728.phlogging.description");
-//        		rowId = data.getLongExtra("edu.miami.c06804728.phlogging.rowId", -1);
-//        		recordFileName = data.getStringExtra("edu.miami.c06804728.phlogging.recordFileName");
-
-        		setViews();
-//        		//Wrong rowId
-//                if(rowId==-1){
-//                	break;
-//                }
-//
-//                //Update the description and recordFileName based on the rowId
-//                imageData = phloggingDatabase.getImageById(rowId);
-//                imageData.put("description", description);
-//                imageData.put("audio_file_name", recordFileName);
-//                phloggingDatabase.updateRowData(rowId, imageData);
-
-        	}
-//        	break;
-//        default:
-//        	break;
-//    	}
-    	//Start the music again
-    	//musicPlayer.start();
+    	if (resultCode == Activity.RESULT_OK) {
+        	//Get the description and rowId values
+        	setViews();
+        }
     }
 //-----------------------------------------------------------------------------
     public void setViews(){

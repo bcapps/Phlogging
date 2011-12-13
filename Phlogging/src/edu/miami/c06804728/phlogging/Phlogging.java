@@ -1,11 +1,7 @@
 package edu.miami.c06804728.phlogging;
 
-import java.io.File;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
-import java.util.Random;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -30,7 +26,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -88,9 +83,6 @@ DialogInterface.OnDismissListener{
         theList.setAdapter(cursorAdapter);
         theList.setOnItemClickListener(this);
 
-        //Setup TTS
-        mySpeaker = new TextToSpeech(this,this);
-
         //Setup the audio recorder player
         recordingPlayer = new MediaPlayer();
 		recordingPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -105,22 +97,6 @@ DialogInterface.OnDismissListener{
         entryCursor.close();
         phloggingDatabase.close();
         mySpeaker.shutdown();
-    }
-//-----------------------------------------------------------------------------
-    @Override
-	public void onInit(int status) {
-    	//When the TTS is initialized, check if it's ready to speak
-        if (status == TextToSpeech.SUCCESS &&
-        			mySpeaker.isLanguageAvailable(Locale.US) ==
-        			TextToSpeech.LANG_COUNTRY_AVAILABLE &&
-        			mySpeaker.setOnUtteranceCompletedListener(this) == TextToSpeech.SUCCESS) {
-            Toast.makeText(this,"Now you can talk",Toast.LENGTH_SHORT).show();
-        } else {
-        	//if not, display an error and exit
-            Toast.makeText(this,"You need to install TextToSpeech",
-            		Toast.LENGTH_LONG).show();
-            finish();
-        }
     }
 //-----------------------------------------------------------------------------
     //Intercept the creation of each item in the listView
