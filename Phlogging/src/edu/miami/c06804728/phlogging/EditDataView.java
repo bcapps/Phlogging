@@ -45,7 +45,6 @@ implements DialogInterface.OnDismissListener{
 	private static final int ACTIVITY_SELECT_PICTURE = 3;
 	private static final int ACTIVITY_CAMERA_APP = 4;
 
-	private String description;
 	private long rowId;
 	private long creationTime;
 
@@ -64,20 +63,11 @@ implements DialogInterface.OnDismissListener{
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_entry_layout);
 
-        //String imageFilename;
-//        Bitmap imageBitmap;
-//        ImageView imageView;
-//        EditText descriptionView;
-
-
         //Open database
         phloggingDatabase = new DataSQLiteDB(this);
 
         //Get the variables sent from last activity
-       // imageFilename = this.getIntent().getStringExtra("edu.miami.c06804728.phlogging.image_file_name");
-      //  description = this.getIntent().getStringExtra("edu.miami.c06804728.phlogging.description");
         rowId = this.getIntent().getLongExtra("edu.miami.c06804728.phlogging.rowId", -1);
-
 
 		//Get the default button background - this is to be reused when resetting the button
 		//This is a hack because android doesn't support resetting the background drawable
@@ -85,33 +75,11 @@ implements DialogInterface.OnDismissListener{
 
         //No corresponding entry found in database- enter Create Mode
         if(rowId==-1){
-    		mainPictureMediaId = -1;
-    	    setRecordingFileName();
+        	mainPictureMediaId = -1;
+        	setDefaultRecordFileName();
         } else{
         	loadExistingEntry(rowId);
         }
-
-/*
-        //Set the ImageView image
-        int maxWidth, maxHeight;
-
-        imageView = (ImageView) findViewById(R.id.image_large);
-        if(imageFilename!=null){
-        	//Get the max values, load and set the Bitmap
-        	maxWidth = getResources().getInteger(R.integer.image_max_width);
-    		maxHeight = getResources().getInteger(R.integer.image_max_height);
-
-        	imageBitmap = loadResizedBitmap(imageFilename,
-    				maxWidth, maxHeight, false);
-        	imageView.setImageBitmap(imageBitmap);
-        }
-
-        //Set the EditText text
-        descriptionView = (EditText) findViewById(R.id.edit_text_field);
-        if(description!=null){
-        	descriptionView.setText(description);
-        }*/
-
 
         //Not recording
         isRecording = false;
@@ -149,6 +117,10 @@ implements DialogInterface.OnDismissListener{
 		case R.id.stop_button:
 			//Stop recording
 			stopRecording();
+			//Stop playing
+			if(recordingPlayer.isPlaying()){
+				recordingPlayer.stop();
+			}
 			break;
 		case R.id.clear_button:
 			//Stop recording
@@ -253,7 +225,6 @@ implements DialogInterface.OnDismissListener{
         			MediaStore.Images.Media.INTERNAL_CONTENT_URI);
         	startActivityForResult(galleryIntent,ACTIVITY_SELECT_PICTURE);
         	break;
-        //TODO: case R.id.button_choose_camera:  //Let the user take a picture
         case R.id.button_take_photo:
         	cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             startActivityForResult(cameraIntent,ACTIVITY_CAMERA_APP);
@@ -553,12 +524,10 @@ implements DialogInterface.OnDismissListener{
         return bitmap;
     }
 //-----------------------------------------------------------------------------
-    private void setRecordingFileName(){
+    private void setDefaultRecordFileName(){
         String formattedTime;
         String recordDirName;
         File recordDir;
-
-        //TODO: add this to the database here so we can delete files later
 
 		//Setup the date format
         creationTime = System.currentTimeMillis();
@@ -592,8 +561,11 @@ implements DialogInterface.OnDismissListener{
         entryText = entryData.getAsString("description");
         mainPictureMediaId = entryData.getAsInteger("image_media_id");
        // timeSinceEpoch = entryData.getAsLong("time");
-        recordFileName = entryData.getAsString("audio_fi le_name");
-
+        recordFileName = entryData.getAsString("audio_file_name");
+        //If the filename is invalid, set it to the default
+        if(recordFileName == null || recordFileName.length()<=0){
+        	setDefaultRecordFileName();
+        }
         //TODO: get and display location and orientation
 
         mainPictureButton = (Button) findViewById(R.id.add_main_pic_button);
