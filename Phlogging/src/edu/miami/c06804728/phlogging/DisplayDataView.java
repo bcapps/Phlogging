@@ -144,6 +144,11 @@ implements DialogInterface.OnDismissListener{
         case R.id.picture_button_dismiss:
         	dismissDialog(PICTURE_DIALOG);
         	break;
+        case R.id.delete_button:
+        	phloggingDatabase.deleteRowData(rowId);
+        	setResult(RESULT_OK);
+        	finish();
+        	break;
         default:
         	break;
         }
