@@ -47,7 +47,6 @@ implements DialogInterface.OnDismissListener{
 
 	private String description;
 	private long rowId;
-	private int mode;
 	private long creationTime;
 
 	private MediaRecorder recorder;
@@ -86,7 +85,8 @@ implements DialogInterface.OnDismissListener{
 
         //No corresponding entry found in database- enter Create Mode
         if(rowId==-1){
-        	createNewEntry();
+    		mainPictureMediaId = -1;
+    	    setRecordingFileName();
         } else{
         	loadExistingEntry(rowId);
         }
@@ -553,15 +553,12 @@ implements DialogInterface.OnDismissListener{
         return bitmap;
     }
 //-----------------------------------------------------------------------------
-    private void createNewEntry(){
+    private void setRecordingFileName(){
         String formattedTime;
         String recordDirName;
         File recordDir;
 
-
         //TODO: add this to the database here so we can delete files later
-
-		mainPictureMediaId = -1;
 
 		//Setup the date format
         creationTime = System.currentTimeMillis();
@@ -595,7 +592,8 @@ implements DialogInterface.OnDismissListener{
         entryText = entryData.getAsString("description");
         mainPictureMediaId = entryData.getAsInteger("image_media_id");
        // timeSinceEpoch = entryData.getAsLong("time");
-        recordFileName = entryData.getAsString("audio_file_name");
+        recordFileName = entryData.getAsString("audio_fi le_name");
+
         //TODO: get and display location and orientation
 
         mainPictureButton = (Button) findViewById(R.id.add_main_pic_button);
