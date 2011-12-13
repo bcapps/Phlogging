@@ -81,7 +81,16 @@ null) > 0);
         						"audio_file_name", "time", "location", "orientation"};
 
         return(theDB.query(PHLOGGING_TABLE,fieldNames,null,null,
-null,null,"image_media_id"));
+null,null,"time"));
+    }
+//-----------------------------------------------------------------------------
+    public Cursor fetchAllData(String sortColumn) {
+
+        String[] fieldNames = {"_id","title","description","image_media_id", "secondary_image_media_id",
+        						"audio_file_name", "time", "location", "orientation"};
+
+        return(theDB.query(PHLOGGING_TABLE,fieldNames,null,null,
+null,null,sortColumn));
     }
 //-----------------------------------------------------------------------------
     public ContentValues getImageByImageMediaId(int imageMediaId) {

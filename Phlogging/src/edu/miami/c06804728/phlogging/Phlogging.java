@@ -63,7 +63,7 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
-        SimpleCursorAdapter cursorAdapter;
+    	SimpleCursorAdapter cursorAdapter;
         ListView theList;
         String[] displayFields = {
         	"image_media_id",
@@ -497,6 +497,19 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
 //-----------------------------------------------------------------------------
     public void myClickHandler(View view) {
     	Intent nextActivity;
+    	SimpleCursorAdapter cursorAdapter;
+        ListView theList;
+        String[] displayFields = {
+        	"image_media_id",
+            "title",
+            "time"
+        };
+
+        int[] displayViews = {
+        	R.id.image_thumbnail,
+            R.id.title,
+            R.id.time
+        };
 
         switch (view.getId()) {
         case R.id.settings_button:
@@ -514,6 +527,30 @@ DialogInterface.OnDismissListener, TextToSpeech.OnInitListener,TextToSpeech.OnUt
         	startActivityForResult(nextActivity,ACTIVITY_EDIT);
 
             break;
+        case R.id.sort_title:
+        	//create a new cursor and refetch the data with sort order
+        	entryCursor = phloggingDatabase.fetchAllData("title");
+        	
+        	//create a new adapter and set it to the list
+        	theList = (ListView)findViewById(R.id.the_list);
+            cursorAdapter = new SimpleCursorAdapter(this,
+              R.layout.list_item_layout,
+                  entryCursor,displayFields,displayViews);
+            cursorAdapter.setViewBinder(this);
+            theList.setAdapter(cursorAdapter);
+        	break;
+        case R.id.sort_date:
+        	//create a new cursor and refetch the data with sort order
+        	entryCursor = phloggingDatabase.fetchAllData("time");
+        	
+        	//create a new adapter and set it to the list
+        	theList = (ListView)findViewById(R.id.the_list);
+            cursorAdapter = new SimpleCursorAdapter(this,
+              R.layout.list_item_layout,
+                  entryCursor,displayFields,displayViews);
+            cursorAdapter.setViewBinder(this);
+            theList.setAdapter(cursorAdapter);
+        	break;
         case R.id.settings_button_dismiss:
         	dismissDialog(SETTINGS_DIALOG);
             break;

@@ -17,13 +17,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal">
-        <Button android:id="@+id/sort_date"
+        <Button android:id="@+id/sort_title"
             android:layout_width="@dimen/button_width"
             android:layout_height="@dimen/button_height"
             android:text="Title"
             android:onClick="myClickHandler">
         </Button>
-        <Button android:id="@+id/sort_title"
+        <Button android:id="@+id/sort_date"
             android:layout_width="@dimen/button_width"
             android:layout_height="@dimen/button_height"
             android:text="Date"
