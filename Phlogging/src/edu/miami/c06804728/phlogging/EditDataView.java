@@ -13,12 +13,16 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.media.MediaRecorder;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 //=============================================================================
@@ -29,6 +33,7 @@ implements DialogInterface.OnDismissListener{
 	private static final int PICTURE_DIALOG = 10;
 	private static final int CREATE_MODE = 1;
 	private static final int EDIT_MODE = 2;
+	private static final int ACTIVITY_SELECT_PICTURE = 3;
 	
 	private String description;
 	private long rowId;
@@ -38,6 +43,7 @@ implements DialogInterface.OnDismissListener{
 
     private boolean isRecording;
 //-----------------------------------------------------------------------------
+	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_entry_layout);
@@ -112,6 +118,7 @@ implements DialogInterface.OnDismissListener{
 //-----------------------------------------------------------------------------
 	public void myClickHandler(View view) {
     	Intent returnIntent;
+    	Intent galleryIntent;
     	EditText descriptionView;
     	ContentValues phlogEntry;
     	TextView titleView;
@@ -154,6 +161,11 @@ implements DialogInterface.OnDismissListener{
         	break;
         case R.id.add_main_pic_button:
         	showDialog(PICTURE_DIALOG);
+        	break;
+        case R.id.button_choose_gallery:
+        	galleryIntent = new Intent(Intent.ACTION_PICK,
+        			android.provider.MediaStore.Images.Media.INTERNAL_CONTENT_URI);
+        			            startActivityForResult(galleryIntent,ACTIVITY_SELECT_PICTURE);
         	break;
         /*case R.id.audio_record:
         	//Setup the media recorder
@@ -272,6 +284,34 @@ implements DialogInterface.OnDismissListener{
     		isRecording = false;
     	}
 	}
+//-----------------------------------------------------------------------------
+    @Override
+    public void onActivityResult(int requestCode,int resultCode,Intent data) {
+        
+        ImageView pictureView;
+        Uri selectedURI;
+        Bitmap selectedPicture;
+        
+        super.onActivityResult(requestCode,resultCode,data);
+
+        switch (requestCode) {
+        case ACTIVITY_SELECT_PICTURE:
+            if (resultCode == Activity.RESULT_OK) {
+                pictureView = (ImageView)findViewById(R.id.image_full_size);
+                selectedURI = data.getData();
+                
+                try {
+                    selectedPicture = MediaStore.Images.Media.getBitmap(
+this.getContentResolver(),selectedURI);
+                    Log.i("ENID", selectedPicture.toString());
+                    pictureView.setImageBitmap(selectedPicture);
+                } catch (Exception e) {
+                	Log.i("ENID", "IM HERE2");
+                }
+            }
+            break;
+        }
+    }
 //-----------------------------------------------------------------------------
 	//This code is from the internet. It fixes a common Android issue
     //where if the image is too big, it just crashes.

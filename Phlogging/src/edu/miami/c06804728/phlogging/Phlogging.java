@@ -24,7 +24,6 @@ import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
 import android.speech.tts.TextToSpeech;
-import android.text.format.Time;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
