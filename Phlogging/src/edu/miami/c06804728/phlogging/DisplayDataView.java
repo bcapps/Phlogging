@@ -395,7 +395,7 @@ implements DialogInterface.OnDismissListener {
     				getContentResolver(),mainImageId,
     				MediaStore.Images.Thumbnails.MICRO_KIND,null);
     		imageView.setImageBitmap(imageThumbnail);
-    	} else if(imageView.getBackground()!=null){
+    	} else {
     		imageView.setImageBitmap(null);
     		imageView.setBackgroundDrawable(null);
     	}
@@ -407,7 +407,7 @@ implements DialogInterface.OnDismissListener {
     				getContentResolver(),secondImageId,
     				MediaStore.Images.Thumbnails.MICRO_KIND,null);
     		imageView.setImageBitmap(imageThumbnail);
-    	} else if(imageView.getBackground()!=null){
+    	} else {
     		imageView.setImageBitmap(null);
     		imageView.setBackgroundDrawable(null);
     	}
