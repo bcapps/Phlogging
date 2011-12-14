@@ -280,6 +280,7 @@ R.integer.video_frame_rate));
     	String title;
     	String description;
     	File audioFile;
+    	File videoFile;
     	ImageView pictureView;
     	Button pictureButton;
     	Intent cameraIntent;
@@ -307,13 +308,8 @@ R.integer.video_frame_rate));
         	//TODO: phlogEntry.put("location", );
         	//TODO: phlogEntry.put("orientation", );
 
-        	//if the file exists, put it in the Intent
-        	if(recordFileName!=null){
-		    	audioFile = new File(recordFileName);
-	        	if(audioFile.exists()){
-	        		phlogContent.put("audio_file_name",recordFileName);
-	        	}
-        	}
+	        phlogContent.put("audio_file_name",recordFileName);
+	        phlogContent.put("video_file_name",videoFileName);
 
         	if(rowId==-1){
 	        	//Add a new entry to the database
