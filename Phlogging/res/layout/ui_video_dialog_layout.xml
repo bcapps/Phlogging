@@ -25,27 +25,27 @@
                 android:orientation="horizontal"
                 android:gravity="center">
                 <Button android:id="@+id/video_record"
-                    android:layout_height="60dp"
-                    android:layout_width="60dp"
+                    android:layout_height="@dimen/dimension"
+                    android:layout_width="@dimen/dimension"
                     android:onClick="videoClickHandler"
                     android:textSize="12sp"
                     android:text="Record Video">
                 </Button>
                 <ImageButton android:id="@+id/video_stop"
-                    android:layout_height="60dp"
-                    android:layout_width="60dp"
+                    android:layout_height="@dimen/dimension"
+                    android:layout_width="@dimen/dimension"
                     android:onClick="videoClickHandler"
                     android:src="@drawable/stop">
                 </ImageButton>
                 <ImageButton android:id="@+id/video_play"
-                    android:layout_height="60dp"
-                    android:layout_width="60dp"
+                    android:layout_height="@dimen/dimension"
+                    android:layout_width="@dimen/dimension"
                     android:onClick="videoClickHandler"
                     android:src="@drawable/play">
                 </ImageButton>
                 <ImageButton android:id="@+id/video_clear"
-                    android:layout_height="60dp"
-                    android:layout_width="60dp"
+                    android:layout_height="@dimen/dimension"
+                    android:layout_width="@dimen/dimension"
                     android:onClick="videoClickHandler"
                     android:src="@drawable/trash">
                 </ImageButton>

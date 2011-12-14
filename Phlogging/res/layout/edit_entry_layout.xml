@@ -8,7 +8,7 @@
         android:layout_height="fill_parent">
     <LinearLayout android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/unspecified"
         android:layout_weight="65">
 		<EditText android:id="@+id/title"
 	    	android:layout_width="fill_parent"
@@ -18,9 +18,9 @@
 	    </EditText>
 	    <EditText android:id="@+id/entry_text"
 	        android:layout_width="fill_parent"
-	        android:layout_height="0dp"
+	        android:layout_height="@dimen/unspecified"
 	        android:layout_weight="50"
-	        android:layout_margin="5dp"
+	        android:layout_margin="@dimen/small_gap"
 	        android:hint="Share your thoughts..."
 	        android:textSize="@dimen/medium_text_size"
 	        android:gravity="top">
@@ -28,7 +28,7 @@
 	</LinearLayout>
 	<LinearLayout android:orientation="vertical"
         android:layout_width="fill_parent"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/unspecified"
         android:layout_weight="35">
 	<LinearLayout android:orientation="horizontal"
 	    android:layout_width="fill_parent"
@@ -81,15 +81,15 @@
 				android:gravity="center_vertical"
 				android:background="@color/LightSlateGray">
 				<Button android:id="@+id/add_main_pic_button"
-			            android:layout_height="60dp"
-			            android:layout_width="60dp"
+			            android:layout_height="@dimen/dimension"
+			            android:layout_width="@dimen/dimension"
 			            android:text="Click me to add a photo"
 			            android:textSize="9sp"
 			            android:onClick="myClickHandler">
 				</Button>
 				<Button android:id="@+id/add_second_pic_button"
-		            android:layout_height="60dp"
-		            android:layout_width="60dp"
+		            android:layout_height="@dimen/dimension"
+		            android:layout_width="@dimen/dimension"
 		            android:text="Click me to add a photo"
 		            android:textSize="9sp"
 		            android:onClick="myClickHandler">
@@ -107,26 +107,26 @@
 				android:gravity="center_vertical"
 				android:background="@color/LightSlateGray">
 				<ImageButton android:id="@+id/record_button"
-				    android:layout_height="60dp"
-				    android:layout_width="60dp"
+				    android:layout_height="@dimen/dimension"
+				    android:layout_width="@dimen/dimension"
 				    android:onClick="audioClickHandler"
 				    android:src="@drawable/microphone">
 				</ImageButton>
 				<ImageButton android:id="@+id/stop_button"
-				    android:layout_height="60dp"
-				    android:layout_width="60dp"
+				    android:layout_height="@dimen/dimension"
+				    android:layout_width="@dimen/dimension"
 				    android:onClick="audioClickHandler"
 				    android:src="@drawable/stop">
 				</ImageButton>
 				<ImageButton android:id="@+id/play_button"
-				    android:layout_height="60dp"
-				    android:layout_width="60dp"
+				    android:layout_height="@dimen/dimension"
+				    android:layout_width="@dimen/dimension"
 				    android:onClick="audioClickHandler"
 				    android:src="@drawable/play">
 				</ImageButton>
 				<ImageButton android:id="@+id/clear_button"
-				    android:layout_height="60dp"
-				    android:layout_width="60dp"
+				    android:layout_height="@dimen/dimension"
+				    android:layout_width="@dimen/dimension"
 				    android:onClick="audioClickHandler"
 				    android:src="@drawable/trash">
 				</ImageButton>
@@ -143,8 +143,8 @@
                 android:gravity="center_vertical"
                 android:background="@color/LightSlateGray">
                 <ImageButton android:id="@+id/add_video"
-                    android:layout_height="60dp"
-                    android:layout_width="60dp"
+                    android:layout_height="@dimen/dimension"
+                    android:layout_width="@dimen/dimension"
                     android:src="@drawable/movie"
                     android:onClick="videoClickHandler">
                 </ImageButton>

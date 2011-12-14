@@ -6,15 +6,15 @@
     <EditText android:id="@+id/email_address"
         android:layout_width="fill_parent" 
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:textSize="30sp"
+        android:layout_margin="@dimen/half_gap"
+        android:textSize="@dimen/big_text_size"
         android:hint="Email address">
     </EditText>
     <Button android:id="@+id/email"
         android:layout_width="fill_parent" 
-        android:layout_height="60dp"
-        android:layout_margin="5dp"
-        android:textSize="30sp"
+        android:layout_height="@dimen/dimension"
+        android:layout_margin="@dimen/half_gap"
+        android:textSize="@dimen/big_text_size"
         android:text="Email"
         android:onClick="myClickHandler">
     </Button>

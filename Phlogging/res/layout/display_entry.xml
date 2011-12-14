@@ -5,45 +5,44 @@
     android:orientation="vertical">
     <LinearLayout android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="0dp"
-        android:layout_margin="4dp"
+        android:layout_height="@dimen/unspecified"
+        android:layout_margin="@dimen/half_gap"
         android:layout_weight="15">
 		<ImageView android:id="@+id/image_thumbnail"
-	        android:layout_height="60dp"
-	        android:layout_width="60dp"
+	        android:layout_height="@dimen/dimension"
+	        android:layout_width="@dimen/dimension"
 	        android:background="#ffffff"
 	        android:onClick="myClickHandler">
 		</ImageView>
 		<TextView android:id="@+id/title"
-	    	android:layout_width="0dp"
+	    	android:layout_width="@dimen/unspecified"
 	    	android:layout_weight="90"
 			android:layout_height="wrap_content"
-			android:layout_margin="6dp"
+			android:layout_margin="@dimen/small_gap"
 			android:textSize="@dimen/big_text_size"
 			android:text="Title here">
 	    </TextView>
          <ImageButton android:id="@+id/add_email"
-             android:layout_height="60dp"
-             android:layout_width="60dp"
-             android:textSize="9sp"
+             android:layout_height="@dimen/dimension"
+             android:layout_width="@dimen/dimension"
              android:src="@drawable/mail"
              android:onClick="myClickHandler">
          </ImageButton>
 	</LinearLayout>
 	 <LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/unspecified"
         android:layout_weight="45">
 		<TextView android:id="@+id/entry_text"
 			android:layout_width="fill_parent"
 			android:layout_height="fill_parent"
-			android:layout_margin="5dp"
+			android:layout_margin="@dimen/half_gap"
 			android:background="#ffffff">
 		</TextView>
 	</LinearLayout>
 	<LinearLayout android:orientation="horizontal"
 	    android:layout_width="fill_parent"
-	    android:layout_height="0dp"
+	    android:layout_height="@dimen/unspecified"
 	    android:layout_weight="20">
 	<ImageView android:id="@+id/second_photo_thumbnail"
  		style="@style/TinyButton"
@@ -61,7 +60,7 @@
 	</LinearLayout>
 	<LinearLayout android:orientation="horizontal"
 	    android:layout_width="fill_parent"
-	    android:layout_height="0dp"
+	    android:layout_height="@dimen/unspecified"
 	    android:layout_weight="10"
 	    android:layout_marginTop="20dp">
 	<Button android:id="@+id/close_button"
@@ -75,9 +74,9 @@
 	</LinearLayout>
 	<LinearLayout
         android:layout_width="fill_parent"
-        android:layout_height="0dp"
+        android:layout_height="@dimen/unspecified"
         android:layout_weight="10"
-        android:layout_margin="5dp">
+        android:layout_margin="@dimen/half_gap">
 		<Button android:id="@+id/delete_button"
 		    style="@style/MediumButton"
 		    android:text="Delete"

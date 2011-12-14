@@ -11,23 +11,23 @@
     </ImageView>
     <LinearLayout
         android:orientation="vertical"
-   		android:layout_width="0dp"
+   		android:layout_width="@dimen/unspecified"
    		android:layout_weight="90"
     	android:layout_height="fill_parent"
     	android:paddingLeft="@dimen/small_gap">
         <TextView android:id="@+id/title"
             android:layout_width="fill_parent"
-            android:layout_height="0dp"
+            android:layout_height="@dimen/unspecified"
             android:layout_weight="55"
-            android:textSize="16sp"
+            android:textSize="@dimen/small_text_size"
             android:textStyle="bold"
             android:padding="@dimen/half_gap">
         </TextView>
         <TextView android:id="@+id/time"
             android:layout_width="fill_parent"
-            android:layout_height="0dp"
+            android:layout_height="@dimen/unspecified"
             android:layout_weight="45"
-            android:textSize="12sp"
+            android:textSize="@dimen/small_text_size"
             android:padding="@dimen/half_gap">
         </TextView>
     </LinearLayout>
