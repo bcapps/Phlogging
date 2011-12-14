@@ -45,7 +45,8 @@ implements DialogInterface.OnDismissListener, SurfaceHolder.Callback{
 //-----------------------------------------------------------------------------
 	private DataSQLiteDB phloggingDatabase;
 	private static final int PICTURE_DIALOG = 0;
-	private static final int VIDEO_DIALOG = 1;
+	private static final int SECOND_PICTURE_DIALOG = 1;
+	private static final int VIDEO_DIALOG = 2;
 	private static final int ACTIVITY_SELECT_PICTURE = 3;
 	private static final int ACTIVITY_CAMERA_APP = 4;
 
@@ -57,7 +58,9 @@ implements DialogInterface.OnDismissListener, SurfaceHolder.Callback{
     private String videoFileName;
     private MediaPlayer recordingPlayer;
     private Dialog currentDialog;
+    private int currentDialogId;
     private int mainPictureMediaId;
+    private int secondPictureMediaId;
     
     private	Camera camera;
     private SurfaceView videoPreview;
@@ -84,6 +87,7 @@ implements DialogInterface.OnDismissListener, SurfaceHolder.Callback{
         //No corresponding entry found in database- enter Create Mode
         if(rowId==-1){
         	mainPictureMediaId = -1;
+        	secondPictureMediaId = -1;
         	setDefaultRecordFileName();
         	setDefaultVideoFileName();
         } else{
@@ -100,6 +104,7 @@ implements DialogInterface.OnDismissListener, SurfaceHolder.Callback{
 
 		//Set current dialog to null
 		currentDialog = null;
+		currentDialogId = -1;
 	}
 //-----------------------------------------------------------------------------
 	public void videoClickHandler(View view) {
@@ -276,7 +281,7 @@ R.integer.video_frame_rate));
     	String description;
     	File audioFile;
     	ImageView pictureView;
-    	Button mainPictureButton;
+    	Button pictureButton;
     	Intent cameraIntent;
 
         switch (view.getId()) {
@@ -298,6 +303,7 @@ R.integer.video_frame_rate));
         	phlogContent.put("description",description);
         	phlogContent.put("time", creationTime);
         	phlogContent.put("image_media_id",mainPictureMediaId);
+        	phlogContent.put("secondary_image_media_id",secondPictureMediaId);
         	//TODO: phlogEntry.put("location", );
         	//TODO: phlogEntry.put("orientation", );
 
@@ -321,12 +327,14 @@ R.integer.video_frame_rate));
 	        finish();
         	break;
         case R.id.picture_button_dismiss:
-        	dismissDialog(PICTURE_DIALOG);
+        	dismissDialog(currentDialogId);
         	break;
         case R.id.add_main_pic_button:
         	showDialog(PICTURE_DIALOG);
         	break;
-
+        case R.id.add_second_pic_button:
+        	showDialog(SECOND_PICTURE_DIALOG);
+        	break;
         case R.id.button_choose_gallery:
         	galleryIntent = new Intent(Intent.ACTION_PICK,
         			MediaStore.Images.Media.INTERNAL_CONTENT_URI);
@@ -338,22 +346,31 @@ R.integer.video_frame_rate));
             break;
         case R.id.button_delete_photo:
         	//If there was already no image, don't do anything
-        	if(mainPictureMediaId == -1){
+        	int mediaId = (currentDialogId == PICTURE_DIALOG)? mainPictureMediaId: secondPictureMediaId;
+        	if(mediaId == -1){
         		break;
         	}
 
         	//Reset the main photo id to not found
-        	mainPictureMediaId = -1;
+        	if(currentDialogId == PICTURE_DIALOG){
+        		mainPictureMediaId = -1;
+        	}
+        	else if(currentDialogId == SECOND_PICTURE_DIALOG){
+        		secondPictureMediaId = -1;
+        	}
 
         	//Remove the image
         	pictureView = (ImageView)currentDialog.findViewById(R.id.image_full_size);
-        	recycleView(pictureView);
+        	//recycleView(pictureView);
+        	pictureView.setImageBitmap(null);
         	pictureView.setBackgroundResource(R.drawable.no_photo);
 
         	//Remove thumbnail and reset the button
-            mainPictureButton = (Button) findViewById(R.id.add_main_pic_button);
-            mainPictureButton.setBackgroundDrawable(defaultButtonBackground);
-            mainPictureButton.setText("Click me to add a photo");
+            pictureButton = (currentDialogId == PICTURE_DIALOG)? 
+            				(Button) findViewById(R.id.add_main_pic_button) :
+            				(Button) findViewById(R.id.add_second_pic_button);
+            pictureButton.setBackgroundDrawable(defaultButtonBackground);
+            pictureButton.setText("Click me to add a photo");
         	break;
         default:
             break;
@@ -371,6 +388,7 @@ R.integer.video_frame_rate));
 
     	switch (dialogId) {
     	case PICTURE_DIALOG:
+    	case SECOND_PICTURE_DIALOG:
     		//Inflate the dialog and set it to the builder's view
     		dialogInflator = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
 
@@ -397,12 +415,13 @@ R.integer.video_frame_rate));
 //-----------------------------------------------------------------------------
     @Override
 	protected void onPrepareDialog (int dialogId, Dialog dialog){
-    	String mainPictureFilename;
-    	Bitmap mainPictureBitmap;
+    	String pictureFilename;
+    	Bitmap pictureBitmap;
     	ImageView pictureView;
 
     	//set the current dialog
     	currentDialog = dialog;
+    	currentDialogId = dialogId;
 
     	switch(dialogId){
     	case PICTURE_DIALOG:
@@ -416,11 +435,29 @@ R.integer.video_frame_rate));
         	}
 
         	//Get the image bitmap
-        	mainPictureFilename = getFilenameFromMediaId(mainPictureMediaId);
-        	mainPictureBitmap = loadResizedBitmap(mainPictureFilename, 300, 300, false);
+        	pictureFilename = getFilenameFromMediaId(mainPictureMediaId);
+        	pictureBitmap = loadResizedBitmap(pictureFilename, 300, 300, false);
 
         	//Set the pictureView's image to the image bitmap
-        	pictureView.setImageBitmap(mainPictureBitmap);
+        	pictureView.setImageBitmap(pictureBitmap);
+
+    		break;
+    	case SECOND_PICTURE_DIALOG:
+    		//Get the pictureView
+        	pictureView = (ImageView)dialog.findViewById(R.id.image_full_size);
+
+    		//If there is no image, set to blank image
+        	if(secondPictureMediaId == -1){
+        		pictureView.setBackgroundResource(R.drawable.no_photo);
+        		break;
+        	}
+
+        	//Get the image bitmap
+        	pictureFilename = getFilenameFromMediaId(secondPictureMediaId);
+        	pictureBitmap = loadResizedBitmap(pictureFilename, 300, 300, false);
+
+        	//Set the pictureView's image to the image bitmap
+        	pictureView.setImageBitmap(pictureBitmap);
 
     		break;
     	case VIDEO_DIALOG:
@@ -447,6 +484,7 @@ R.integer.video_frame_rate));
     @Override
 	public void onDismiss (DialogInterface dialog){
 		currentDialog = null;
+		currentDialogId = -1;
     }
 //-----------------------------------------------------------------------------
   //-----------------------------------------------------------------------------
@@ -510,7 +548,7 @@ int height) {
     	super.onActivityResult(requestCode,resultCode,returnIntent);
 
         ImageView pictureView;
-        Button mainPictureButton;
+        Button pictureButton;
         Uri selectedURI;
         Bitmap selectedPicture;
         String selectedImagePath;
@@ -524,23 +562,32 @@ int height) {
                 selectedImagePath = getPath(selectedURI);
 
                 //Set the media ID, to be added to the database
-                mainPictureMediaId = getMediaId(selectedURI);
+                if(currentDialogId == PICTURE_DIALOG){
+                	mainPictureMediaId = getMediaId(selectedURI);
+            	}
+            	else if(currentDialogId == SECOND_PICTURE_DIALOG){
+            		secondPictureMediaId = getMediaId(selectedURI);
+            	}
 
 
                 //Set the thumbnail onto the button
-                mainPictureButton = (Button) findViewById(R.id.add_main_pic_button);
+                pictureButton = (currentDialogId == PICTURE_DIALOG)? 
+                				(Button) findViewById(R.id.add_main_pic_button) :
+                				(Button) findViewById(R.id.add_second_pic_button);
 
                 try {
                 	//Recycle the view
-                	recycleView(pictureView);
-
+                	pictureView.setImageBitmap(null);
+                	pictureView.setBackgroundDrawable(null);
+                	pictureView.setImageURI(null);
+                	
                 	//Set the pictureView
                     selectedPicture = loadResizedBitmap(selectedImagePath, 300, 300, false);
                     pictureView.setImageBitmap(selectedPicture);
 
                     //Set the thumbnail
-                    mainPictureButton.setBackgroundDrawable(new BitmapDrawable(selectedPicture));
-                    mainPictureButton.setText("");
+                    pictureButton.setBackgroundDrawable(new BitmapDrawable(selectedPicture));
+                    pictureButton.setText("");
                 } catch (Exception e) {
                 	//Error
                 }
@@ -555,21 +602,30 @@ int height) {
                 selectedURI = Uri.parse(selectedImagePath);
 
                 //Set the media ID, to be added to the database
-                mainPictureMediaId = getMediaId(selectedURI);
+                if(currentDialogId == PICTURE_DIALOG){
+                	mainPictureMediaId = getMediaId(selectedURI);
+            	}
+            	else if(currentDialogId == SECOND_PICTURE_DIALOG){
+            		secondPictureMediaId = getMediaId(selectedURI);
+            	}
 
                 //Set the thumbnail onto the button
-                mainPictureButton = (Button) findViewById(R.id.add_main_pic_button);
+                pictureButton = (currentDialogId == PICTURE_DIALOG)? 
+                				(Button) findViewById(R.id.add_main_pic_button) :
+                				(Button) findViewById(R.id.add_second_pic_button);
 
                 try {
                 	//Recycle the view
-                	recycleView(pictureView);
+                	pictureView.setImageBitmap(null);
+                	pictureView.setBackgroundDrawable(null);
+                	pictureView.setImageURI(null);
 
                 	//Set the pictureView
                     pictureView.setImageBitmap(photoBitmap);
 
                     //Set the thumbnail
-                    mainPictureButton.setBackgroundDrawable(new BitmapDrawable(photoBitmap));
-                    mainPictureButton.setText("");
+                    pictureButton.setBackgroundDrawable(new BitmapDrawable(photoBitmap));
+                    pictureButton.setText("");
                 } catch (Exception e) {
                 	//Error
                 }
@@ -745,14 +801,15 @@ int height) {
         ContentValues entryData;
         String title;
         String entryText;
-        Bitmap mainImageThumbnail;
-        Button mainPictureButton;
+        Bitmap imageThumbnail;
+        Button pictureButton;
 
     	 //Get the ContentValues and corresponding data
         entryData = phloggingDatabase.getEntryByRowId(rowId);
         title = entryData.getAsString("title");
         entryText = entryData.getAsString("description");
         mainPictureMediaId = entryData.getAsInteger("image_media_id");
+        secondPictureMediaId = entryData.getAsInteger("secondary_image_media_id");
         //timeSinceEpoch = entryData.getAsLong("time");
         recordFileName = entryData.getAsString("audio_file_name");
         //If the filename is invalid, set it to the default
@@ -767,21 +824,24 @@ int height) {
         }
         //TODO: get and display location and orientation
 
-        mainPictureButton = (Button) findViewById(R.id.add_main_pic_button);
-
         //Set the imageView image
         if(mainPictureMediaId != -1){
-        	mainImageThumbnail = MediaStore.Images.Thumbnails.getThumbnail(
+        	imageThumbnail = MediaStore.Images.Thumbnails.getThumbnail(
         			getContentResolver(),mainPictureMediaId,
         			MediaStore.Images.Thumbnails.MICRO_KIND,null);
-        	mainPictureButton = (Button) findViewById(R.id.add_main_pic_button);
-        	try {
-                //Set the thumbnail
-                mainPictureButton.setBackgroundDrawable(new BitmapDrawable(mainImageThumbnail));
-                mainPictureButton.setText("");
-            } catch (Exception e) {
-            	//Error
-            }
+        	pictureButton = (Button) findViewById(R.id.add_main_pic_button);
+            pictureButton.setBackgroundDrawable(new BitmapDrawable(imageThumbnail));
+            pictureButton.setText("");
+        }
+        
+        //Set the secondary imageView image
+        if(secondPictureMediaId != -1){
+        	imageThumbnail = MediaStore.Images.Thumbnails.getThumbnail(
+        			getContentResolver(),secondPictureMediaId,
+        			MediaStore.Images.Thumbnails.MICRO_KIND,null);
+        	pictureButton = (Button) findViewById(R.id.add_second_pic_button);
+            pictureButton.setBackgroundDrawable(new BitmapDrawable(imageThumbnail));
+            pictureButton.setText("");
         }
 
         //Set the titleView title text
