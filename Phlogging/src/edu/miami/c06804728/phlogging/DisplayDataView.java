@@ -31,6 +31,7 @@ public class DisplayDataView extends Activity
 implements DialogInterface.OnDismissListener{
 //-----------------------------------------------------------------------------
 	private static final int PICTURE_DIALOG = 0;
+	private static final int EDIT_ACTIVITY = 1;
 	private DataSQLiteDB phloggingDatabase;
 	private long rowId;
 
@@ -81,14 +82,14 @@ implements DialogInterface.OnDismissListener{
         	if(recordingPlayer.isPlaying()){
         		recordingPlayer.stop();
         	}
-        	//TODO: start the EditData Intent
+        	
         	nextActivity = new Intent();
         	nextActivity.setClassName("edu.miami.c06804728.phlogging",
             		"edu.miami.c06804728.phlogging.EditDataView");
             nextActivity.putExtra("edu.miami.c06804728.phlogging.rowId", rowId);
 
-          //Start the Edit activity
-        	startActivityForResult(nextActivity,0);
+            //Start the Edit activity
+        	startActivityForResult(nextActivity,EDIT_ACTIVITY);
 
         	break;
         case R.id.play_recording:
@@ -292,51 +293,51 @@ implements DialogInterface.OnDismissListener{
     public void onActivityResult(int requestCode,int resultCode,Intent data) {
     	super.onActivityResult(requestCode, resultCode, data);
     	if (resultCode == Activity.RESULT_OK) {
-        	//Get the description and rowId values
+        	//Reload the views based on the new data
         	setViews();
         }
     }
 //-----------------------------------------------------------------------------
     public void setViews(){
-        ContentValues entryData;
-        String title;
-        String entryText;
-        Bitmap mainImageThumbnail;
+    	ContentValues entryData;
+    	String title;
+    	String entryText;
+    	Bitmap mainImageThumbnail;
 
-        TextView titleView;
-        TextView entryTextView;
-        ImageView mainImageView;
+    	TextView titleView;
+    	TextView entryTextView;
+    	ImageView mainImageView;
 
-  //Get the ContentValues and corresponding data
-    entryData = phloggingDatabase.getEntryByRowId(rowId);
-    title = entryData.getAsString("title");
-    entryText = entryData.getAsString("description");
-    mainImageId = entryData.getAsInteger("image_media_id");
-    recordingFileName = entryData.getAsString("audio_file_name");
+    	//Get the ContentValues and corresponding data
+    	entryData = phloggingDatabase.getEntryByRowId(rowId);
+    	title = entryData.getAsString("title");
+    	entryText = entryData.getAsString("description");
+    	mainImageId = entryData.getAsInteger("image_media_id");
+    	recordingFileName = entryData.getAsString("audio_file_name");
 
-    //TODO: get and display location and orientation
+    	//TODO: get and display location and orientation
 
-    mainImageView = (ImageView) findViewById(R.id.image_thumbnail);
+    	mainImageView = (ImageView) findViewById(R.id.image_thumbnail);
 
-    //Set the imageView image
-    if(mainImageId != -1){
-    	mainImageThumbnail = MediaStore.Images.Thumbnails.getThumbnail(
-    			getContentResolver(),mainImageId,
-    			MediaStore.Images.Thumbnails.MICRO_KIND,null);
-    	mainImageView.setImageBitmap(mainImageThumbnail);
-    } else if(mainImageView.getBackground()!=null){
-    	//recycleView(mainImageView);
-    	mainImageView.setImageBitmap(null);
-    	mainImageView.setBackgroundDrawable(null);
+    	//Set the imageView image
+    	if(mainImageId != -1){
+    		mainImageThumbnail = MediaStore.Images.Thumbnails.getThumbnail(
+    				getContentResolver(),mainImageId,
+    				MediaStore.Images.Thumbnails.MICRO_KIND,null);
+    		mainImageView.setImageBitmap(mainImageThumbnail);
+    	} else if(mainImageView.getBackground()!=null){
+    		//recycleView(mainImageView);
+    		mainImageView.setImageBitmap(null);
+    		mainImageView.setBackgroundDrawable(null);
 
-    }
+    	}
 
-    //Set the titleView title
-    titleView = (TextView) findViewById(R.id.title);
-    titleView.setText(title);
+    	//Set the titleView title
+    	titleView = (TextView) findViewById(R.id.title);
+    	titleView.setText(title);
 
-    //Set the entryView entry
-    entryTextView = (TextView) findViewById(R.id.entry_text);
-    entryTextView.setText(entryText);
+    	//Set the entryView entry
+    	entryTextView = (TextView) findViewById(R.id.entry_text);
+    	entryTextView.setText(entryText);
     }
 }
