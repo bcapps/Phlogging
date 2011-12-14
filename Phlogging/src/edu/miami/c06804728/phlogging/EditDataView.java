@@ -585,7 +585,7 @@ implements DialogInterface.OnDismissListener{
             }
         }
 
-      //Set the titleView title text
+        //Set the titleView title text
     	EditText titleView = (EditText) findViewById(R.id.title);
     	titleView.setText(title);
 
