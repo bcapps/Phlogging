@@ -3,21 +3,6 @@
     android:orientation="vertical"
     android:layout_width="fill_parent" 
     android:layout_height="fill_parent">
-    <EditText android:id="@+id/search_for"
-        android:layout_width="fill_parent" 
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:textSize="30sp"
-        android:hint="Name to search for">
-    </EditText>
-    <Button android:id="@+id/search"
-        android:layout_width="fill_parent" 
-        android:layout_height="60dp"
-        android:layout_margin="5dp"
-        android:textSize="30sp"
-        android:text="Search"
-        android:onClick="myClickHandler">
-    </Button>
     <EditText android:id="@+id/email_address"
         android:layout_width="fill_parent" 
         android:layout_height="wrap_content"

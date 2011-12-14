@@ -25,21 +25,10 @@ public class ContactsEmailView extends Activity {
 //-----------------------------------------------------------------------------
     public void myClickHandler(View view) {
 
-        String nameToSearchFor;
         String[] emailToSendTo = new String[1];
         Intent nextIntent;
 
         switch (view.getId()) {
-        case R.id.search:
-            ((TextView)findViewById(R.id.email_address)).setText(null);
-            nameToSearchFor = ((EditText)findViewById(R.id.search_for)).
-            	getText().toString();
-            if (nameToSearchFor != null && nameToSearchFor.length() > 0) {
-                searchForEmailAddress(nameToSearchFor);
-            } else {
-                selectEmailAddress();
-            }
-            break;
         case R.id.email:
             emailToSendTo[0] = ((EditText)findViewById(R.id.email_address)).
             	getText().toString();
@@ -53,43 +42,6 @@ public class ContactsEmailView extends Activity {
             break;
         default:
             break;
-        }
-    }
-//-----------------------------------------------------------------------------
-    private void searchForEmailAddress(String nameToSearchFor) {
-        
-        String[] projection = new String[] {
-        		ContactsContract.CommonDataKinds.Email.DATA,
-        		ContactsContract.Contacts.DISPLAY_NAME
-        };
-        Cursor contactsCursor;
-        String contactName;
-        int nameIndex;
-        boolean contactFound;
-        TextView emailAddress;
-        
-        contactsCursor = managedQuery(
-        		ContactsContract.CommonDataKinds.Email.CONTENT_URI,projection,null,null,null);
-        startManagingCursor(contactsCursor);
-        contactFound = false;
-        emailAddress = (TextView)findViewById(R.id.email_address);
-        if (contactsCursor.moveToFirst()) {
-            nameIndex = contactsCursor.getColumnIndex(
-            		ContactsContract.Contacts.DISPLAY_NAME);
-            do {
-                contactName = contactsCursor.getString(nameIndex);
-                if (contactName.contains(nameToSearchFor)) {
-                    contactFound = true;
-                }
-            } while (!contactFound && contactsCursor.moveToNext());
-        }
-        stopManagingCursor(contactsCursor);
-        if (contactFound) {
-            emailAddress.setText(
-            		contactsCursor.getString(contactsCursor.getColumnIndex(
-            		ContactsContract.CommonDataKinds.Email.DATA)));
-        } else {
-            emailAddress.setHint(nameToSearchFor +" not found in emails");
         }
     }
 //-----------------------------------------------------------------------------
@@ -121,12 +73,6 @@ Intent returnedIntent) {
                 if (contactsCursor.moveToFirst()){
                     contactName = contactsCursor.getString(
                     		contactsCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                    if (contactName != null && contactName.length() > 0) {
-                        ((TextView)findViewById(R.id.search_for)).setText(contactName);
-                        searchForEmailAddress(contactName);
-                    } else {
-                        emailAddress.setHint("No name for contact");
-                    }
                 } else {
                     emailAddress.setHint("WEIRD");
                 }
