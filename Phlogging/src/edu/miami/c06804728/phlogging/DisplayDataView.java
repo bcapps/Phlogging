@@ -15,6 +15,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
@@ -76,6 +77,10 @@ implements DialogInterface.OnDismissListener{
 		VideoView videoView;
 		File videoFile;
 		Intent emailIntent;
+		ContentValues entryData;
+		String title;
+    	String entryText;
+    	
 
         switch (view.getId()) {
         case R.id.close_button:
@@ -162,10 +167,21 @@ implements DialogInterface.OnDismissListener{
         	}
         	break;
         case R.id.add_email:
-        	Log.i("ENID", "EMAIL NUKKA");
         	emailIntent = new Intent();
         	emailIntent.setClassName("edu.miami.c06804728.phlogging",
     		"edu.miami.c06804728.phlogging.ContactsEmailView");
+        	
+        	//Get the ContentValues and corresponding data
+        	entryData = phloggingDatabase.getEntryByRowId(rowId);
+        	title = entryData.getAsString("title");
+        	entryText = entryData.getAsString("description");
+        	int imageMediaId = entryData.getAsInteger("image_media_id");
+        	String imageFileName = getFilenameFromMediaId(imageMediaId);
+        	
+        	emailIntent.putExtra("edu.miami.c06804728.phlogging.title", title);
+        	emailIntent.putExtra("edu.miami.c06804728.phlogging.entryText", entryText);
+        	emailIntent.putExtra("edu.miami.c06804728.phlogging.imageFileName", imageFileName);
+        	
         	startActivity(emailIntent);
         	break;
         default:

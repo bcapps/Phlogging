@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -14,6 +15,10 @@ public class ContactsEmailView extends Activity {
 //-----------------------------------------------------------------------------
     private static final int ACTIVITY_SELECT_CONTACT = 1;
     private static final int ACTIVITY_SEND_EMAIL = 2;
+    
+    String title;
+	String entryText;
+	Uri imageUri;
 //-----------------------------------------------------------------------------
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -21,6 +26,10 @@ public class ContactsEmailView extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.contacts_email_layout);
         
+        title = this.getIntent().getStringExtra("edu.miami.c06804728.phlogging.title");
+        entryText = this.getIntent().getStringExtra("edu.miami.c06804728.phlogging.entryText");
+        String imageFileName = this.getIntent().getStringExtra("edu.miami.c06804728.phlogging.imageFileName");
+    	imageUri = Uri.parse("file://"+ imageFileName);
    }
 //-----------------------------------------------------------------------------
     public void myClickHandler(View view) {
@@ -36,6 +45,9 @@ public class ContactsEmailView extends Activity {
             nextIntent.setType("plain/text");
             if (emailToSendTo[0] != null && emailToSendTo[0].length() > 0) {
                 nextIntent.putExtra(Intent.EXTRA_EMAIL,emailToSendTo);
+                nextIntent.putExtra(Intent.EXTRA_SUBJECT, title);
+                nextIntent.putExtra(Intent.EXTRA_TEXT, entryText);
+                nextIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
             }
             startActivityForResult(Intent.createChooser(nextIntent,
             	"Choose ..."),ACTIVITY_SEND_EMAIL);
@@ -58,30 +70,8 @@ ContactsContract.Contacts.CONTENT_URI);
     public void onActivityResult(int requestCode,int resultCode,
 Intent returnedIntent) {
         
-        Uri contactData;
-        Cursor contactsCursor;
-        String contactName;
-        TextView emailAddress;
+    	finish();
         
-        super.onActivityResult(requestCode,resultCode,returnedIntent);
-        emailAddress = (TextView)findViewById(R.id.email_address);
-        switch (requestCode) {
-        case ACTIVITY_SELECT_CONTACT:
-            if (resultCode == Activity.RESULT_OK){
-                contactData = returnedIntent.getData();
-                contactsCursor = managedQuery(contactData,null,null,null,null);
-                if (contactsCursor.moveToFirst()){
-                    contactName = contactsCursor.getString(
-                    		contactsCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                } else {
-                    emailAddress.setHint("WEIRD");
-                }
-                contactsCursor.close();
-            } else {
-                emailAddress.setHint("None selected");
-            }
-            break;
-        }
     }
 //-----------------------------------------------------------------------------
 }
