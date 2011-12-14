@@ -10,15 +10,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 //=============================================================================
 public class ContactsEmailView extends Activity {
 //-----------------------------------------------------------------------------
-    private static final int ACTIVITY_SELECT_CONTACT = 1;
     private static final int ACTIVITY_SEND_EMAIL = 2;
     
-    String title;
-	String entryText;
-	Uri imageUri;
+    private String title;
+    private String entryText;
+    private String imageFileName;
+    private Uri imageUri;
 //-----------------------------------------------------------------------------
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -28,8 +29,9 @@ public class ContactsEmailView extends Activity {
         
         title = this.getIntent().getStringExtra("edu.miami.c06804728.phlogging.title");
         entryText = this.getIntent().getStringExtra("edu.miami.c06804728.phlogging.entryText");
-        String imageFileName = this.getIntent().getStringExtra("edu.miami.c06804728.phlogging.imageFileName");
-    	imageUri = Uri.parse("file://"+ imageFileName);
+        imageFileName = this.getIntent().getStringExtra("edu.miami.c06804728.phlogging.imageFileName");
+    	
+        imageUri = Uri.parse("file://"+ imageFileName);
    }
 //-----------------------------------------------------------------------------
     public void myClickHandler(View view) {
@@ -47,7 +49,9 @@ public class ContactsEmailView extends Activity {
                 nextIntent.putExtra(Intent.EXTRA_EMAIL,emailToSendTo);
                 nextIntent.putExtra(Intent.EXTRA_SUBJECT, title);
                 nextIntent.putExtra(Intent.EXTRA_TEXT, entryText);
-                nextIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+                if(imageFileName!=null){
+                	nextIntent.putExtra(Intent.EXTRA_STREAM, imageUri);
+                }
             }
             startActivityForResult(Intent.createChooser(nextIntent,
             	"Choose ..."),ACTIVITY_SEND_EMAIL);
@@ -57,21 +61,11 @@ public class ContactsEmailView extends Activity {
         }
     }
 //-----------------------------------------------------------------------------
-    public void selectEmailAddress() {
-        
-        Intent nextIntent;
-        
-        nextIntent = new Intent(Intent.ACTION_PICK,
-ContactsContract.Contacts.CONTENT_URI);
-        startActivityForResult(nextIntent,ACTIVITY_SELECT_CONTACT);
-    }
-//-----------------------------------------------------------------------------
     @Override
     public void onActivityResult(int requestCode,int resultCode,
 Intent returnedIntent) {
-        
+    		
     	finish();
-        
     }
 //-----------------------------------------------------------------------------
 }
