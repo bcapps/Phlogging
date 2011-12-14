@@ -46,8 +46,7 @@
 	    android:layout_height="0dp"
 	    android:layout_weight="20">
 	<ImageView android:id="@+id/second_photo_thumbnail"
- 		android:layout_width="60dp"
-	    android:layout_height="60dp"
+ 		style="@style/TinyButton"
 	    android:onClick="myClickHandler">
 	</ImageView>
 	<ImageButton android:id="@+id/video_button"

@@ -34,7 +34,8 @@ implements DialogInterface.OnDismissListener{
 	private static final int EDIT_ACTIVITY = 1;
     private static final int DELETE_DIALOG = 2;
 	private static final int PICTURE_DIALOG = 3;
-	private static final int VIDEO_DIALOG = 4;
+	private static final int SECOND_PICTURE_DIALOG = 4;
+	private static final int VIDEO_DIALOG = 5;
 	private DataSQLiteDB phloggingDatabase;
 	
 	private long rowId;
@@ -43,6 +44,8 @@ implements DialogInterface.OnDismissListener{
     private String recordingFileName;
     private String videoFileName;
     private int mainImageId;
+    private int secondImageId;
+    private int currentDialogId;
     private Dialog currentDialog;
 //-----------------------------------------------------------------------------
 	@Override
@@ -64,6 +67,7 @@ implements DialogInterface.OnDismissListener{
         //Initialize all the views with their values
         setViews();
         currentDialog = null;
+        currentDialogId = -1;
 
         //Setup the audio recorder player
         recordingPlayer = new MediaPlayer();
@@ -127,8 +131,13 @@ implements DialogInterface.OnDismissListener{
         		showDialog(PICTURE_DIALOG);
         	}
         	break;
+        case R.id.second_photo_thumbnail:
+        	if(secondImageId >= 0){
+        		showDialog(SECOND_PICTURE_DIALOG);
+        	}
+        	break;
         case R.id.picture_button_dismiss:
-        	dismissDialog(PICTURE_DIALOG);
+        	dismissDialog(currentDialogId);
         	break;
         case R.id.delete_button:
         	showDialog(DELETE_DIALOG);
@@ -162,7 +171,6 @@ implements DialogInterface.OnDismissListener{
         	}
         	break;
         case R.id.add_email:
-        	Log.i("ENID", "EMAIL NUKKA");
         	emailIntent = new Intent();
         	emailIntent.setClassName("edu.miami.c06804728.phlogging",
     		"edu.miami.c06804728.phlogging.ContactsEmailView");
@@ -184,6 +192,7 @@ implements DialogInterface.OnDismissListener{
 
     	switch (dialogId) {
     	case PICTURE_DIALOG:
+    	case SECOND_PICTURE_DIALOG:
     		//Inflate the dialog and set it to the builder's view
     		dialogInflator = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
 
@@ -215,12 +224,13 @@ implements DialogInterface.OnDismissListener{
 //-----------------------------------------------------------------------------
 	 @Override
 		protected void onPrepareDialog (int dialogId, Dialog dialog){
-	    	String mainPictureFilename;
-	    	Bitmap mainPictureBitmap;
+	    	String pictureFilename;
+	    	Bitmap pictureBitmap;
 	    	ImageView pictureView;
 	    	VideoView videoView;
 
 	    	currentDialog = dialog;
+	    	currentDialogId = dialogId;
 	    	
 	    	switch(dialogId){
 	    	case PICTURE_DIALOG:
@@ -228,11 +238,23 @@ implements DialogInterface.OnDismissListener{
 	        	pictureView = (ImageView)dialog.findViewById(R.id.image_full_size);
 
 	        	//Get the image bitmap
-	        	mainPictureFilename = getFilenameFromMediaId(mainImageId);
-	        	mainPictureBitmap = loadResizedBitmap(mainPictureFilename, 300, 300, false);
+	        	pictureFilename = getFilenameFromMediaId(mainImageId);
+	        	pictureBitmap = loadResizedBitmap(pictureFilename, 300, 300, false);
 
 	        	//Set the pictureView's image to the image bitmap
-	        	pictureView.setImageBitmap(mainPictureBitmap);
+	        	pictureView.setImageBitmap(pictureBitmap);
+
+	    		break;
+	    	case SECOND_PICTURE_DIALOG:
+	        	//Get the pictureView
+	        	pictureView = (ImageView)dialog.findViewById(R.id.image_full_size);
+
+	        	//Get the image bitmap
+	        	pictureFilename = getFilenameFromMediaId(secondImageId);
+	        	pictureBitmap = loadResizedBitmap(pictureFilename, 300, 300, false);
+
+	        	//Set the pictureView's image to the image bitmap
+	        	pictureView.setImageBitmap(pictureBitmap);
 
 	    		break;
 	    	case VIDEO_DIALOG:
@@ -245,6 +267,7 @@ implements DialogInterface.OnDismissListener{
 	 @Override
 	 public void onDismiss (DialogInterface dialog){
 		 currentDialog = null;
+		 currentDialogId = -1;
 	 }
 //-----------------------------------------------------------------------------
 	 @Override
@@ -365,32 +388,46 @@ implements DialogInterface.OnDismissListener{
     	ContentValues entryData;
     	String title;
     	String entryText;
-    	Bitmap mainImageThumbnail;
+    	Bitmap imageThumbnail;
 
     	TextView titleView;
     	TextView entryTextView;
-    	ImageView mainImageView;
+    	ImageView imageView;
 
     	//Get the ContentValues and corresponding data
     	entryData = phloggingDatabase.getEntryByRowId(rowId);
     	title = entryData.getAsString("title");
     	entryText = entryData.getAsString("description");
     	mainImageId = entryData.getAsInteger("image_media_id");
+    	secondImageId = entryData.getAsInteger("secondary_image_media_id");
     	recordingFileName = entryData.getAsString("audio_file_name");
     	videoFileName = entryData.getAsString("video_file_name");
+    	
     	//TODO: get and display location and orientation
 
-    	mainImageView = (ImageView) findViewById(R.id.image_thumbnail);
+    	imageView = (ImageView) findViewById(R.id.image_thumbnail);
 
     	//Set the imageView image
     	if(mainImageId != -1){
-    		mainImageThumbnail = MediaStore.Images.Thumbnails.getThumbnail(
+    		imageThumbnail = MediaStore.Images.Thumbnails.getThumbnail(
     				getContentResolver(),mainImageId,
     				MediaStore.Images.Thumbnails.MICRO_KIND,null);
-    		mainImageView.setImageBitmap(mainImageThumbnail);
-    	} else if(mainImageView.getBackground()!=null){
-    		mainImageView.setImageBitmap(null);
-    		mainImageView.setBackgroundDrawable(null);
+    		imageView.setImageBitmap(imageThumbnail);
+    	} else if(imageView.getBackground()!=null){
+    		imageView.setImageBitmap(null);
+    		imageView.setBackgroundDrawable(null);
+    	}
+    	
+    	//Set the secondary image
+    	if(secondImageId != -1){
+    		imageView = (ImageView) findViewById(R.id.second_photo_thumbnail);
+    		imageThumbnail = MediaStore.Images.Thumbnails.getThumbnail(
+    				getContentResolver(),secondImageId,
+    				MediaStore.Images.Thumbnails.MICRO_KIND,null);
+    		imageView.setImageBitmap(imageThumbnail);
+    	} else if(imageView.getBackground()!=null){
+    		imageView.setImageBitmap(null);
+    		imageView.setBackgroundDrawable(null);
     	}
 
     	//Set the titleView title
