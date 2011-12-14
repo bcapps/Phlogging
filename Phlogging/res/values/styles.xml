@@ -32,4 +32,21 @@
         <item name="android:layout_height">60dp</item>
         <item name="android:layout_margin">10dp</item>	
     </style>
+    <style name="OneRow">
+        <item name="android:orientation">horizontal</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>       
+    <style name="ButtonControl">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_weight">33</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+    <style name="ButtonControl.Audio">
+        <item name="android:onClick">audioClickHandler</item>
+    </style>
+    <style name="ButtonControl.Video">
+        <item name="android:onClick">videoClickHandler</item>
+    </style>
 </resources>

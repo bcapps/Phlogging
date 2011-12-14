@@ -25,4 +25,9 @@
     <integer name="image_max_width">300</integer>
     <integer name="dialog_image_max_height">250</integer>
     <integer name="image_max_height">500</integer>
+    <integer name="max_video_length">20000</integer>
+    <integer name="max_video_size">500000</integer>
+    <integer name="video_frame_rate">30</integer>
+    <dimen name="video_preview_width">320px</dimen>
+    <dimen name="video_preview_height">240px</dimen>
 </resources>

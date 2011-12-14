@@ -16,6 +16,8 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.hardware.Camera;
+import android.hardware.Camera.Size;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
@@ -24,11 +26,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
-import android.provider.MediaStore.Images;
-import android.provider.MediaStore.Images.Media;
 import android.provider.MediaStore.MediaColumns;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -36,12 +38,14 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 //=============================================================================
 public class EditDataView extends Activity
-implements DialogInterface.OnDismissListener{
+implements DialogInterface.OnDismissListener, SurfaceHolder.Callback{
 //-----------------------------------------------------------------------------
 	private DataSQLiteDB phloggingDatabase;
 	private static final int PICTURE_DIALOG = 0;
+	private static final int VIDEO_DIALOG = 1;
 	private static final int ACTIVITY_SELECT_PICTURE = 3;
 	private static final int ACTIVITY_CAMERA_APP = 4;
 
@@ -50,9 +54,14 @@ implements DialogInterface.OnDismissListener{
 
 	private MediaRecorder recorder;
     private String recordFileName;
+    private String videoFileName;
     private MediaPlayer recordingPlayer;
     private Dialog currentDialog;
     private int mainPictureMediaId;
+    
+    private	Camera camera;
+    private SurfaceView videoPreview;
+    private SurfaceHolder surfaceHolder;
 
     private Drawable defaultButtonBackground;
 
@@ -62,6 +71,15 @@ implements DialogInterface.OnDismissListener{
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_entry_layout);
+        
+        String videoDirName;
+        File videoDir;
+        String formattedTime;
+
+		//Setup the date format
+        creationTime = System.currentTimeMillis();
+        SimpleDateFormat df = new SimpleDateFormat("MM.dd.yyyy.HH.mm.ss");
+		formattedTime = df.format(new Date(creationTime));
 
         //Open database
         phloggingDatabase = new DataSQLiteDB(this);
@@ -77,6 +95,18 @@ implements DialogInterface.OnDismissListener{
         if(rowId==-1){
         	mainPictureMediaId = -1;
         	setDefaultRecordFileName();
+        	
+        	//Set the recording fileName
+            videoDirName = Environment.getExternalStorageDirectory().
+            		getAbsolutePath() + "/Android/data/edu.miami.c06804728.phlogging/files";
+            videoDir = new File (videoDirName);
+            if (!videoDir.exists() && !videoDir.mkdirs()) {
+            	Toast.makeText(this,
+            			"ERROR: Could not make temporary storage directory "+videoDir,
+            			Toast.LENGTH_LONG).show();
+            	finish();
+            }
+            videoFileName = videoDir + "/" +  formattedTime + "Video.3gp";
         } else{
         	loadExistingEntry(rowId);
         }
@@ -91,6 +121,103 @@ implements DialogInterface.OnDismissListener{
 
 		//Set current dialog to null
 		currentDialog = null;
+	}
+//-----------------------------------------------------------------------------
+	public void videoClickHandler(View view) {
+		VideoView videoScreen = null;
+
+		if(currentDialog != null){
+			videoScreen = (VideoView)currentDialog.findViewById(R.id.video_screen);
+			videoPreview = (SurfaceView)currentDialog.findViewById(R.id.surface_camera);
+		}
+
+		switch(view.getId()){
+		case R.id.add_video:
+			showDialog(VIDEO_DIALOG);
+			break;
+		case R.id.video_button_dismiss:
+			camera.unlock();
+	        camera.release();
+			dismissDialog(VIDEO_DIALOG);
+			break;
+		case R.id.video_record:
+            videoScreen.setVisibility(View.GONE);
+            videoPreview.setVisibility(View.VISIBLE);
+            camera.startPreview();
+            camera.unlock();
+            recorder = new MediaRecorder();
+            recorder.setCamera(camera);
+            recorder.setAudioSource(MediaRecorder.AudioSource.MIC);
+            recorder.setVideoSource(MediaRecorder.VideoSource.CAMERA);
+            recorder.setOutputFormat(MediaRecorder.OutputFormat.THREE_GPP);
+            recorder.setAudioEncoder(MediaRecorder.AudioEncoder.AMR_NB);
+            recorder.setVideoEncoder(MediaRecorder.VideoEncoder.DEFAULT);
+            recorder.setMaxDuration(getResources().getInteger(
+R.integer.max_video_length)); 
+            recorder.setMaxFileSize(getResources().getInteger(
+R.integer.max_video_size));
+            recorder.setVideoSize(videoPreview.getWidth(),
+            		videoPreview.getHeight()); 
+            recorder.setVideoFrameRate(getResources().getInteger(
+R.integer.video_frame_rate)); 
+            recorder.setOutputFile(videoFileName);
+            recorder.setPreviewDisplay(surfaceHolder.getSurface());
+            boolean didFail = false;
+            try {
+                recorder.prepare();
+            } catch (IOException e) {
+                didFail = true;
+               
+                Toast.makeText(this,
+						"There was an error preparing the video recording.",
+						Toast.LENGTH_LONG).show();
+                
+                recorder.release();
+                camera.lock();
+                camera.stopPreview();
+                
+                //If the recordedFile exists, delete it
+    			File videoFile = new File(videoFileName);
+    			if(videoFile.exists()){
+    				if(!videoFile.delete()){
+    					Toast.makeText(this,
+    							"There was an error clearing the audio recording.",
+    							Toast.LENGTH_LONG).show();
+    				}
+    			}
+            }
+            if(!didFail){
+            	recorder.start();
+            }
+            break;
+        case R.id.video_stop:
+            recorder.stop();
+            recorder.release();
+            camera.lock();
+            camera.stopPreview();
+            videoPreview.setVisibility(View.GONE);
+            videoScreen.setVisibility(View.VISIBLE);
+            break;
+        case R.id.video_play:
+            videoScreen.setVisibility(View.VISIBLE);
+            videoPreview.setVisibility(View.GONE);
+            videoScreen.setVideoPath(videoFileName);
+            videoScreen.start();
+            break;
+        case R.id.video_clear:
+        	//If the recordedFile exists, delete it
+			File videoFile = new File(videoFileName);
+			if(videoFile.exists()){
+				if(!videoFile.delete()){
+					Toast.makeText(this,
+							"There was an error clearing the audio recording.",
+							Toast.LENGTH_LONG).show();
+				}
+			}
+        	break;
+		default:
+			break;
+		}
 	}
 //-----------------------------------------------------------------------------
 	public void audioClickHandler(View view) {
@@ -273,6 +400,14 @@ implements DialogInterface.OnDismissListener{
     				(ViewGroup)findViewById(R.id.dialog_root));
     		dialogBuilder.setView(dialogView);
     		break;
+    	case VIDEO_DIALOG:
+    		//Inflate the dialog and set it to the builder's view
+    		dialogInflator = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
+
+    		dialogView = dialogInflator.inflate(R.layout.ui_video_dialog_layout,
+    				(ViewGroup)findViewById(R.id.dialog_root));
+    		dialogBuilder.setView(dialogView);
+    		break;
     	default:
     		break;
     	}
@@ -310,6 +445,24 @@ implements DialogInterface.OnDismissListener{
         	pictureView.setImageBitmap(mainPictureBitmap);
 
     		break;
+    	case VIDEO_DIALOG:
+    		//----Prepare the surface view
+    		camera = Camera.open();
+            if (camera == null){
+                Toast.makeText(getApplicationContext(),"Camera not available!", 
+    Toast.LENGTH_LONG).show();
+                finish();
+            }
+            camera.lock();
+            
+            videoPreview = (SurfaceView)dialog.findViewById(R.id.surface_camera);
+            surfaceHolder = videoPreview.getHolder();
+            surfaceHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
+            surfaceHolder.addCallback(this);
+            
+    		break;
+    	default:
+    		break;
     	}
     }
 //-----------------------------------------------------------------------------
@@ -318,6 +471,61 @@ implements DialogInterface.OnDismissListener{
 		currentDialog = null;
     }
 //-----------------------------------------------------------------------------
+  //-----------------------------------------------------------------------------
+    public void onCompletion(MediaPlayer mediaPlayer) {
+        
+        mediaPlayer.release();
+    }
+//-----------------------------------------------------------------------------
+    public boolean onError(MediaPlayer mediaPlayer,int whatHappened,int extra) {
+        
+        mediaPlayer.stop();
+        mediaPlayer.release();
+        return(true);
+    }
+//-----------------------------------------------------------------------------
+    public void surfaceCreated(SurfaceHolder holder) {
+
+        try {
+            camera.setPreviewDisplay(holder);
+        } catch (IOException e) {
+            //----Should do something here
+        }
+    }
+//-----------------------------------------------------------------------------
+    public void surfaceChanged(SurfaceHolder holder,int format,int width,
+int height) {
+     
+        Camera.Parameters cameraParameters;
+        boolean sizeFound;
+        
+        camera.stopPreview();
+//        sizeFound = false;
+        cameraParameters = camera.getParameters();
+//        for (Size size : cameraParameters.getSupportedPreviewSizes()) {
+//            if (size.width == width || size.height == height) {
+//                width = size.width;
+//                height = size.height;
+//                sizeFound = true;
+//                break;
+//            }
+//        }
+//        if (sizeFound) {
+            cameraParameters.setPreviewSize(width,height);
+            camera.setParameters(cameraParameters);
+//        } else {
+//            Toast.makeText(getApplicationContext(),
+//"Camera cannot do "+width+"x"+height,Toast.LENGTH_LONG).show();
+//            finish();
+//        }
+//        
+   }
+//-----------------------------------------------------------------------------
+    public void surfaceDestroyed(SurfaceHolder holder) {
+
+    }
+//-----------------------------------------------------------------------------
+    
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -546,7 +754,6 @@ implements DialogInterface.OnDismissListener{
         	finish();
         }
         recordFileName = recordDir + "/" +  formattedTime + getString(R.string.record_file_name);
-
     }
 //-----------------------------------------------------------------------------
     private void loadExistingEntry(long rowId){
@@ -561,13 +768,36 @@ implements DialogInterface.OnDismissListener{
         title = entryData.getAsString("title");
         entryText = entryData.getAsString("description");
         mainPictureMediaId = entryData.getAsInteger("image_media_id");
-       // timeSinceEpoch = entryData.getAsLong("time");
+        //timeSinceEpoch = entryData.getAsLong("time");
         recordFileName = entryData.getAsString("audio_file_name");
         //If the filename is invalid, set it to the default
         if(recordFileName == null || recordFileName.length()<=0){
         	setDefaultRecordFileName();
-        	/*((Button)findViewById(R.id.clear_button)).setEnabled(false);
-        	((Button)findViewById(R.id.play_button)).setEnabled(false);*/
+        }
+        
+        videoFileName = entryData.getAsString("video_file_name");
+        //If the filename is invalid, set it to the default
+        if(videoFileName == null || videoFileName.length()<=0){
+        	String videoDirName;
+            File videoDir;
+            String formattedTime;
+            
+          //Setup the date format
+            creationTime = System.currentTimeMillis();
+            SimpleDateFormat df = new SimpleDateFormat("MM.dd.yyyy.HH.mm.ss");
+    		formattedTime = df.format(new Date(creationTime));
+            
+        	//Set the recording fileName
+            videoDirName = Environment.getExternalStorageDirectory().
+            		getAbsolutePath() + "/Android/data/edu.miami.c06804728.phlogging/files";
+            videoDir = new File (videoDirName);
+            if (!videoDir.exists() && !videoDir.mkdirs()) {
+            	Toast.makeText(this,
+            			"ERROR: Could not make temporary storage directory "+videoDir,
+            			Toast.LENGTH_LONG).show();
+            	finish();
+            }
+            videoFileName = videoDir + "/" +  formattedTime + "Video.3gp";
         }
         //TODO: get and display location and orientation
 

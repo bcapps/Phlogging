@@ -91,12 +91,9 @@ DialogInterface.OnDismissListener{
     @Override
     public void onDestroy() {
         super.onDestroy();
-
-        musicPlayer.release();
         recordingPlayer.release();
         entryCursor.close();
         phloggingDatabase.close();
-        mySpeaker.shutdown();
     }
 //-----------------------------------------------------------------------------
     //Intercept the creation of each item in the listView

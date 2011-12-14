@@ -56,9 +56,6 @@ implements DialogInterface.OnDismissListener{
         	finish();
         }
 
-//        (Button)background.setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY)
-//        background.setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY)
-
         //Initialize all the views with their values
         setViews();
 
@@ -126,9 +123,6 @@ implements DialogInterface.OnDismissListener{
         	break;
         case R.id.delete_button:
         	showDialog(DELETE_DIALOG);
-//        	phloggingDatabase.deleteRowData(rowId);
-//        	setResult(RESULT_OK);
-//        	finish();
         	break;
         default:
         	break;
@@ -335,10 +329,8 @@ implements DialogInterface.OnDismissListener{
     				MediaStore.Images.Thumbnails.MICRO_KIND,null);
     		mainImageView.setImageBitmap(mainImageThumbnail);
     	} else if(mainImageView.getBackground()!=null){
-    		//recycleView(mainImageView);
     		mainImageView.setImageBitmap(null);
     		mainImageView.setBackgroundDrawable(null);
-
     	}
 
     	//Set the titleView title

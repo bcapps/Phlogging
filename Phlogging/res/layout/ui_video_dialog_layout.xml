@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_gravity="center_horizontal" >
+    <FrameLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="10dp">
+        <SurfaceView android:id="@+id/surface_camera"
+            android:layout_width="250dp"
+            android:layout_height="150dp">
+        </SurfaceView>
+        <VideoView android:id="@+id/video_screen"
+            android:layout_width="250dp"
+            android:layout_height="150dp"
+            android:visibility="gone">
+        </VideoView>
+    </FrameLayout>
+    <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="80dp"
+                android:orientation="horizontal"
+                android:gravity="center">
+                <Button android:id="@+id/video_record"
+                    android:layout_height="60dp"
+                    android:layout_width="60dp"
+                    android:onClick="videoClickHandler"
+                    android:textSize="12sp"
+                    android:text="Record Video">
+                </Button>
+                <ImageButton android:id="@+id/video_stop"
+                    android:layout_height="60dp"
+                    android:layout_width="60dp"
+                    android:onClick="videoClickHandler"
+                    android:src="@drawable/stop">
+                </ImageButton>
+                <ImageButton android:id="@+id/video_play"
+                    android:layout_height="60dp"
+                    android:layout_width="60dp"
+                    android:onClick="videoClickHandler"
+                    android:src="@drawable/play">
+                </ImageButton>
+                <ImageButton android:id="@+id/video_clear"
+                    android:layout_height="60dp"
+                    android:layout_width="60dp"
+                    android:onClick="videoClickHandler"
+                    android:src="@drawable/trash">
+                </ImageButton>
+            </LinearLayout>
+    <Button android:id="@+id/video_button_dismiss"
+        android:layout_width="@dimen/button_width"
+        android:layout_height="@dimen/button_height"
+        android:layout_gravity="center"
+        android:text="@string/dismiss_button_text"
+        android:onClick="videoClickHandler">
+    </Button>
+</LinearLayout>

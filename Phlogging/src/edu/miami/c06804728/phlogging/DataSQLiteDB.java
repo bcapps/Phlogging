@@ -12,7 +12,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DataSQLiteDB {
 //-----------------------------------------------------------------------------
     public static final String DATABASE_NAME = "PhloggingDB.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     private static final String PHLOGGING_TABLE = "ImageDescriptions";
     private static final String CREATE_PHLOGGING_TABLE =
 "CREATE TABLE IF NOT EXISTS " + PHLOGGING_TABLE +
@@ -22,6 +22,7 @@ public class DataSQLiteDB {
 "image_media_id INTEGER, " +
 "secondary_image_media_id INTEGER, " +
 "audio_file_name TEXT," +
+"video_file_name TEXT, "+
 "time REAL, " +
 "location TEXT, "+
 "orientation TEXT"+
@@ -56,6 +57,7 @@ public class DataSQLiteDB {
     public boolean deleteRowData(long rowID) {
     	ContentValues rowData;
     	String audioFileName;
+    	String videoFileName;
 
     	//Delete the audio file if it exists
     	rowData = getEntryByRowId(rowID);
@@ -69,6 +71,18 @@ public class DataSQLiteDB {
     			recordingFile.delete();
     		}
     	}
+    	
+    	//Delete the video file if it exists
+    	videoFileName = rowData.getAsString("video_file_name");
+    	//if it isn't null
+    	if(videoFileName!=null){
+    		File videoFile = new File(videoFileName);
+    		//and the file is still there
+    		if(videoFile.exists()){
+    			//delete it
+    			videoFile.delete();
+    		}
+    	}
 
     	//delete the table entry
         return(theDB.delete(PHLOGGING_TABLE,"_id =" + rowID,
@@ -78,7 +92,7 @@ null) > 0);
     public Cursor fetchAllData() {
 
         String[] fieldNames = {"_id","title","description","image_media_id", "secondary_image_media_id",
-        						"audio_file_name", "time", "location", "orientation"};
+        						"audio_file_name", "video_file_name", "time", "location", "orientation"};
 
         return(theDB.query(PHLOGGING_TABLE,fieldNames,null,null,
 null,null,"time"));
@@ -87,7 +101,7 @@ null,null,"time"));
     public Cursor fetchAllData(String sortColumn) {
 
         String[] fieldNames = {"_id","title","description","image_media_id", "secondary_image_media_id",
-        						"audio_file_name", "time", "location", "orientation"};
+        						"audio_file_name", "video_file_name", "time", "location", "orientation"};
 
         return(theDB.query(PHLOGGING_TABLE,fieldNames,null,null,
 null,null,sortColumn));
@@ -139,9 +153,13 @@ null,null,sortColumn));
                     rowData.put("description",cursor.getString(index));
                 }else if (fieldNames[index].equals("audio_file_name")) {
                     rowData.put("audio_file_name",cursor.getString(index));
+                }else if (fieldNames[index].equals("video_file_name")) {
+                    rowData.put("video_file_name",cursor.getString(index));
                 }else if (fieldNames[index].equals("time")) {
                     rowData.put("time",cursor.getLong(index));
-                } else if (fieldNames[index].equals("location")) {
+                } else if (fieldNames[index].equals("time")) {
+                    rowData.put("time",cursor.getLong(index));
+                }else if (fieldNames[index].equals("location")) {
                     rowData.put("location",cursor.getString(index));
                 } else if (fieldNames[index].equals("orientation")) {
                     rowData.put("orientation",cursor.getString(index));
