@@ -12,7 +12,6 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -166,17 +165,6 @@ implements DialogInterface.OnDismissListener {
         	//Get view and play video
         	videoView = (VideoView)currentDialog.findViewById(R.id.video_full_size);
         	videoView.start();
-        	break;
-        case R.id.video_stop:
-        	//error checking
-        	if(videoFileName == null){
-        		break;
-        	}
-        	//Get view and stop playback
-        	videoView = (VideoView)currentDialog.findViewById(R.id.video_full_size);
-        	if(videoView.isPlaying()){
-        		videoView.stopPlayback();
-        	}
         	break;
         case R.id.add_email:
         	//Create the email Intent

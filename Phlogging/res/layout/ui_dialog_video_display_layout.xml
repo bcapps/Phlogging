@@ -22,12 +22,6 @@
                     android:onClick="myClickHandler"
                     android:src="@drawable/play">
                 </ImageButton>
-                <ImageButton android:id="@+id/video_stop"
-                    android:layout_height="@dimen/dimension"
-                    android:layout_width="@dimen/dimension"
-                    android:onClick="myClickHandler"
-                    android:src="@drawable/stop">
-                </ImageButton>
      </LinearLayout>
     <Button android:id="@+id/video_button_dismiss"
         android:layout_width="@dimen/button_width"
