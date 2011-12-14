@@ -305,8 +305,6 @@ R.integer.video_frame_rate));
         	phlogContent.put("time", creationTime);
         	phlogContent.put("image_media_id",mainPictureMediaId);
         	phlogContent.put("secondary_image_media_id",secondPictureMediaId);
-        	//TODO: phlogEntry.put("location", );
-        	//TODO: phlogEntry.put("orientation", );
 
 	        phlogContent.put("audio_file_name",recordFileName);
 	        phlogContent.put("video_file_name",videoFileName);
@@ -818,8 +816,7 @@ int height) {
         if(videoFileName == null || videoFileName.length()<=0){
         	setDefaultVideoFileName();
         }
-        //TODO: get and display location and orientation
-
+        
         //Set the imageView image
         if(mainPictureMediaId != -1){
         	imageThumbnail = MediaStore.Images.Thumbnails.getThumbnail(
