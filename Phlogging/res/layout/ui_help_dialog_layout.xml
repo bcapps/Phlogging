@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_root"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal">
+    <TextView 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="LOTS OF HELPT EXT INSERT HERE HI HEATHER WEEEEE"
+        android:textColor="@color/black"
+        android:background="@color/LightSlateGray">
+    </TextView>
+    <Button android:id="@+id/help_dismiss"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dismiss"
+        android:onClick="myClickHandler">
+    </Button>
+</LinearLayout>

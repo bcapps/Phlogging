@@ -30,6 +30,19 @@
             android:onClick="myClickHandler">
         </Button>
     </LinearLayout>
+    <TextView 
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:textSize="@dimen/medium_text_size"
+        android:text="Need Some Help?">
+    </TextView>
+    <Button android:id="@+id/help_button"
+            android:layout_width="@dimen/button_width"
+            android:layout_height="@dimen/button_height"
+            android:text="Help!"
+            android:onClick="myClickHandler">
+    </Button>
     <Button android:id="@+id/settings_button_dismiss"
         android:layout_width="@dimen/button_width"
         android:layout_height="@dimen/button_height"

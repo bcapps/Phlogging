@@ -43,7 +43,8 @@ DialogInterface.OnDismissListener{
     private MediaPlayer musicPlayer;
 
     private static final int SETTINGS_DIALOG = 1;
-    private static final int ACTIVITY_EDIT = 2;
+    private static final int HELP_DIALOG = 2;
+    private static final int ACTIVITY_EDIT = 3;
 
     private TextToSpeech mySpeaker;
     private MediaPlayer recordingPlayer;
@@ -327,6 +328,12 @@ DialogInterface.OnDismissListener{
         case R.id.settings_button_dismiss:
         	dismissDialog(SETTINGS_DIALOG);
             break;
+        case R.id.help_button:
+        	showDialog(HELP_DIALOG);
+        	break;
+        case R.id.help_dismiss:
+        	dismissDialog(HELP_DIALOG);
+        	break;
         default:
             break;
         }
@@ -347,6 +354,13 @@ DialogInterface.OnDismissListener{
     		dialogInflator = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
 
     		dialogView = dialogInflator.inflate(R.layout.ui_settings_dialog_layout,
+    				(ViewGroup)findViewById(R.id.dialog_root));
+    		dialogBuilder.setView(dialogView);
+    		break;
+    	case HELP_DIALOG:
+    		dialogInflator = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
+
+    		dialogView = dialogInflator.inflate(R.layout.ui_help_dialog_layout,
     				(ViewGroup)findViewById(R.id.dialog_root));
     		dialogBuilder.setView(dialogView);
     		break;
