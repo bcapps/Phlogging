@@ -45,6 +45,7 @@
 	</ImageView>
 	<ImageButton android:id="@+id/video_button"
  		style="@style/TinyButton"
+ 		android:src="@drawable/movie"
 	    android:onClick="myClickHandler">
 	</ImageButton>
 	<ImageButton android:id="@+id/play_recording"
