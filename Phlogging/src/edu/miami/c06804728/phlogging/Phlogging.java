@@ -1,7 +1,7 @@
 package edu.miami.c06804728.phlogging;
 
+import java.sql.Date;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -20,7 +20,6 @@ import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
 import android.speech.tts.TextToSpeech;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,6 +30,7 @@ import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
 //=============================================================================
 public class Phlogging extends Activity
 implements OnItemClickListener, SimpleCursorAdapter.ViewBinder,

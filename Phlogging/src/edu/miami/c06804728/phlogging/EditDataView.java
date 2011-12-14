@@ -2,8 +2,8 @@ package edu.miami.c06804728.phlogging;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Date;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -14,9 +14,9 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.hardware.Camera;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.hardware.Camera;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
@@ -38,6 +38,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
+
 //=============================================================================
 public class EditDataView extends Activity
 implements DialogInterface.OnDismissListener, SurfaceHolder.Callback{
@@ -66,7 +67,6 @@ implements DialogInterface.OnDismissListener, SurfaceHolder.Callback{
 
     private boolean isRecording;
 //-----------------------------------------------------------------------------
-	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_entry_layout);
@@ -354,7 +354,6 @@ R.integer.video_frame_rate));
             mainPictureButton = (Button) findViewById(R.id.add_main_pic_button);
             mainPictureButton.setBackgroundDrawable(defaultButtonBackground);
             mainPictureButton.setText("Click me to add a photo");
-
         	break;
         default:
             break;
@@ -463,7 +462,8 @@ R.integer.video_frame_rate));
         return(true);
     }
 //-----------------------------------------------------------------------------
-    public void surfaceCreated(SurfaceHolder holder) {
+    @Override
+	public void surfaceCreated(SurfaceHolder holder) {
 
         try {
             camera.setPreviewDisplay(holder);
@@ -472,7 +472,8 @@ R.integer.video_frame_rate));
         }
     }
 //-----------------------------------------------------------------------------
-    public void surfaceChanged(SurfaceHolder holder,int format,int width,
+    @Override
+	public void surfaceChanged(SurfaceHolder holder,int format,int width,
 int height) {
         Camera.Parameters cameraParameters;
         
@@ -482,7 +483,8 @@ int height) {
         camera.setParameters(cameraParameters);  
    }
 //-----------------------------------------------------------------------------
-    public void surfaceDestroyed(SurfaceHolder holder) {
+    @Override
+	public void surfaceDestroyed(SurfaceHolder holder) {
 
     }
 //-----------------------------------------------------------------------------
@@ -624,20 +626,20 @@ int height) {
 //-----------------------------------------------------------------------------
     //Helper method to get the file path from a Uri
     public String getPath(Uri uri) {
-        String[] projection = { MediaStore.Images.Media.DATA };
+        String[] projection = { MediaColumns.DATA };
         Cursor cursor = managedQuery(uri, projection, null, null, null);
         int column_index = cursor
-                .getColumnIndex(MediaStore.Images.Media.DATA);
+                .getColumnIndex(MediaColumns.DATA);
         cursor.moveToFirst();
         return cursor.getString(column_index);
     }
 //-----------------------------------------------------------------------------
     //Helper method to get the media id from a Uri
     public int getMediaId(Uri uri) {
-        String[] projection = { MediaStore.Images.Media._ID };
+        String[] projection = { BaseColumns._ID };
         Cursor cursor = managedQuery(uri, projection, null, null, null);
         int column_index = cursor
-                .getColumnIndex(MediaStore.Images.Media._ID);
+                .getColumnIndex(BaseColumns._ID);
         cursor.moveToFirst();
         return cursor.getInt(column_index);
     }

@@ -19,6 +19,7 @@ import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,6 +75,7 @@ implements DialogInterface.OnDismissListener{
 		Intent nextActivity;
 		VideoView videoView;
 		File videoFile;
+		Intent emailIntent;
 
         switch (view.getId()) {
         case R.id.close_button:
@@ -158,6 +160,13 @@ implements DialogInterface.OnDismissListener{
         	if(videoView.isPlaying()){
         		videoView.stopPlayback();
         	}
+        	break;
+        case R.id.add_email:
+        	Log.i("ENID", "EMAIL NUKKA");
+        	emailIntent = new Intent();
+        	emailIntent.setClassName("edu.miami.c06804728.phlogging",
+    		"edu.miami.c06804728.phlogging.ContactsEmailView");
+        	startActivity(emailIntent);
         	break;
         default:
         	break;
@@ -395,7 +404,8 @@ implements DialogInterface.OnDismissListener{
 //-----------------------------------------------------------------------------
     DialogInterface.OnClickListener deleteListener =
     	new DialogInterface.OnClickListener() {
-    public void onClick(DialogInterface dialog,int whatWasClicked) {
+    @Override
+	public void onClick(DialogInterface dialog,int whatWasClicked) {
 
         switch (whatWasClicked) {
         case DialogInterface.BUTTON_POSITIVE:

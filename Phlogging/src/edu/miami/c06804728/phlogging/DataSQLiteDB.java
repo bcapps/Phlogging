@@ -8,6 +8,7 @@ import android.content.ContextWrapper;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+
 //=============================================================================
 public class DataSQLiteDB {
 //-----------------------------------------------------------------------------
@@ -181,7 +182,8 @@ null,null,sortColumn));
             userContext = context;
         }
     //-------------------------------------------------------------------------
-        public void onCreate(SQLiteDatabase db) {
+        @Override
+		public void onCreate(SQLiteDatabase db) {
 
             db.execSQL(CREATE_PHLOGGING_TABLE);
         }
@@ -192,7 +194,8 @@ null,null,sortColumn));
             super.onOpen(db);
         }
     //-------------------------------------------------------------------------
-        public void onUpgrade(SQLiteDatabase db,int oldVersion,
+        @Override
+		public void onUpgrade(SQLiteDatabase db,int oldVersion,
 int newVersion) {
 
             (new ContextWrapper(userContext)).deleteDatabase(DATABASE_NAME);
