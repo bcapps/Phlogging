@@ -513,12 +513,12 @@ R.integer.video_frame_rate));
     @Override
 	public void surfaceChanged(SurfaceHolder holder,int format,int width,
 int height) {
-        Camera.Parameters cameraParameters;
-        
-        camera.stopPreview();
-        cameraParameters = camera.getParameters();
-        cameraParameters.setPreviewSize(width,height);
-        camera.setParameters(cameraParameters);  
+//        Camera.Parameters cameraParameters;
+//        
+//        camera.stopPreview();
+//        cameraParameters = camera.getParameters();
+//        cameraParameters.setPreviewSize(width,height);
+//        camera.setParameters(cameraParameters);  
    }
 //-----------------------------------------------------------------------------
     @Override

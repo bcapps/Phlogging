@@ -7,11 +7,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -19,7 +17,6 @@ import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
-import android.speech.tts.TextToSpeech;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,20 +30,16 @@ import android.widget.Toast;
 
 //=============================================================================
 public class Phlogging extends Activity
-implements OnItemClickListener, SimpleCursorAdapter.ViewBinder,
-DialogInterface.OnDismissListener{
+implements OnItemClickListener, SimpleCursorAdapter.ViewBinder{
 //-----------------------------------------------------------------------------
     private DataSQLiteDB phloggingDatabase;
     private Cursor entryCursor;
     private Cursor imageMediaCursor;
 
-    private MediaPlayer musicPlayer;
-
     private static final int SETTINGS_DIALOG = 1;
     private static final int HELP_DIALOG = 2;
     private static final int ACTIVITY_EDIT = 3;
 
-    private TextToSpeech mySpeaker;
     private MediaPlayer recordingPlayer;
 
 //-----------------------------------------------------------------------------
@@ -118,7 +111,7 @@ DialogInterface.OnDismissListener{
         		recycleView(thumbnailView);
         		return(true);
         	}
-        	
+
         	thumbnailBitmap = MediaStore.Images.Thumbnails.getThumbnail(
         			getContentResolver(),imageIndex,
         			MediaStore.Images.Thumbnails.MICRO_KIND,null);
@@ -147,11 +140,11 @@ DialogInterface.OnDismissListener{
         }
         //if on the audio column
         else if(columnIndex == cursor.getColumnIndex("time")){
-        	//Get the checkbox view and the description
+        	//Get the timeView and time
         	timeView = (TextView)view.findViewById(R.id.time);
         	timeSinceEpoch = cursor.getLong(columnIndex);
 
-        	//Check the checkbox if the value isn't null
+        	//If the time is valid, set the TimeView
         	if(timeSinceEpoch > 0){
         		SimpleDateFormat df = new SimpleDateFormat("MM/dd/yyyy hh:mm");
         		timeView.setText(df.format(new Date(timeSinceEpoch)));
@@ -167,29 +160,22 @@ DialogInterface.OnDismissListener{
     @Override
     public void onItemClick(AdapterView<?> parent,View view,int position, long rowId) {
     	Intent nextActivity;
+    	
+    	//Create the Display intent with the rowId
     	nextActivity = new Intent();
     	nextActivity.setClassName("edu.miami.c06804728.phlogging",
         		"edu.miami.c06804728.phlogging.DisplayDataView");
         nextActivity.putExtra("edu.miami.c06804728.phlogging.rowId", rowId);
 
-    	//Start the Edit activity
+    	//Start the Display activity
     	startActivityForResult(nextActivity,ACTIVITY_EDIT);
     }
 //-----------------------------------------------------------------------------
     @Override
     public void onActivityResult(int requestCode,int resultCode,Intent data) {
     	super.onActivityResult(requestCode, resultCode, data);
-
-    	switch (requestCode) {
-        case ACTIVITY_EDIT:
-        	if (resultCode == Activity.RESULT_OK) {
-                //Refresh the listView
-                entryCursor.requery();
-        	}
-        	break;
-        default:
-        	break;
-    	}
+        	
+    	entryCursor.requery();
     }
 //-----------------------------------------------------------------------------
     //Convenience method to get the image filename from a rowId
@@ -202,6 +188,7 @@ DialogInterface.OnDismissListener{
     	int imageMediaId;
 
     	imageFound = false;
+    	
     	//Get the relevant MediaStore column indexes
     	imageIDIndex = imageMediaCursor.getColumnIndex(BaseColumns._ID);
     	imageDataIndex = imageMediaCursor.getColumnIndex(MediaColumns.DATA);
@@ -233,48 +220,9 @@ DialogInterface.OnDismissListener{
         }
     }
 //-----------------------------------------------------------------------------
-    //Convenience method to get a Bitmap from a rowId
-    public Bitmap getBitmapFromRowId(long rowId){
-    	Bitmap rowImageBitmap;
-    	String imageFileName;
-    	int maxWidth, maxHeight;
-
-    	//Get the filename from the rowId
-    	imageFileName = getFilenameFromRowId(rowId);
-    	if(imageFileName!=null){
-    		//Get and return the Bitmap using the filename
-    		maxWidth = getResources().getInteger(R.integer.image_max_width);
-    		maxHeight = getResources().getInteger(R.integer.dialog_image_max_height);
-
-    		rowImageBitmap = loadResizedBitmap(imageFileName,
-    				maxWidth, maxHeight, false);
-    		return rowImageBitmap;
-    	}
-
-    	return null;
-    }
-//-----------------------------------------------------------------------------
-    //Convenience method to get a description from a rowId
-    public String getDescriptionFromRowId(long rowId){
-    	ContentValues imageData;
-    	String description;
-
-    	//get the description
-    	imageData = phloggingDatabase.getEntryByRowId((int) rowId);
-    	description = imageData.getAsString("description");
-
-    	return description; //can be null
-    }
-//-----------------------------------------------------------------------------
-    public String getAudioFileNameFromRowId(long rowId){
-    	ContentValues imageData;
-
-    	imageData = phloggingDatabase.getEntryByRowId(rowId);
-    	return imageData.getAsString("audio_file_name");
-    }
-//-----------------------------------------------------------------------------
     public void myClickHandler(View view) {
     	Intent nextActivity;
+    	//All the variables for resorting
     	SimpleCursorAdapter cursorAdapter;
         ListView theList;
         String[] displayFields = {
@@ -304,7 +252,7 @@ DialogInterface.OnDismissListener{
         case R.id.sort_title:
         	//create a new cursor and refetch the data with sort order
         	entryCursor = phloggingDatabase.fetchAllData("title");
-        	
+
         	//create a new adapter and set it to the list
         	theList = (ListView)findViewById(R.id.the_list);
             cursorAdapter = new SimpleCursorAdapter(this,
@@ -316,7 +264,7 @@ DialogInterface.OnDismissListener{
         case R.id.sort_date:
         	//create a new cursor and refetch the data with sort order
         	entryCursor = phloggingDatabase.fetchAllData("time");
-        	
+
         	//create a new adapter and set it to the list
         	theList = (ListView)findViewById(R.id.the_list);
             cursorAdapter = new SimpleCursorAdapter(this,
@@ -351,6 +299,7 @@ DialogInterface.OnDismissListener{
     	dialogBuilder = new AlertDialog.Builder(this);
     	switch (dialogId) {
     	case SETTINGS_DIALOG:
+    		//Inflate the settings dialog and set the view
     		dialogInflator = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
 
     		dialogView = dialogInflator.inflate(R.layout.ui_settings_dialog_layout,
@@ -358,6 +307,7 @@ DialogInterface.OnDismissListener{
     		dialogBuilder.setView(dialogView);
     		break;
     	case HELP_DIALOG:
+    		//Inflate the help dialog and set the view
     		dialogInflator = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
 
     		dialogView = dialogInflator.inflate(R.layout.ui_help_dialog_layout,
@@ -368,19 +318,8 @@ DialogInterface.OnDismissListener{
     		break;
     	}
     	theDialog = dialogBuilder.create();
-    	theDialog.setOnDismissListener(this);
 
     	return(theDialog);
-    }
-//-----------------------------------------------------------------------------
-    @Override
-	protected void onPrepareDialog (int dialogId, Dialog dialog){
-
-    }
-//-----------------------------------------------------------------------------
-    @Override
-	public void onDismiss (DialogInterface dialog){
-
     }
 //-----------------------------------------------------------------------------
     //Generic code to recycleView. Taken verbatim from Geoff's site.
@@ -409,31 +348,6 @@ DialogInterface.OnDismissListener{
             view.setBackgroundDrawable(null);
             System.gc();
         }
-    }
-//-----------------------------------------------------------------------------
-    //This code is from the internet. It fixes a common Android issue
-    //where if the bitmap is too big, it just crashes, getting
-    //the dreaded java.lang.OutOfMemoryError, even with recycling the view.
-    public static Bitmap loadResizedBitmap( String filename, int width, int height, boolean exact ) {
-        Bitmap bitmap = null;
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile( filename, options );
-        if ( options.outHeight > 0 && options.outWidth > 0 ) {
-            options.inJustDecodeBounds = false;
-            options.inSampleSize = 2;
-            while (    options.outWidth  / options.inSampleSize > width
-                    && options.outHeight / options.inSampleSize > height ) {
-                options.inSampleSize++;
-            }
-            options.inSampleSize--;
-
-            bitmap = BitmapFactory.decodeFile( filename, options );
-            if ( bitmap != null && exact ) {
-                bitmap = Bitmap.createScaledBitmap( bitmap, width, height, false );
-            }
-        }
-        return bitmap;
     }
 }
 //=============================================================================

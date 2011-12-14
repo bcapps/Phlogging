@@ -81,8 +81,8 @@
 				android:gravity="center_vertical"
 				android:background="@color/LightSlateGray">
 				<Button android:id="@+id/add_main_pic_button"
-			            android:layout_height="96px"
-			            android:layout_width="96px"
+			            android:layout_height="60dp"
+			            android:layout_width="60dp"
 			            android:text="Click me to add a photo"
 			            android:textSize="9sp"
 			            android:onClick="myClickHandler">

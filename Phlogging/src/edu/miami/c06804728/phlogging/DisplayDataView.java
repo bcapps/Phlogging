@@ -15,12 +15,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,7 +28,7 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 public class DisplayDataView extends Activity
-implements DialogInterface.OnDismissListener{
+implements DialogInterface.OnDismissListener {
 //-----------------------------------------------------------------------------
 	private static final int EDIT_ACTIVITY = 1;
     private static final int DELETE_DIALOG = 2;
@@ -38,9 +36,10 @@ implements DialogInterface.OnDismissListener{
 	private static final int SECOND_PICTURE_DIALOG = 4;
 	private static final int VIDEO_DIALOG = 5;
 	private DataSQLiteDB phloggingDatabase;
-	
-	private long rowId;
 
+	private long rowId;
+	
+	//Media variables
     private MediaPlayer recordingPlayer;
     private String recordingFileName;
     private String videoFileName;
@@ -85,7 +84,6 @@ implements DialogInterface.OnDismissListener{
 		String title;
     	String entryText;
     	
-
         switch (view.getId()) {
         case R.id.close_button:
         	//if playing, stop
@@ -101,6 +99,7 @@ implements DialogInterface.OnDismissListener{
         		recordingPlayer.stop();
         	}
 
+        	//create the edit activity with rowId
         	nextActivity = new Intent();
         	nextActivity.setClassName("edu.miami.c06804728.phlogging",
             		"edu.miami.c06804728.phlogging.EditDataView");
@@ -132,11 +131,13 @@ implements DialogInterface.OnDismissListener{
 	    	}
         	break;
         case R.id.image_thumbnail:
+        	//If the image exists, show the dialog
         	if(mainImageId >= 0){
         		showDialog(PICTURE_DIALOG);
         	}
         	break;
         case R.id.second_photo_thumbnail:
+        	//If the second image exists, show the dialog
         	if(secondImageId >= 0){
         		showDialog(SECOND_PICTURE_DIALOG);
         	}
@@ -162,6 +163,7 @@ implements DialogInterface.OnDismissListener{
         	dismissDialog(VIDEO_DIALOG);
         	break;
         case R.id.video_play:
+        	//Get view and play video
         	videoView = (VideoView)currentDialog.findViewById(R.id.video_full_size);
         	videoView.start();
         	break;
@@ -170,27 +172,31 @@ implements DialogInterface.OnDismissListener{
         	if(videoFileName == null){
         		break;
         	}
+        	//Get view and stop playback
         	videoView = (VideoView)currentDialog.findViewById(R.id.video_full_size);
         	if(videoView.isPlaying()){
         		videoView.stopPlayback();
         	}
         	break;
         case R.id.add_email:
+        	//Create the email Intent
         	emailIntent = new Intent();
         	emailIntent.setClassName("edu.miami.c06804728.phlogging",
     		"edu.miami.c06804728.phlogging.ContactsEmailView");
-        	
+
         	//Get the ContentValues and corresponding data
         	entryData = phloggingDatabase.getEntryByRowId(rowId);
         	title = entryData.getAsString("title");
         	entryText = entryData.getAsString("description");
         	int imageMediaId = entryData.getAsInteger("image_media_id");
         	String imageFileName = getFilenameFromMediaId(imageMediaId);
-        	
+
+        	//Put the data into the intent
         	emailIntent.putExtra("edu.miami.c06804728.phlogging.title", title);
         	emailIntent.putExtra("edu.miami.c06804728.phlogging.entryText", entryText);
         	emailIntent.putExtra("edu.miami.c06804728.phlogging.imageFileName", imageFileName);
-        	
+
+        	//Start intent
         	startActivity(emailIntent);
         	break;
         default:
@@ -218,6 +224,7 @@ implements DialogInterface.OnDismissListener{
     		dialogBuilder.setView(dialogView);
     		break;
     	case DELETE_DIALOG:
+    		//Set the delete dialog messages
     		 dialogBuilder.setMessage("Are you sure you want to permanantly delete this phlog entry?");
              dialogBuilder.setPositiveButton("Yes",deleteListener);
              dialogBuilder.setNegativeButton("No",deleteListener);
@@ -248,7 +255,7 @@ implements DialogInterface.OnDismissListener{
 
 	    	currentDialog = dialog;
 	    	currentDialogId = dialogId;
-	    	
+
 	    	switch(dialogId){
 	    	case PICTURE_DIALOG:
 	        	//Get the pictureView
@@ -305,7 +312,6 @@ implements DialogInterface.OnDismissListener{
 
     	imageFound = false;
 
-    	//Setup
     	String[] queryFields = {
                 BaseColumns._ID,
                 //The data field will be used later to obtain the fileName
@@ -337,34 +343,6 @@ implements DialogInterface.OnDismissListener{
 
         //If the image isn't found, return null
         return null;
-    }
-//-----------------------------------------------------------------------------
-    //Generic code to recycleView. Taken verbatim from Geoff's site.
-    private void recycleView(View view) {
-
-        ImageView imageView;
-        Bitmap imageBitmap;
-        BitmapDrawable imageBitmapDrawable;
-
-        if (view != null) {
-            if (view instanceof ImageView) {
-                imageView = (ImageView)view;
-                if ((imageBitmapDrawable =
-                		(BitmapDrawable)imageView.getDrawable()) != null &&
-                		(imageBitmap = imageBitmapDrawable.getBitmap()) != null) {
-                    imageBitmap.recycle();
-                }
-                imageView.setImageURI(null);
-                imageView.setImageBitmap(null);
-            }
-            if ((imageBitmapDrawable =
-            		(BitmapDrawable)view.getBackground()) != null &&
-            		(imageBitmap = imageBitmapDrawable.getBitmap()) != null) {
-                imageBitmap.recycle();
-            }
-            view.setBackgroundDrawable(null);
-            System.gc();
-        }
     }
 //-----------------------------------------------------------------------------
 
@@ -401,6 +379,7 @@ implements DialogInterface.OnDismissListener{
         }
     }
 //-----------------------------------------------------------------------------
+    //Set all the views and their corresponding values
     public void setViews(){
     	ContentValues entryData;
     	String title;
@@ -419,12 +398,10 @@ implements DialogInterface.OnDismissListener{
     	secondImageId = entryData.getAsInteger("secondary_image_media_id");
     	recordingFileName = entryData.getAsString("audio_file_name");
     	videoFileName = entryData.getAsString("video_file_name");
-    	
-    	//TODO: get and display location and orientation
 
     	imageView = (ImageView) findViewById(R.id.image_thumbnail);
 
-    	//Set the imageView image
+    	//Set or unset the imageView image
     	if(mainImageId != -1){
     		imageThumbnail = MediaStore.Images.Thumbnails.getThumbnail(
     				getContentResolver(),mainImageId,
@@ -434,10 +411,10 @@ implements DialogInterface.OnDismissListener{
     		imageView.setImageBitmap(null);
     		imageView.setBackgroundDrawable(null);
     	}
-    	
-    	//Set the secondary image
+
+    	//Set or unset the secondary image
+    	imageView = (ImageView) findViewById(R.id.second_photo_thumbnail);
     	if(secondImageId != -1){
-    		imageView = (ImageView) findViewById(R.id.second_photo_thumbnail);
     		imageThumbnail = MediaStore.Images.Thumbnails.getThumbnail(
     				getContentResolver(),secondImageId,
     				MediaStore.Images.Thumbnails.MICRO_KIND,null);
@@ -463,11 +440,13 @@ implements DialogInterface.OnDismissListener{
 
         switch (whatWasClicked) {
         case DialogInterface.BUTTON_POSITIVE:
+        	//Delete the entry and exit
         	phloggingDatabase.deleteRowData(rowId);
         	setResult(RESULT_OK);
             finish();
             break;
         case DialogInterface.BUTTON_NEGATIVE:
+        	//Cancel
         	dismissDialog(DELETE_DIALOG);
         	break;
         default:
