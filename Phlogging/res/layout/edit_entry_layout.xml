@@ -142,13 +142,12 @@
                 android:layout_margin="@dimen/half_gap"
                 android:gravity="center_vertical"
                 android:background="@color/LightSlateGray">
-                <Button android:id="@+id/add_video"
-                    android:layout_height="96px"
-                    android:layout_width="96px"
-                    android:text="Click me to add a video"
-                    android:textSize="9sp"
+                <ImageButton android:id="@+id/add_video"
+                    android:layout_height="60dp"
+                    android:layout_width="60dp"
+                    android:src="@drawable/movie"
                     android:onClick="videoClickHandler">
-                </Button>
+                </ImageButton>
             </LinearLayout>
 		</LinearLayout>
     </SlidingDrawer>
