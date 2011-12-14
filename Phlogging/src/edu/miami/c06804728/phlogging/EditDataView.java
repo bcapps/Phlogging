@@ -81,6 +81,7 @@ implements DialogInterface.OnDismissListener{
         	loadExistingEntry(rowId);
         }
 
+
         //Not recording
         isRecording = false;
 
@@ -565,6 +566,8 @@ implements DialogInterface.OnDismissListener{
         //If the filename is invalid, set it to the default
         if(recordFileName == null || recordFileName.length()<=0){
         	setDefaultRecordFileName();
+        	/*((Button)findViewById(R.id.clear_button)).setEnabled(false);
+        	((Button)findViewById(R.id.play_button)).setEnabled(false);*/
         }
         //TODO: get and display location and orientation
 

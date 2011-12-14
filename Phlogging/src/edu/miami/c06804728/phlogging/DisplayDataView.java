@@ -31,13 +31,14 @@ public class DisplayDataView extends Activity
 implements DialogInterface.OnDismissListener{
 //-----------------------------------------------------------------------------
 	private static final int PICTURE_DIALOG = 0;
+    private final int DELETE_DIALOG = 1;
+
 	private DataSQLiteDB phloggingDatabase;
 	private long rowId;
 
     private MediaPlayer recordingPlayer;
     private String recordingFileName;
     private int mainImageId;
-
 //-----------------------------------------------------------------------------
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -54,6 +55,9 @@ implements DialogInterface.OnDismissListener{
         if(rowId==-1){
         	finish();
         }
+        
+//        (Button)background.setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY)
+//        background.setColorFilter(Color.GRAY, PorterDuff.Mode.MULTIPLY)
 
         //Initialize all the views with their values
         setViews();
@@ -121,9 +125,10 @@ implements DialogInterface.OnDismissListener{
         	dismissDialog(PICTURE_DIALOG);
         	break;
         case R.id.delete_button:
-        	phloggingDatabase.deleteRowData(rowId);
-        	setResult(RESULT_OK);
-        	finish();
+        	showDialog(DELETE_DIALOG);
+//        	phloggingDatabase.deleteRowData(rowId);
+//        	setResult(RESULT_OK);
+//        	finish();
         	break;
         default:
         	break;
@@ -147,6 +152,11 @@ implements DialogInterface.OnDismissListener{
     		dialogView = dialogInflator.inflate(R.layout.ui_dialog_image_display_layout,
     				(ViewGroup)findViewById(R.id.dialog_root));
     		dialogBuilder.setView(dialogView);
+    		break;
+    	case DELETE_DIALOG:
+    		 dialogBuilder.setMessage("Are you sure you want to permanantly delete this phlog entry?");
+             dialogBuilder.setPositiveButton("Yes",deleteListener);
+             dialogBuilder.setNegativeButton("No",deleteListener);
     		break;
     	default:
     		break;
@@ -339,4 +349,24 @@ implements DialogInterface.OnDismissListener{
     entryTextView = (TextView) findViewById(R.id.entry_text);
     entryTextView.setText(entryText);
     }
+//-----------------------------------------------------------------------------
+    DialogInterface.OnClickListener deleteListener =
+    	new DialogInterface.OnClickListener() {
+    public void onClick(DialogInterface dialog,int whatWasClicked) {
+
+        switch (whatWasClicked) {
+        case DialogInterface.BUTTON_POSITIVE:
+        	phloggingDatabase.deleteRowData(rowId);
+        	setResult(RESULT_OK);
+            finish();
+            break;
+        case DialogInterface.BUTTON_NEGATIVE:
+        	dismissDialog(DELETE_DIALOG);
+        	break;
+        default:
+            break;
+        }
+    }
+    };
+//-----------------------------------------------------------------------------
 }
