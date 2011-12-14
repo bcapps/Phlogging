@@ -49,7 +49,7 @@
                     android:onClick="videoClickHandler"
                     android:src="@drawable/trash">
                 </ImageButton>
-            </LinearLayout>
+     </LinearLayout>
     <Button android:id="@+id/video_button_dismiss"
         android:layout_width="@dimen/button_width"
         android:layout_height="@dimen/button_height"

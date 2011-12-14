@@ -17,7 +17,6 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.hardware.Camera;
-import android.hardware.Camera.Size;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.media.MediaRecorder;
@@ -71,16 +70,7 @@ implements DialogInterface.OnDismissListener, SurfaceHolder.Callback{
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
         setContentView(R.layout.edit_entry_layout);
-        
-        String videoDirName;
-        File videoDir;
-        String formattedTime;
-
-		//Setup the date format
-        creationTime = System.currentTimeMillis();
-        SimpleDateFormat df = new SimpleDateFormat("MM.dd.yyyy.HH.mm.ss");
-		formattedTime = df.format(new Date(creationTime));
-
+   
         //Open database
         phloggingDatabase = new DataSQLiteDB(this);
 
@@ -95,18 +85,7 @@ implements DialogInterface.OnDismissListener, SurfaceHolder.Callback{
         if(rowId==-1){
         	mainPictureMediaId = -1;
         	setDefaultRecordFileName();
-        	
-        	//Set the recording fileName
-            videoDirName = Environment.getExternalStorageDirectory().
-            		getAbsolutePath() + "/Android/data/edu.miami.c06804728.phlogging/files";
-            videoDir = new File (videoDirName);
-            if (!videoDir.exists() && !videoDir.mkdirs()) {
-            	Toast.makeText(this,
-            			"ERROR: Could not make temporary storage directory "+videoDir,
-            			Toast.LENGTH_LONG).show();
-            	finish();
-            }
-            videoFileName = videoDir + "/" +  formattedTime + "Video.3gp";
+        	setDefaultVideoFileName();
         } else{
         	loadExistingEntry(rowId);
         }
@@ -495,30 +474,12 @@ R.integer.video_frame_rate));
 //-----------------------------------------------------------------------------
     public void surfaceChanged(SurfaceHolder holder,int format,int width,
 int height) {
-     
         Camera.Parameters cameraParameters;
-        boolean sizeFound;
         
         camera.stopPreview();
-//        sizeFound = false;
         cameraParameters = camera.getParameters();
-//        for (Size size : cameraParameters.getSupportedPreviewSizes()) {
-//            if (size.width == width || size.height == height) {
-//                width = size.width;
-//                height = size.height;
-//                sizeFound = true;
-//                break;
-//            }
-//        }
-//        if (sizeFound) {
-            cameraParameters.setPreviewSize(width,height);
-            camera.setParameters(cameraParameters);
-//        } else {
-//            Toast.makeText(getApplicationContext(),
-//"Camera cannot do "+width+"x"+height,Toast.LENGTH_LONG).show();
-//            finish();
-//        }
-//        
+        cameraParameters.setPreviewSize(width,height);
+        camera.setParameters(cameraParameters);  
    }
 //-----------------------------------------------------------------------------
     public void surfaceDestroyed(SurfaceHolder holder) {
@@ -733,6 +694,28 @@ int height) {
         return bitmap;
     }
 //-----------------------------------------------------------------------------
+    private void setDefaultVideoFileName(){
+    	String videoDirName;
+        File videoDir;
+        String formattedTime;
+        
+        //Setup the date format
+        creationTime = System.currentTimeMillis();
+        SimpleDateFormat df = new SimpleDateFormat("MM.dd.yyyy.HH.mm.ss");
+		formattedTime = df.format(new Date(creationTime));
+        
+    	//Set the recording fileName
+        videoDirName = Environment.getExternalStorageDirectory().
+        		getAbsolutePath() + "/Android/data/edu.miami.c06804728.phlogging/files";
+        videoDir = new File (videoDirName);
+        if (!videoDir.exists() && !videoDir.mkdirs()) {
+        	Toast.makeText(this,
+        			"ERROR: Could not make temporary storage directory "+videoDir,
+        			Toast.LENGTH_LONG).show();
+        	finish();
+        }
+        videoFileName = videoDir + "/" +  formattedTime + "Video.3gp";
+    }
     private void setDefaultRecordFileName(){
         String formattedTime;
         String recordDirName;
@@ -778,26 +761,7 @@ int height) {
         videoFileName = entryData.getAsString("video_file_name");
         //If the filename is invalid, set it to the default
         if(videoFileName == null || videoFileName.length()<=0){
-        	String videoDirName;
-            File videoDir;
-            String formattedTime;
-            
-          //Setup the date format
-            creationTime = System.currentTimeMillis();
-            SimpleDateFormat df = new SimpleDateFormat("MM.dd.yyyy.HH.mm.ss");
-    		formattedTime = df.format(new Date(creationTime));
-            
-        	//Set the recording fileName
-            videoDirName = Environment.getExternalStorageDirectory().
-            		getAbsolutePath() + "/Android/data/edu.miami.c06804728.phlogging/files";
-            videoDir = new File (videoDirName);
-            if (!videoDir.exists() && !videoDir.mkdirs()) {
-            	Toast.makeText(this,
-            			"ERROR: Could not make temporary storage directory "+videoDir,
-            			Toast.LENGTH_LONG).show();
-            	finish();
-            }
-            videoFileName = videoDir + "/" +  formattedTime + "Video.3gp";
+        	setDefaultVideoFileName();
         }
         //TODO: get and display location and orientation
 

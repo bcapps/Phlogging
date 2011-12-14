@@ -19,26 +19,30 @@ import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.provider.MediaStore;
 import android.provider.MediaStore.MediaColumns;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 public class DisplayDataView extends Activity
 implements DialogInterface.OnDismissListener{
 //-----------------------------------------------------------------------------
-	private static final int PICTURE_DIALOG = 0;
-    private final int DELETE_DIALOG = 2;
 	private static final int EDIT_ACTIVITY = 1;
+    private static final int DELETE_DIALOG = 2;
+	private static final int PICTURE_DIALOG = 3;
+	private static final int VIDEO_DIALOG = 4;
 	private DataSQLiteDB phloggingDatabase;
+	
 	private long rowId;
 
     private MediaPlayer recordingPlayer;
     private String recordingFileName;
+    private String videoFileName;
     private int mainImageId;
+    private Dialog currentDialog;
 //-----------------------------------------------------------------------------
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -58,6 +62,7 @@ implements DialogInterface.OnDismissListener{
 
         //Initialize all the views with their values
         setViews();
+        currentDialog = null;
 
         //Setup the audio recorder player
         recordingPlayer = new MediaPlayer();
@@ -67,6 +72,8 @@ implements DialogInterface.OnDismissListener{
 	public void myClickHandler(View view) {
 		File audioFile;
 		Intent nextActivity;
+		VideoView videoView;
+		File videoFile;
 
         switch (view.getId()) {
         case R.id.close_button:
@@ -124,6 +131,34 @@ implements DialogInterface.OnDismissListener{
         case R.id.delete_button:
         	showDialog(DELETE_DIALOG);
         	break;
+        case R.id.video_button:
+        	//error checking
+        	if(videoFileName == null){
+        		break;
+        	}
+        	//if not playing and the file exists, play it
+	    	videoFile = new File(videoFileName);
+	    	if(videoFile.exists()){
+        		showDialog(VIDEO_DIALOG);
+	    	}
+        	break;
+        case R.id.video_button_dismiss:
+        	dismissDialog(VIDEO_DIALOG);
+        	break;
+        case R.id.video_play:
+        	videoView = (VideoView)currentDialog.findViewById(R.id.video_full_size);
+        	videoView.start();
+        	break;
+        case R.id.video_stop:
+        	//error checking
+        	if(videoFileName == null){
+        		break;
+        	}
+        	videoView = (VideoView)currentDialog.findViewById(R.id.video_full_size);
+        	if(videoView.isPlaying()){
+        		videoView.stopPlayback();
+        	}
+        	break;
         default:
         	break;
         }
@@ -152,6 +187,14 @@ implements DialogInterface.OnDismissListener{
              dialogBuilder.setPositiveButton("Yes",deleteListener);
              dialogBuilder.setNegativeButton("No",deleteListener);
     		break;
+    	case VIDEO_DIALOG:
+    		//Inflate the dialog and set it to the builder's view
+    		dialogInflator = (LayoutInflater)this.getSystemService(LAYOUT_INFLATER_SERVICE);
+
+    		dialogView = dialogInflator.inflate(R.layout.ui_dialog_video_display_layout,
+    				(ViewGroup)findViewById(R.id.dialog_root));
+    		dialogBuilder.setView(dialogView);
+    		break;
     	default:
     		break;
     	}
@@ -166,7 +209,10 @@ implements DialogInterface.OnDismissListener{
 	    	String mainPictureFilename;
 	    	Bitmap mainPictureBitmap;
 	    	ImageView pictureView;
+	    	VideoView videoView;
 
+	    	currentDialog = dialog;
+	    	
 	    	switch(dialogId){
 	    	case PICTURE_DIALOG:
 	        	//Get the pictureView
@@ -180,11 +226,16 @@ implements DialogInterface.OnDismissListener{
 	        	pictureView.setImageBitmap(mainPictureBitmap);
 
 	    		break;
+	    	case VIDEO_DIALOG:
+	    		videoView = (VideoView)dialog.findViewById(R.id.video_full_size);
+	    		videoView.setVideoPath(videoFileName);
+	    		break;
 	    	}
 	    }
 //-----------------------------------------------------------------------------
 	 @Override
 	 public void onDismiss (DialogInterface dialog){
+		 currentDialog = null;
 	 }
 //-----------------------------------------------------------------------------
 	 @Override
@@ -317,7 +368,7 @@ implements DialogInterface.OnDismissListener{
     	entryText = entryData.getAsString("description");
     	mainImageId = entryData.getAsInteger("image_media_id");
     	recordingFileName = entryData.getAsString("audio_file_name");
-
+    	videoFileName = entryData.getAsString("video_file_name");
     	//TODO: get and display location and orientation
 
     	mainImageView = (ImageView) findViewById(R.id.image_thumbnail);

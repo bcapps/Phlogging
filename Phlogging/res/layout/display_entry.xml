@@ -43,11 +43,10 @@
 	    android:layout_height="60dp"
 	    android:onClick="myClickHandler">
 	</ImageView>
-	<ImageView android:id="@+id/video_thumbnail"
- 		android:layout_width="60dp"
-	    android:layout_height="60dp"
+	<ImageButton android:id="@+id/video_button"
+ 		style="@style/TinyButton"
 	    android:onClick="myClickHandler">
-	</ImageView>
+	</ImageButton>
 	<ImageButton android:id="@+id/play_recording"
 	    style="@style/TinyButton"
 	    android:src="@drawable/speaker">

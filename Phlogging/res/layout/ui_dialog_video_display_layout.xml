@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/dialog_root"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center_horizontal">
+    <VideoView android:id="@+id/video_full_size"
+        android:layout_width="250dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center"
+        android:layout_marginBottom="@dimen/margin">
+    </VideoView>
+    <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="80dp"
+                android:orientation="horizontal"
+                android:gravity="center">
+                <ImageButton android:id="@+id/video_play"
+                    android:layout_height="60dp"
+                    android:layout_width="60dp"
+                    android:onClick="myClickHandler"
+                    android:src="@drawable/play">
+                </ImageButton>
+                <ImageButton android:id="@+id/video_stop"
+                    android:layout_height="60dp"
+                    android:layout_width="60dp"
+                    android:onClick="myClickHandler"
+                    android:src="@drawable/stop">
+                </ImageButton>
+     </LinearLayout>
+    <Button android:id="@+id/video_button_dismiss"
+        android:layout_width="@dimen/button_width"
+        android:layout_height="@dimen/button_height"
+        android:text="@string/dismiss_button_text"
+        android:onClick="myClickHandler">
+    </Button>
+</LinearLayout>
